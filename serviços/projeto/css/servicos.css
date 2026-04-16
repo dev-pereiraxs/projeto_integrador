@@ -1,0 +1,110 @@
+:root {
+    --bg-body: #f5f7fb;
+
+    --azul-principal: #2563eb;
+    --azul-hover: #1e40af;
+
+    --azul-claro: #dbeafe;
+    --azul-texto: #1d4ed8;
+
+    --amarelo-claro: #fef3c7;
+    --amarelo-texto: #b45309;
+
+    --laranja-claro: #fde68a;
+    --laranja-texto: #92400e;
+
+    --verde-claro: #dcfce7;
+    --verde-texto: #166534;
+
+    --cinza-texto: #555;
+    --cinza-claro: #777;
+}
+
+/* MENU SUPERIOR */
+.topo {
+    background: linear-gradient(to right, #0b1d4d, #1f3c88);
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 300px;
+    height: 200px;
+
+}
+
+/* TAG */
+.tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+/* CORES DAS TAGS */
+.azul {
+    background: var(--azul-claro);
+    color: var(--azul-texto);
+}
+
+.amarelo {
+    background: var(--amarelo-claro);
+    color: var(--amarelo-texto);
+}
+
+.laranja {
+    background: var(--laranja-claro);
+    color: var(--laranja-texto);
+}
+
+.verde {
+    background: var(--verde-claro);
+    color: var(--verde-texto);
+}
+
+/* PREÇO */
+.preco {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--azul-texto);
+    font-weight: bold;
+}
+
+/*  TEXTOS  */
+.card h3 {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.card p {
+    color: var(--cinza-texto);
+    font-size: 14px;
+}
+
+.tempo {
+    display: block;
+    margin-top: 5px;
+    color: var(--cinza-claro);
+    font-size: 13px;
+}
+
+/*  BOTÃO */
+.card button {
+    margin-top: 10px;
+    background: var(--azul-principal);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Hover */
+.card button:hover {
+    background: var(--azul-hover);
+}
