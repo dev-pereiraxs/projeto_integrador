@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/servicos.css">
+  <title>Agenda Fácil</title>
+
+
+</head>
+
+<body class="bg-[var(--bg-body)]">
+
+  <!-- MENU SUPERIOR (FULL WIDTH) -->
+  <header class="topo flex justify-between items-center px-8 py-4 text-white">
+    
+    <div class="font-bold text-lg">Agenda Fácil</div>
+
+    <nav class="space-x-6 hidden md:block">
+      <a href="#">Início</a>
+      <a href="#" class="font-bold">Serviços</a>
+      <a href="#">Minhas Agendamentos</a>
+      <a href="#">Painel Prestador</a>
+      <a href="#">Admin</a>
+    </nav>
+
+  </header>
+
+  <!-- CONTAINER CENTRAL -->
+  <div class="container mx-auto max-w-6xl p-6 md:p-10">
+
+    <!-- Título -->
+    <h1 class="text-2xl font-bold mb-6">Serviços Disponíveis</h1>
+
+    <!-- BUSCA + FILTRO -->
+    <div class="flex flex-col md:flex-row gap-3 mb-6">
+      
+      <input 
+        type="text" 
+        placeholder="Buscar serviço ou prestador..."
+        class="flex-1 p-3 rounded-lg border border-gray-300"
+      >
+
+      <select class="p-3 rounded-lg border border-gray-300">
+        <option>Todas as categorias</option>
+        <option>Tecnologia</option>
+        <option>Mecânica</option>
+        <option>Elétrica</option>
+        <option>Hidráulica</option>
+        <option>Reformas</option>
+        <option>Limpezas</option>
+      </select>
+
+    </div>
+
+    <!-- GRID DE CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="card">
+        <span class="tag azul">Tecnologia / TI</span>
+        <span class="preco">R$ 100.00</span>
+
+        <h3>WINMTV!</h3>
+        <p>AVADAIA</p>
+
+        <button>Agendar</button>
+      </div>
+
+      <div class="card">
+        <span class="tag amarelo">Mecânica</span>
+        <span class="preco">R$ 120.00</span>
+
+        <h3>Troca de Óleo e Filtros</h3>
+        <p>Troca de óleo e filtros.</p>
+
+        <button>Agendar</button>
+      </div>
+
+      <div class="card">
+        <span class="tag laranja">Elétrica</span>
+        <span class="preco">R$ 90.00</span>
+
+        <h3>Alinhamento e Balanceamento</h3>
+        <p>Serviço de alinhamento.</p>
+
+        <button>Agendar</button>
+      </div>
+
+      <div class="card">
+        <span class="tag azul">Tecnologia / TI</span>
+        <span class="preco">R$ 150.00</span>
+
+        <h3>Formatação de Computador</h3>
+        <p>Formatação completa.</p>
+
+        <button>Agendar</button>
+      </div>
+
+      <div class="card">
+        <span class="tag azul">Tecnologia / TI</span>
+        <span class="preco">R$ 80.00</span>
+
+        <h3>Configuração de Rede Wi-Fi</h3>
+        <p>Configuração de rede.</p>
+
+        <button>Agendar</button>
+      </div>
+
+      <div class="card">
+        <span class="tag verde">Reforma</span>
+        <span class="preco">R$ 350.00</span>
+
+        <h3>Pintura de Cômodo</h3>
+        <p>Pintura completa.</p>
+
+        <button>Agendar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
