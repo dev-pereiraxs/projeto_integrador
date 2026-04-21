@@ -79,6 +79,11 @@
     color: var(--verde-texto);
 }
 
+.cinza {
+    background: var(--cinza-claro);
+    color: var(--cinza-texto);
+}
+
 /* PREÇO */
 .preco {
     position: absolute;
