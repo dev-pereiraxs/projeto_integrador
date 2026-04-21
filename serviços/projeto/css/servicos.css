@@ -28,21 +28,34 @@
 /* CARD */
 .card {
     background: white;
-    padding: 40px;
+    padding: 20px;
     border-radius: 15px;
     position: relative;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    width: 300px;
-    height: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 
+    display: flex;
+    flex-direction: column;
+
+    min-height: 260px;
+    height: 100%;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* TAG */
+/* HOVER */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* TAG BASE */
 .tag {
     display: inline-block;
     padding: 5px 10px;
     border-radius: 8px;
     font-size: 12px;
+    width: fit-content;
+    margin-bottom: 5px;
 }
 
 /* CORES DAS TAGS */
@@ -69,42 +82,40 @@
 /* PREÇO */
 .preco {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 15px;
+    right: 15px;
     color: var(--azul-texto);
     font-weight: bold;
 }
 
-/*  TEXTOS  */
+/* TEXTOS */
 .card h3 {
     margin-top: 10px;
     font-weight: 600;
+    font-size: 16px;
 }
 
 .card p {
     color: var(--cinza-texto);
     font-size: 14px;
-}
-
-.tempo {
-    display: block;
     margin-top: 5px;
-    color: var(--cinza-claro);
-    font-size: 13px;
+
+    flex-grow: 1; 
 }
 
-/*  BOTÃO */
+
 .card button {
-    margin-top: 10px;
+    margin-top: 15px;
     background: var(--azul-principal);
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 10px;
     border-radius: 8px;
     cursor: pointer;
+    width: 100%;
 }
 
-/* Hover */
+
 .card button:hover {
     background: var(--azul-hover);
 }
