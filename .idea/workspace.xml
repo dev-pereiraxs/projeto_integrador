@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e7f1fb79-e2ff-42e7-bbc9-9d59f0d867c4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/projeto_integrador.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil" beforeDir="false" afterPath="$PROJECT_DIR$/agenda-facil" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/cadastro.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/prestador.html" beforeDir="false" />
@@ -39,7 +34,8 @@
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/orcamentos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/servicos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/sucesso.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/cadastro.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/cadastro.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/prestador.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prestador.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/principal.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/principal.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
