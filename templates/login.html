@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Ícones -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../static/logincss.css">
+
+  <title>Login - Agenda Fácil</title>
+</head>
+
+<body>
+  <div class="formulario">
+    <h1>Acessar conta</h1>
+
+    <form action="#" method="post">
+
+      <!-- USUÁRIO -->
+      <div class="caixa-formulario">
+        <input type="text" name="username" placeholder="Nome de usuário" required />
+        <i class='bx bxs-user'></i>
+      </div>
+
+      <!-- SENHA -->
+      <div class="caixa-formulario">
+        <input type="password" name="password" placeholder="Senha" required />
+        <i class="bx bxs-lock-alt"></i>
+      </div>
+
+      <!-- OPÇÕES -->
+      <div class="caixa-lembrar-esqueci">
+        <label>
+          <input type="checkbox"> Lembrar
+        </label>
+
+        <!-- 🔧 CORRIGIDO (antes não era clicável) -->
+        <a href="#">Esqueci minha senha</a>
+      </div>
+
+      <!-- BOTÃO -->
+      <button type="submit">Entrar</button>
+
+      <!-- REGISTRO -->
+      <div class="link-registro">
+        <p>
+          Não tem conta?
+          <a href="../templates/cadastro.html">Registrar</a>
+        </p>
+      </div>
+
+    </form>
+  </div>
+</body>
+
+</html>

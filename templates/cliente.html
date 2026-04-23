@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Agenda Fácil</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white border-bottom">
+        <div class="container">
+            <span class="navbar-brand fw-bold">Agenda Fácil</span>
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <span class="text-muted">João Oliveira</span>
+                <button class="btn btn-outline-danger btn-sm">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PERFIL -->
+    <div class="container my-4">
+
+        <!-- HEADER -->
+        <div class="card shadow-sm p-4 mb-4">
+            <div class="d-flex flex-wrap align-items-center">
+
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle" width="90" height="90">
+
+                <div class="ms-4">
+                    <span class="badge bg-secondary-subtle text-dark mb-2">Cliente</span>
+                    <h4 class="mb-1">João Oliveira</h4>
+                    <p class="text-muted mb-1">
+                        <i class="bi bi-geo-alt"></i> São Paulo, SP
+                    </p>
+                    <small class="text-warning">★★★★☆</small>
+                    <span class="text-muted ms-2">4.8</span>
+                </div>
+
+                <div class="ms-auto mt-3 mt-lg-0">
+                    <button class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Editar Perfil
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- TABS FUNCIONAIS -->
+            <ul class="nav nav-tabs mt-4" id="profileTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#perfil">Perfil</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agendamentos">Agendamentos</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historico">Histórico</button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- CONTEÚDO DAS TABS -->
+        <div class="tab-content">
+
+            <!-- PERFIL -->
+            <div class="tab-pane fade show active" id="perfil">
+
+                <div class="row g-4">
+
+                    <!-- ESQUERDA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm p-3">
+                            <h5 class="mb-3">Informações Gerais</h5>
+
+                            <p><i class="bi bi-envelope me-2"></i> joao@email.com</p>
+                            <p><i class="bi bi-telephone me-2"></i> (11) 90000-0000</p>
+                            <p><i class="bi bi-geo-alt me-2"></i> Rua Exemplo, 123</p>
+                        </div>
+                    </div>
+
+                    <!-- DIREITA -->
+                    <div class="col-lg-6">
+
+                        <!-- PREFERÊNCIAS -->
+                        <div class="card shadow-sm p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Minhas Preferências</h5>
+                                <button class="btn btn-sm btn-outline-primary">
+                                    Editar
+                                </button>
+                            </div>
+
+                            <div class="row g-3">
+
+                                <!-- CARD -->
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3 text-center h-100 preference-card active">
+                                        <img src="../static/img/eletrica.png" class="preference-img">
+                                        <h6 class="mt-2 mb-1">Elétrica</h6>
+                                        <small class="text-muted">Serviços elétricos</small>
+                                    </div>
+                                </div>
+
+                                <!-- CARD -->
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3 text-center h-100 preference-card active">
+                                        <img src="../static/img/reformas.png" class="preference-img">
+                                        <h6 class="mt-2 mb-1">Reformas</h6>
+                                        <small class="text-muted">Obras e manutenção</small>
+                                    </div>
+                                </div>
+
+                                <!-- CARD -->
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3 text-center h-100 preference-card">
+                                        <img src="../static/img/hidraulica.png" class="preference-img">
+                                        <h6 class="mt-2 mb-1">Hidráulica</h6>
+                                        <small class="text-muted">Encanamento</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                        <!-- FAVORITOS -->
+                        <div class="card shadow-sm p-3">
+                            <h5 class="mb-3">Profissionais Favoritos</h5>
+
+                            <!-- ITEM -->
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://randomuser.me/api/portraits/men/45.jpg" class="rounded-circle me-3"
+                                    width="50">
+
+                                <div class="flex-grow-1">
+                                    <strong>Carlos Mecânico</strong>
+                                    <p class="mb-0 text-muted small">Especialista automotivo</p>
+                                    <small class="text-warning">★★★★☆ 4.9</small>
+                                </div>
+
+                                <button class="btn btn-outline-primary btn-sm">Ver</button>
+                            </div>
+
+                            <!-- ITEM -->
+                            <div class="d-flex align-items-center">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" class="rounded-circle me-3"
+                                    width="50">
+
+                                <div class="flex-grow-1">
+                                    <strong>Maria Elétrica</strong>
+                                    <p class="mb-0 text-muted small">Instalações elétricas</p>
+                                    <small class="text-warning">★★★★☆ 4.8</small>
+                                </div>
+
+                                <button class="btn btn-outline-primary btn-sm">Ver</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- OUTRAS TABS (placeholder) -->
+            <div class="tab-pane fade" id="agendamentos">
+                <div class="card p-4">Nenhum agendamento ainda.</div>
+            </div>
+
+            <div class="tab-pane fade" id="historico">
+                <div class="card p-4">Histórico vazio.</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

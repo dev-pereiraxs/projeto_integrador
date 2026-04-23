@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../static/prestador.css">
+
+    <title>Criar conta</title>
+</head>
+
+<body>
+    <main id="form_container">
+
+        <!-- HEADER -->
+        <div id="form_header">
+            <h1 id="form_title">Criar conta de prestador</h1>
+
+            <button type="button" class="btn-default" onclick="window.location.href='../templates/principal.html'">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </button>
+        </div>
+
+        <!-- FORM -->
+        <form id="form">
+
+            <div id="input_container">
+
+                <!-- NOME -->
+                <div class="input-box">
+                    <label class="form-label">Primeiro nome</label>
+                    <div class="input-field">
+                        <input type="text" id="name" class="form-control" required>
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="input-box">
+                    <label class="form-label">Último nome</label>
+                    <div class="input-field">
+                        <input type="text" id="last_name" class="form-control" required>
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                </div>
+
+                <!-- DATA -->
+                <div class="input-box">
+                    <label class="form-label">Nascimento</label>
+                    <div class="input-field">
+                        <input type="date" id="birthdate" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- EMAIL -->
+                <div class="input-box">
+                    <label class="form-label">E-mail</label>
+                    <div class="input-field">
+                        <input type="email" id="email" class="form-control" required>
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                </div>
+
+                <!-- SENHA -->
+                <div class="input-box">
+                    <label class="form-label">Senha</label>
+
+                    <div class="input-field">
+                        <input type="password" id="password" class="form-control" required>
+                        <i class="fa-regular fa-eye-slash password-icon"></i>
+                    </div>
+
+                    <div id="password-rules">
+                        <p id="length"> Mínimo 8 caracteres</p>
+                        <p id="uppercase">Letra maiúscula</p>
+                        <p id="number">Número</p>
+                        <p id="special"> Caractere especial</p>
+                    </div>
+                </div>
+
+                <!-- CONFIRMAR SENHA -->
+                <div class="input-box">
+                    <label class="form-label">Confirmar senha</label>
+                    <div class="input-field">
+                        <input type="password" id="confirm_password" class="form-control" required>
+                        <i class="fa-regular fa-eye-slash password-icon"></i>
+                    </div>
+                </div>
+
+                <!-- GÊNERO -->
+                <div class="radio-container">
+                    <label class="form-label">Gênero</label>
+
+                    <div id="gender_inputs">
+                        <label><input type="radio" name="gender" value="female"> Feminino</label>
+                        <label><input type="radio" name="gender" value="male"> Masculino</label>
+                        <label><input type="radio" name="gender" value="other"> Outro</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SERVIÇOS -->
+            <div class="services-container">
+                <label class="form-label">Áreas de atuação</label>
+
+                <div class="services-grid">
+                    <div class="card" data-value="ti"><img src="../static/img//ti.png">
+                        <h4>TI</h4>
+                    </div>
+                    <div class="card" data-value="mecanica"><img src="../static/img/mecanica.png">
+                        <h4>Mecânica</h4>
+                    </div>
+                    <div class="card" data-value="eletrica"><img src="../static/img/eletrica.png">
+                        <h4>Elétrica</h4>
+                    </div>
+                    <div class="card" data-value="hidraulica"><img src="../static/img/hidraulica.png">
+                        <h4>Hidráulica</h4>
+                    </div>
+                    <div class="card" data-value="reformas"><img src="../static/img/reformas.png">
+                        <h4>Reformas</h4>
+                    </div>
+                    <div class="card" data-value="limpeza"><img src="../static/img/limpeza.png">
+                        <h4>Limpeza</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÃO -->
+            <button type="submit" class="btn-default">
+                Criar conta
+            </button>
+
+        </form>
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+
+        // Mostrar senha
+        document.querySelectorAll('.password-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const input = this.parentElement.querySelector('input');
+                input.type = input.type === 'password' ? 'text' : 'password';
+                this.classList.toggle('fa-eye');
+            });
+        });
+
+        // Validação dinâmica da senha
+        const passwordInput = document.getElementById('password');
+
+        const rules = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            number: document.getElementById('number'),
+            special: document.getElementById('special')
+        };
+
+        passwordInput.addEventListener('input', () => {
+            const value = passwordInput.value;
+
+            validate(value.length >= 8, rules.length);
+            validate(/[A-Z]/.test(value), rules.uppercase);
+            validate(/[0-9]/.test(value), rules.number);
+            validate(/[^A-Za-z0-9]/.test(value), rules.special);
+        });
+
+        function validate(condition, element) {
+            element.classList.toggle('valid', condition);
+            element.classList.toggle('invalid', !condition);
+            element.innerHTML = (condition ? '✅ ' : '❌ ') + element.textContent.slice(2);
+        }
+
+        // Seleção de serviços
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('selected');
+            });
+        });
+
+        // SUBMIT
+        document.getElementById('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const password = passwordInput.value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            const strongPassword =
+                password.length >= 8 &&
+                /[A-Z]/.test(password) &&
+                /[0-9]/.test(password) &&
+                /[^A-Za-z0-9]/.test(password);
+
+            if (!strongPassword) {
+                alert('Senha fraca!');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+
+            const selected = [...document.querySelectorAll('.card.selected')]
+                .map(card => card.dataset.value);
+
+            if (selected.length === 0) {
+                alert('Selecione pelo menos uma área');
+                return;
+            }
+
+            alert('Cadastro válido 🚀');
+            console.log({ password, selected });
+        });
+
+    </script>
+
+</body>
+
+</html>

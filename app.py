@@ -90,6 +90,10 @@ def salvar():
 def index():
     return "Página Inicial - O servidor está rodando!"
 
+@app.route("/servicos")
+def servicos():
+    return render_template("servicos.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
     
