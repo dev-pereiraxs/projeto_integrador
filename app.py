@@ -88,11 +88,35 @@ def salvar():
 
 @app.route("/")
 def index():
-    return "Página Inicial - O servidor está rodando!"
+    return render_template("principal.html")
+
+@app.route("/cadastro")
+def cadastro():
+    return render_template("cadastro.html")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
 @app.route("/servicos")
 def servicos():
     return render_template("servicos.html")
+
+@app.route("/sucesso")
+def sucesso():
+    return render_template("sucesso.html")
+
+@app.route("/clientes")
+def clientes():
+    return render_template("cliente.html")
+
+@app.route("/prestador")
+def prestador():
+    return render_template('prestador.html')
+
+@app.route("/orcamento")
+def orcamento():
+    return render_template("orcamentos.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
