@@ -1,0 +1,126 @@
+:root {
+    --bg-body: #f5f7fb;
+
+    --azul-principal: #2563eb;
+    --azul-hover: #1e40af;
+
+    --azul-claro: #dbeafe;
+    --azul-texto: #1d4ed8;
+
+    --amarelo-claro: #fef3c7;
+    --amarelo-texto: #b45309;
+
+    --laranja-claro: #fde68a;
+    --laranja-texto: #92400e;
+
+    --verde-claro: #dcfce7;
+    --verde-texto: #166534;
+
+    --cinza-texto: #555;
+    --cinza-claro: #777;
+}
+
+/* MENU SUPERIOR */
+.topo {
+    background: linear-gradient(to right, #0b1d4d, #1f3c88);
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 260px;
+    height: 100%;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* HOVER */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* TAG BASE */
+.tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    width: fit-content;
+    margin-bottom: 5px;
+}
+
+/* CORES DAS TAGS */
+.azul {
+    background: var(--azul-claro);
+    color: var(--azul-texto);
+}
+
+.amarelo {
+    background: var(--amarelo-claro);
+    color: var(--amarelo-texto);
+}
+
+.laranja {
+    background: var(--laranja-claro);
+    color: var(--laranja-texto);
+}
+
+.verde {
+    background: var(--verde-claro);
+    color: var(--verde-texto);
+}
+
+.cinza {
+    background: var(--cinza-claro);
+    color: var(--cinza-texto);
+}
+
+/* PREÇO */
+.preco {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: var(--azul-texto);
+    font-weight: bold;
+}
+
+/* TEXTOS */
+.card h3 {
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.card p {
+    color: var(--cinza-texto);
+    font-size: 14px;
+    margin-top: 5px;
+
+    flex-grow: 1; 
+}
+
+
+.card button {
+    margin-top: 15px;
+    background: var(--azul-principal);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.card button:hover {
+    background: var(--azul-hover);
+}
