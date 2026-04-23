@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda Fácil</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../static/princss.css" />
+</head>
+
+<body>
+
+  <div class="page-shell">
+
+    <!-- HEADER -->
+    <header class="topbar container">
+      <a class="brand" href="#inicio">
+        <span class="brand-mark"></span>
+        <span>Agenda Fácil</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="./login.html">Entrar</a>
+        <a href="./cadastro.html">Cadastrar-se</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <main>
+      <section class="hero container" id="inicio">
+
+        <!-- TEXTO -->
+        <article class="hero-copy">
+          <span class="eyebrow">Serviços para casa e empresa</span>
+
+          <h1>Agende Serviços com Facilidade e Segurança</h1>
+
+          <p>
+            Encontre profissionais verificados, solicite orçamentos e agende serviços de tecnologia,
+            mecânica, elétrica, reformas e muito mais em poucos cliques.
+          </p>
+
+          <div class="hero-actions">
+            <a href="./servicos.html" class="btn btn-primary">Agendar Serviço</a>
+            <a href="./prestador.html" class="btn btn-secondary">Quero Ser Prestador</a>
+          </div>
+        </article>
+
+        <!-- VISUAL -->
+        <figure class="hero-visual">
+
+          <div class="hero-visual-inner">
+            <img src="../static/img/profissional.png" class="hero-img" alt="Profissional de serviços verificado">
+
+            <!-- CARD 1 -->
+            <div class="floating-card check-card">
+              <span class="check-icon">✔</span>
+              <div>
+                <strong>Profissional validado</strong>
+                <small>Documentos e reputação verificados</small>
+              </div>
+            </div>
+
+            <!-- CARD 2 -->
+            <div class="floating-card schedule-card">
+              <div class="schedule-top">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+        </figure>
+
+      </section>
+
+      <!-- COMO FUNCIONA -->
+      <section class="steps-section container">
+        <h2>Como funciona</h2>
+
+        <div class="steps-grid">
+
+          <article class="step-card">
+            <span class="step-number">1</span>
+            <h3>Escolha o serviço</h3>
+            <p>Selecione a categoria desejada e descreva sua necessidade.</p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-number">2</span>
+            <h3>Encontre um profissional</h3>
+            <p>Veja perfis, avaliações e disponibilidade em tempo real.</p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-number">3</span>
+            <h3>Agende online</h3>
+            <p>Defina data, horário e conclua tudo em poucos segundos.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- CATEGORIAS -->
+      <section class="categories-section container" id="categorias">
+        <h2>Categorias de serviço</h2>
+
+        <div class="categories-grid">
+
+          <article class="service-card">
+            <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
+            <div>
+              <h3>Tecnologia / TI</h3>
+              <p>Suporte técnico, redes e computadores.</p>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <img src="../static/img/mecanica.png" alt="Mecânica" class="service-icon">
+            <div>
+              <h3>Mecânica</h3>
+              <p>Manutenção preventiva e corretiva.</p>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <img src="../static/img/eletrica.png" alt="Elétrica" class="service-icon">
+            <div>
+              <h3>Elétrica</h3>
+              <p>Instalações e reparos com segurança.</p>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <img src="../static/img/hidraulica.png" alt="Hidráulica" class="service-icon">
+            <div>
+              <h3>Hidráulica</h3>
+              <p>Resolva vazamentos sem complicação.</p>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <img src="../static/img/reformas.png" alt="Reformas" class="service-icon">
+            <div>
+              <h3>Reformas</h3>
+              <p>Pintura e melhorias para seu espaço.</p>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <img src="../static/img/limpeza.png" alt="Limpeza" class="service-icon">
+            <div>
+              <h3>Limpeza</h3>
+              <p>Faxina com profissionais avaliados.</p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-band" id="cta">
+    <div class="container cta-inner">
+
+      <div class="cta-copy">
+        <span class="eyebrow eyebrow-blue">Solução prática para o dia a dia</span>
+        <h2>Precisa de ajuda hoje?</h2>
+        <p>Encontre um profissional em minutos com um processo simples e confiável.</p>
+      </div>
+
+      <div class="benefits-grid">
+
+        <article class="benefit-card">
+          <img src="../static/img/seguranca.png" alt="Profissional verificado" class="benefit-icon">
+          <h3>Profissionais verificados</h3>
+          <p>Segurança e confiança em todos os atendimentos.</p>
+        </article>
+
+        <article class="benefit-card">
+          <img src="../static/img/avaliacoes.png" alt="Avaliações" class="benefit-icon">
+          <h3>Avaliações reais</h3>
+          <p>Histórico e reputação confiáveis.</p>
+        </article>
+
+        <article class="benefit-card">
+          <img src="../static/img/google-agenda.png" alt="Google Agenda" class="benefit-icon">
+          <h3>Integração com agenda</h3>
+          <p>Organize seus compromissos facilmente.</p>
+        </article>
+
+        <article class="benefit-card">
+          <img src="../static/img/app.png" alt="Aplicativo" class="benefit-icon">
+          <h3>Tudo em um só lugar</h3>
+          <p>Gerencie tudo direto pelo app.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
