@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e7f1fb79-e2ff-42e7-bbc9-9d59f0d867c4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/projeto_integrador.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil" beforeDir="false" afterPath="$PROJECT_DIR$/agenda-facil" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/cadastro.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/prestador.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/src/javascript/script.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/src/styles/cadascss.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/cadastro/src/styles/prestador.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/app.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/avaliacoes.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/eletrica.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/google-agenda.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/hidraulica.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/limpeza.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/mecanica.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/profissional.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/reformas.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/seguranca.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/img/ti.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/login/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/login/logincss.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/perfil/cliente.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/perfil/cliente.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/perfil/cliente.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/principal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/princss.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/css/servicos.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/orcamentos.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/servicos.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/sucesso.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/principal.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/principal.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3Cm9D95nJv7bCJ4deAiikJn0GPf" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-b63d5a1f7c97-b61e75351b1f-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.22158.340" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e7f1fb79-e2ff-42e7-bbc9-9d59f0d867c4" name="Changes" comment="" />
+      <created>1776979755660</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776979755660</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
