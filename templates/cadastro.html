@@ -17,19 +17,25 @@
             <h1 id="form_title">
                 Criar conta
             </h1>
-            <button class="btn-default" onclick="window.location.href=' {{ url_for('index') }} '">
+            <button class="btn-default" onclick="window.location.href='{{ url_for('index') }}'">
                 <i class="fa-solid fa-right-to-bracket"></i>
             </button>
         </div>
 
-        <form action="" id="form">
+        {% if erro %}
+            <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold;">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+            </div>
+        {% endif %}
+
+        <form action="{{ url_for('salvar') }}" method="POST" id="form">
             <div id="input_container">
                 <div class="input-box">
                     <label for="name" class="form-label">
                         Primeiro nome
                     </label>
                     <div class="input-field">
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Fulano">
+                        <input type="text" name="nome" id="name" class="form-control" placeholder="Fulano" required>
                         <i class="fa-regular fa-user"></i>
                     </div>
                 </div>
@@ -39,7 +45,7 @@
                         Último nome
                     </label>
                     <div class="input-field">
-                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="De Tal">
+                        <input type="text" name="sobrenome" id="last_name" class="form-control" placeholder="De Tal" required>
                         <i class="fa-regular fa-user"></i>
                     </div>
                 </div>
@@ -49,7 +55,7 @@
                         Nascimento
                     </label>
                     <div class="input-field">
-                        <input type="date" name="birthdate" id="birthdate" class="form-control">
+                        <input type="date" name="data_nascimento" id="birthdate" class="form-control" required>
                     </div>
                 </div>
 
@@ -59,7 +65,7 @@
                     </label>
                     <div class="input-field">
                         <input type="email" name="email" id="email" class="form-control"
-                            placeholder="exemplo@gmail.com">
+                            placeholder="exemplo@gmail.com" required>
                         <i class="fa-regular fa-envelope"></i>
                     </div>
                 </div>
@@ -69,7 +75,7 @@
                         Senha
                     </label>
                     <div class="input-field">
-                        <input type="password" name="password" id="password" class="form-control" placeholder="*******">
+                        <input type="password" name="senha" id="password" class="form-control" placeholder="*******" required>
                         <i class="fa-regular fa-eye-slash password-icon"></i>
                     </div>
                 </div>
@@ -80,7 +86,7 @@
                     </label>
                     <div class="input-field">
                         <input type="password" name="confirm_password" id="confirm_password" class="form-control"
-                            placeholder="*******">
+                            placeholder="*******" required>
                         <i class="fa-regular fa-eye-slash password-icon"></i>
                     </div>
                 </div>
@@ -92,32 +98,31 @@
 
                     <div id="gender_inputs">
                         <div class="radio-box">
-                            <input type="radio" name="gender" id="female" class="form-control" value="female">
+                            <input type="radio" name="sexo" id="female" class="form-control" value="Feminino" required>
                             <label for="female" class="form-label">
                                 Feminino
                             </label>
                         </div>
 
                         <div class="radio-box">
-                            <input type="radio" name="gender" id="male" class="form-control" value="male">
+                            <input type="radio" name="sexo" id="male" class="form-control" value="Masculino" required>
                             <label for="male" class="form-label">
                                 Masculino
                             </label>
                         </div>
 
                         <div class="radio-box">
-                            <input type="radio" name="gender" id="other" class="form-control" value="other">
+                            <input type="radio" name="sexo" id="other" class="form-control" value="Outro" required>
                             <label for="other" class="form-label">
                                 Outro
                             </label>
                         </div>
                     </div>
 
-
                 </div>
             </div>
 
-            <button type="sumbit" class="btn-default">
+            <button type="submit" class="btn-default">
                 <i class="fa-solid fa-check"></i>
                 Criar conta
             </button>

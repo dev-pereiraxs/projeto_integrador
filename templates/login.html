@@ -18,17 +18,22 @@
   <div class="formulario">
     <h1>Acessar conta</h1>
 
-    <form action="#" method="post">
+    {% if erro %}
+            <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-weight: bold;">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+            </div>
+        {% endif %}
+    <form action="{{ url_for('autenticar') }}" method="POST" id="form">
 
       <!-- USUÁRIO -->
       <div class="caixa-formulario">
-        <input type="text" name="username" placeholder="Nome de usuário" required />
+        <input type="email" name="email" id="email" class="form-control" required placeholder="Email">
         <i class='bx bxs-user'></i>
       </div>
 
       <!-- SENHA -->
       <div class="caixa-formulario">
-        <input type="password" name="password" placeholder="Senha" required />
+        <input type="password" name="senha" id="password" class="form-control" required placeholder="Senha">
         <i class="bx bxs-lock-alt"></i>
       </div>
 
@@ -43,13 +48,13 @@
       </div>
 
       <!-- BOTÃO -->
-      <button type="submit">Entrar</button>
+      <button type="submit" class="btn-default">Entrar</button>
 
       <!-- REGISTRO -->
       <div class="link-registro">
         <p>
           Não tem conta?
-          <a href="../templates/cadastro.html">Registrar</a>
+          <a href=" {{ url_for('cadastro')}} ">Registrar</a>
         </p>
       </div>
 

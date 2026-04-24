@@ -34,9 +34,9 @@
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/orcamentos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/servicos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/sucesso.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/cadastro.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/cadastro.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/prestador.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prestador.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/principal.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/principal.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
