@@ -11,3 +11,7 @@ CREATE TABLE IF NOT EXISTS cadastro_clientes (
 );
 
 select * from cadastro_clientes;
+drop table cadastro_clientes;
+
+ALTER TABLE cadastro_clientes CHANGE idade data_nascimento DATE;
+ALTER TABLE cadastro_clientes ADD sexo VARCHAR(20);;
