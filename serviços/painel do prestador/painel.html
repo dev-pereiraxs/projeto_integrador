@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel do Prestador</title>
+
+   
+    <script src="https://cdn.tailwindcss.com"></script>
+
+  
+    <link rel="stylesheet" href="painel.css" />
+  </head>
+
+  <body class="bg-[var(--bg)] text-[var(--text)]">
+    <div class="max-w-5xl mx-auto p-6">
+      
+      <h1 class="text-2xl font-semibold mb-1">Painel do Prestador</h1>
+
+      
+      <div class="grid grid-cols-3 text-center mb-6">
+        <div>
+          <h2 id="pendentes" class="text-xl font-bold text-[var(--pending)]">
+            0
+          </h2>
+          <p class="text-sm text-gray-500">Pendentes</p>
+        </div>
+
+        <div>
+          <h2 id="andamento" class="text-xl font-bold text-[var(--progress)]">
+            0
+          </h2>
+          <p class="text-sm text-gray-500">Em Andamento</p>
+        </div>
+
+        <div>
+          <h2 id="concluidos" class="text-xl font-bold text-[var(--done)]">
+            0
+          </h2>
+          <p class="text-sm text-gray-500">Concluídos</p>
+        </div>
+      </div>
+
+      
+      <div class="flex gap-4 mb-6">
+        <button class="btn">Pedidos</button>
+
+        
+        <a
+          href="forms.html"
+          class="px-4 py-2 rounded-full text-sm text-white bg-[var(--progress)] hover:opacity-90"
+        >
+          + Novo Serviço
+        </a>
+      </div>
+
+     
+      <div id="lista" class="space-y-4"></div>
+    </div>
+
+    
+    <script src="pn.js"></script>
+  </body>
+</html>

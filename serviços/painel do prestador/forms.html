@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Novo Serviço</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="painel.css" />
+  </head>
+
+  <body class="bg-[var(--bg)]">
+    <div class="max-w-4xl mx-auto p-6">
+      <h1 class="text-xl font-semibold mb-6">Cadastrar Novo Serviço</h1>
+
+      <form id="form" class="bg-white p-6 rounded-xl border space-y-4">
+
+        <div>
+          <label class="text-sm">Nome do Serviço</label>
+          <input id="nome" type="text" class="input" />
+        </div>
+
+        <div>
+          <label class="text-sm">Categoria</label>
+          <select id="categoria" class="input">
+            <option>Mecânica</option>
+            <option>Elétrica</option>
+            <option>Tecnologia</option>
+            <option>Reformas</option>
+            <option>Hidráulica</option>
+            <option>Limpeza</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-sm">Descrição</label>
+          <textarea id="descricao" class="input"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm">Preço Base (R$)</label>
+            <input id="preco" type="number" class="input" />
+          </div>
+
+          <div>
+            <label class="text-sm">Duração (Horas)</label>
+            <input id="duracao" type="number" class="input" />
+          </div>
+        </div>
+
+        <button class="w-full btn-primary">+ Cadastrar Serviço</button>
+      </form>
+    </div>
+
+    <script src="forms.js"></script>
+  </body>
+</html>

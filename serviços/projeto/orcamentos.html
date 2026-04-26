@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Solicitar Orçamento</title>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-xl shadow w-full max-w-xl">
+
+        <h1 class="text-2xl font-bold mb-6 text-center">Solicitar Orçamento</h1>
+
+        <form id="formOrcamento" class="space-y-4">
+
+            <input id="nome" placeholder="Nome" class="w-full p-3 border rounded" required>
+
+            <!-- EMAIL AGORA OPCIONAL -->
+            <input id="email" type="email" placeholder="Email (opcional)" class="w-full p-3 border rounded">
+
+            <input id="telefone" placeholder="Telefone" class="w-full p-3 border rounded" required>
+
+            <select id="categoria" class="w-full p-3 border rounded" required>
+                <option value="">Selecione</option>
+                <option value="Tecnologia">Tecnologia</option>
+                <option value="Hidráulica">Hidráulica</option>
+                <option value="Elétrica">Elétrica</option>
+                <option value="Reformas">Reformas</option>
+            </select>
+
+            <textarea id="descricao" placeholder="Descreva o serviço" class="w-full p-3 border rounded"></textarea>
+
+            <button id="btnEnviar" type="submit" class="w-full bg-blue-600 text-white p-3 rounded">
+                Enviar
+            </button>
+
+        </form>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <!-- EmailJS -->
+    <script>
+        // 🔑 Inicializa EmailJS
+        (function () {
+            emailjs.init("uX9VTM1RJGpHB17ex");
+        })();
+
+        const form = document.getElementById("formOrcamento");
+        const telefone = document.getElementById("telefone");
+        const btn = document.getElementById("btnEnviar");
+
+        // 📞 Máscara telefone
+        telefone.addEventListener("input", () => {
+            let v = telefone.value.replace(/\D/g, "");
+
+            if (v.length > 11) v = v.slice(0, 11);
+
+            v = v.replace(/(\d{2})(\d)/, "($1) $2");
+            v = v.replace(/(\d{5})(\d)/, "$1-$2");
+
+            telefone.value = v;
+        });
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            btn.innerText = "Enviando...";
+            btn.disabled = true;
+
+            const categoria = document.getElementById("categoria").value;
+
+            if (!categoria) {
+                alert("Selecione uma categoria");
+                btn.innerText = "Enviar";
+                btn.disabled = false;
+                return;
+            }
+
+            let emailPrestador = "";
+
+            if (categoria === "Tecnologia") {
+                emailPrestador = "tecnologia@email.com";
+            } else if (categoria === "Hidráulica") {
+                emailPrestador = "hidraulica@email.com";
+            } else if (categoria === "Elétrica") {
+                emailPrestador = "eletrica@email.com";
+            } else if (categoria === "Reformas") {
+                emailPrestador = "reformas@email.com";
+            }
+
+            const emailCliente = document.getElementById("email").value;
+
+            const dados = {
+                nome: document.getElementById("nome").value,
+                email: emailCliente || "Não informado",
+                telefone: telefone.value,
+                categoria: categoria,
+                descricao: document.getElementById("descricao").value,
+                email_prestador: emailPrestador
+            };
+
+            // 📩 SEMPRE envia para prestador
+            const envioPrestador = emailjs.send(
+                "service_b6ejlqp",
+                "template_ju6fbyc",
+                dados
+            );
+
+            // 📩 SÓ envia para cliente se ele colocou email
+            let promessas = [envioPrestador];
+
+            if (emailCliente) {
+                const envioCliente = emailjs.send(
+                    "service_b6ejlqp",
+                    "template_a9a80tv",
+                    dados
+                );
+                promessas.push(envioCliente);
+            }
+
+            Promise.all(promessas)
+                .then(() => {
+                    window.location.href = "sucesso.html";
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("Erro ao enviar");
+                    btn.innerText = "Enviar";
+                    btn.disabled = false;
+                });
+        });
+
+    </script>
+
+</body>
+
+</html>
