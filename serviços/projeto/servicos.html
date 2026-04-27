@@ -25,6 +25,7 @@
 
     <!-- CONTAINER -->
     <div class="container mx-auto max-w-6xl p-6 md:p-10">
+
         <h1 class="text-2xl font-bold mb-6">Serviços Disponíveis</h1>
 
         <!-- BUSCA + FILTRO -->
@@ -49,120 +50,40 @@
 
         </div>
 
-        <!-- GRID -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- GRID DINÂMICO (AGORA VAZIO) -->
+        <div id="lista-servicos"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <!-- TECNOLOGIA -->
-            <div class="card" data-categoria="tecnologia">
-                <span class="tag azul">Tecnologia / TI</span>
-                <span class="preco">R$ 100.00</span>
-                <h3>Reparo de computadores</h3>
-                <p>Manutenção e upgrade de peças.</p>
-                <button>Agendar</button>
-            </div>
+            <!-- OS CARDS SERÃO INSERIDOS AUTOMATICAMENTE PELO JS -->
 
-            <!-- MECÂNICA -->
-            <div class="card" data-categoria="mecanica">
-                <span class="tag amarelo">Mecânica</span>
-                <span class="preco">R$ 120.00</span>
-                <h3>Troca de Óleo</h3>
-                <p>Troca de óleo e filtros.</p>
-                <button>Agendar</button>
-            </div>
+        </div>
 
-            <!-- ELÉTRICA -->
-            <div class="card" data-categoria="eletrica">
-                <span class="tag laranja">Elétrica</span>
-                <span class="preco">R$ 90.00</span>
-                <h3>Instalação Elétrica</h3>
-                <p>Instalação e manutenção elétrica.</p>
-                <button>Agendar</button>
-            </div>
+        <!-- CTA -->
+        <div class="orcamentos-card col-span-full flex justify-center mt-10">
 
-            <!-- HIDRÁULICA -->
-            <div class="card" data-categoria="hidraulica">
-                <span class="tag ciano">Hidráulica</span>
-                <span class="preco">R$ 110.00</span>
-                <h3>Conserto de Vazamentos</h3>
-                <p>Reparo de tubulações e vazamentos.</p>
-                <button>Agendar</button>
-            </div>
+            <div class="text-center bg-white p-8 rounded-xl shadow max-w-xl w-full">
 
-            <!-- REFORMAS -->
-            <div class="card" data-categoria="reformas">
-                <span class="tag verde">Reformas</span>
-                <span class="preco">R$ 300.00</span>
-                <h3>Pintura Residencial</h3>
-                <p>Pintura completa de ambientes.</p>
-                <button>Agendar</button>
-            </div>
+                <h2 class="text-xl font-semibold mb-2">
+                    Não achou seu serviço?
+                </h2>
 
-            <!-- LIMPEZA -->
-            <div class="card" data-categoria="limpeza">
-                <span class="tag verde">Limpeza</span>
-                <span class="preco">R$ 200.00</span>
-                <h3>Limpeza Residencial</h3>
-                <p>Limpeza completa de casas e apartamentos.</p>
-                <button>Agendar</button>
-            </div>
+                <p class="text-gray-600 mb-4">
+                    Solicite um orçamento personalizado.
+                </p>
 
-            <!-- CTA -->
-            <div class="orcamentos-card col-span-full flex justify-center">
-                <div class="text-center bg-white p-8 rounded-xl shadow max-w-xl w-full">
+                <a href="orcamentos.html"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                    Solicitar orçamento
+                </a>
 
-                    <h2 class="text-xl font-semibold mb-2">
-                        Não achou seu serviço?
-                    </h2>
-
-                    <p class="text-gray-600 mb-4">
-                        Solicite um orçamento personalizado.
-                    </p>
-
-                    <a href="orcamentos.html"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-                        Solicitar orçamento
-                    </a>
-
-                </div>
             </div>
 
         </div>
+
     </div>
 
-    <!-- JS -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-
-            const buscaInput = document.getElementById("busca");
-            const filtroCategoria = document.getElementById("filtroCategoria");
-            const cards = document.querySelectorAll(".card");
-
-            function filtrarServicos() {
-                const texto = buscaInput.value.toLowerCase();
-                const categoria = filtroCategoria.value;
-
-                cards.forEach(card => {
-                    const titulo = card.querySelector("h3").textContent.toLowerCase();
-                    const descricao = card.querySelector("p").textContent.toLowerCase();
-                    const categoriaCard = card.dataset.categoria;
-
-                    const matchTexto =
-                        titulo.includes(texto) || descricao.includes(texto);
-
-                    const matchCategoria =
-                        categoria === "todas" || categoria === categoriaCard;
-
-                    card.style.display = (matchTexto && matchCategoria)
-                        ? "block"
-                        : "none";
-                });
-            }
-
-            buscaInput.addEventListener("input", filtrarServicos);
-            filtroCategoria.addEventListener("change", filtrarServicos);
-
-        });
-    </script>
+    <!-- SCRIPT DE FILTRO + RENDER -->
+    <script src="script.js"></script>
 
 </body>
 </html>
