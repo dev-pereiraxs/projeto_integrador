@@ -19,5 +19,5 @@ form.addEventListener("submit", (e) => {
 
   localStorage.setItem("servicos", JSON.stringify(lista));
 
-  window.location.href = "sucesso.html";
+  window.location.href = "/sucesso-servico";
 });

@@ -1,31 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  const container = document.getElementById("lista-servicos");
   const buscaInput = document.getElementById("busca");
   const filtroCategoria = document.getElementById("filtroCategoria");
-  const cards = document.querySelectorAll(".card");
 
-  function filtrarServicos() {
+  let servicos = JSON.parse(localStorage.getItem("servicos")) || [];
+
+  function criarCard(servico) {
+    return `
+      <div class="card" data-categoria="${servico.categoria}">
+        
+        <span class="tag azul">${servico.categoria}</span>
+
+        <span class="preco">R$ ${servico.preco || "0.00"}</span>
+
+        <h3>${servico.titulo}</h3>
+
+        <p>${servico.descricao || ""}</p>
+
+        <small class="text-gray-500">
+          Duração: ${servico.duracao || "-"}h
+        </small>
+
+        <button>Agendar</button>
+      </div>
+    `;
+  }
+
+  function render() {
+    container.innerHTML = servicos.map(criarCard).join("");
+  }
+
+  function filtrar() {
     const texto = buscaInput.value.toLowerCase();
     const categoria = filtroCategoria.value;
 
-    cards.forEach(card => {
-      const titulo = card.querySelector("h3").textContent.toLowerCase();
-      const descricao = card.querySelector("p").textContent.toLowerCase();
-      const categoriaCard = card.dataset.categoria;
+    const filtrados = servicos.filter(s => {
 
       const matchTexto =
-        titulo.includes(texto) || descricao.includes(texto);
+        s.titulo.toLowerCase().includes(texto) ||
+        (s.descricao || "").toLowerCase().includes(texto);
 
       const matchCategoria =
-        categoria === "todas" || categoria === categoriaCard;
+        categoria === "todas" || s.categoria === categoria;
 
-      card.style.display = (matchTexto && matchCategoria)
-        ? "block"
-        : "none";
+      return matchTexto && matchCategoria;
     });
+
+    container.innerHTML = filtrados.map(criarCard).join("");
   }
 
-  buscaInput.addEventListener("input", filtrarServicos);
-  filtroCategoria.addEventListener("change", filtrarServicos);
+  buscaInput.addEventListener("input", filtrar);
+  filtroCategoria.addEventListener("change", filtrar);
 
+  render();
 });
