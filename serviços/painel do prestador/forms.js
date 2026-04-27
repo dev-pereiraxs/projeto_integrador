@@ -5,7 +5,10 @@ form.addEventListener("submit", (e) => {
 
   const novoServico = {
     titulo: document.getElementById("nome").value,
-    cliente: "Novo Cliente",
+    categoria: document.getElementById("categoria").value.toLowerCase(),
+    descricao: document.getElementById("descricao").value,
+    preco: document.getElementById("preco").value,
+    duracao: document.getElementById("duracao").value,
     data: new Date().toLocaleString(),
     status: "pendente"
   };
@@ -16,6 +19,5 @@ form.addEventListener("submit", (e) => {
 
   localStorage.setItem("servicos", JSON.stringify(lista));
 
- 
   window.location.href = "sucesso.html";
 });
