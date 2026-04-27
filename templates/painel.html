@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
   
-    <link rel="stylesheet" href="painel.css" />
+    <link rel="stylesheet" href="../static/painel.css" />
   </head>
 
   <body class="bg-[var(--bg)] text-[var(--text)]">
@@ -46,7 +46,7 @@
 
         
         <a
-          href="forms.html"
+          href=" {{ url_for('formulario')}}"
           class="px-4 py-2 rounded-full text-sm text-white bg-[var(--progress)] hover:opacity-90"
         >
           + Novo Serviço
@@ -58,6 +58,6 @@
     </div>
 
     
-    <script src="pn.js"></script>
+    <script src="../static/js/pn.js"></script>
   </body>
 </html>

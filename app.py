@@ -139,6 +139,18 @@ def prestador():
 def orcamento():
     return render_template("orcamentos.html")
 
+@app.route("/painel")
+def painel():
+    return render_template("painel.html")
+
+@app.route("/formulario")
+def formulario():
+    return render_template("formulario.html")    
+
+@app.route('/sucesso-servico')
+def sucesso_servico():
+    return render_template('sucessoservico.html')
+
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     email = request.form["email"]
