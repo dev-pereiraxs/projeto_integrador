@@ -15,3 +15,4 @@ drop table cadastro_clientes;
 
 ALTER TABLE cadastro_clientes CHANGE idade data_nascimento DATE;
 ALTER TABLE cadastro_clientes ADD sexo VARCHAR(20);;
+
