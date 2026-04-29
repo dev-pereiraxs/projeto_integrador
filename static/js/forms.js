@@ -133,7 +133,7 @@ form.addEventListener("submit", (e) => {
     preco: document.getElementById("preco").value,
     duracao: document.getElementById("duracao").value,
     data: new Date().toLocaleString(),
-    status: "pendente"
+    status: "publicado"
   };
 
   const lista = JSON.parse(localStorage.getItem("servicos")) || [];
