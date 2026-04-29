@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let servicos = JSON.parse(localStorage.getItem("servicos")) || [];
 
-  function criarCard(servico) {
+  // 🔥 CRIA CARD
+  function criarCard(servico, index) {
     return `
       <div class="card" data-categoria="${servico.categoria}">
         
@@ -22,15 +23,51 @@ document.addEventListener("DOMContentLoaded", () => {
           Duração: ${servico.duracao || "-"}h
         </small>
 
-        <button>Agendar</button>
+        <button class="btn-agendar" data-index="${index}">
+          Agendar
+        </button>
       </div>
     `;
   }
 
-  function render() {
-    container.innerHTML = servicos.map(criarCard).join("");
+  // 🔥 ADICIONA EVENTO NOS BOTÕES
+  function adicionarEventos(listaAtual = servicos) {
+    const botoes = document.querySelectorAll(".btn-agendar");
+
+    botoes.forEach((btn, i) => {
+      btn.addEventListener("click", () => {
+
+        const usuario = localStorage.getItem("usuarioLogado");
+
+        if (!usuario) {
+          alert("Você precisa estar logado para agendar!");
+          window.location.href = "/login";
+          return;
+        }
+
+        const servicoSelecionado = listaAtual[i];
+
+        localStorage.setItem(
+          "servicoSelecionado",
+          JSON.stringify(servicoSelecionado)
+        );
+
+        // 👉 vai para página de agendamento
+        window.location.href = "/agendamento.html";
+      });
+    });
   }
 
+  // 🔥 RENDER INICIAL
+  function render() {
+    container.innerHTML = servicos
+      .map((s, i) => criarCard(s, i))
+      .join("");
+
+    adicionarEventos();
+  }
+
+  // 🔥 FILTRO
   function filtrar() {
     const texto = buscaInput.value.toLowerCase();
     const categoria = filtroCategoria.value;
@@ -47,7 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchTexto && matchCategoria;
     });
 
-    container.innerHTML = filtrados.map(criarCard).join("");
+    container.innerHTML = filtrados
+      .map((s, i) => criarCard(s, i))
+      .join("");
+
+    adicionarEventos(filtrados);
   }
 
   buscaInput.addEventListener("input", filtrar);

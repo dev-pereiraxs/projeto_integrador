@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agenda Fácil</title>
+<link rel="stylesheet" href="../static/agendamento.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="af-root">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="white" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="logo-text">Agenda Fácil</span>
+    </div>
+    <div class="nav">
+      <span class="nav-link">Início</span>
+      <div class="avatar-row">
+        <div class="avatar">JS</div>
+        <span style="font-size:13px;font-weight:500">João Silva</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:4px"><path d="M3 4.5l3 3 3-3" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="page-title">Agendar Serviço</div>
+
+    <div class="glass prof-card">
+      <div class="prof-left">
+        <div class="prof-photo">👷</div>
+        <div>
+          <div class="prof-name">José Almeida</div>
+          <div class="prof-sub">Eletricista Certificado</div>
+          <div class="stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            <span style="font-size:13px;font-weight:600;color:#f59e0b;margin-left:2px">4,8</span>
+            <span class="rating-text">(127 avaliações)</span>
+          </div>
+        </div>
+      </div>
+      <div class="badge-verified">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Verificado
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-icon">📅</div>
+        <div class="metric-label">Serviços Ativos</div>
+        <div class="metric-value">8</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">📋</div>
+        <div class="metric-label">Atendimentos do Dia</div>
+        <div class="metric-value">5</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">🕐</div>
+        <div class="metric-label">Solicitações</div>
+        <div class="metric-value">3</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <div class="metric-label">Ganhos do Mês</div>
+        <div class="metric-value" style="font-size:16px">R$ 3.200</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="glass" style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <span class="cal-month">Abril 2024</span>
+          <div class="cal-nav">
+            <div class="cal-btn">‹</div>
+            <div class="cal-btn">›</div>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-dow">S</div><div class="cal-dow">T</div><div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div><div class="cal-dow">D</div>
+          <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div>
+          <div class="cal-day available">8</div><div class="cal-day available">9</div><div class="cal-day">10</div><div class="cal-day available">11</div><div class="cal-day available">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+          <div class="cal-day">15</div><div class="cal-day available">16</div><div class="cal-day available">17</div><div class="cal-day selected">18</div><div class="cal-day available">19</div><div class="cal-day">20</div><div class="cal-day">21</div>
+          <div class="cal-day">22</div><div class="cal-day available">23</div><div class="cal-day">24</div><div class="cal-day available">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div>
+          <div class="cal-day available">29</div><div class="cal-day">30</div>
+        </div>
+        <div style="margin-top:20px">
+          <div class="section-title">Horários Disponíveis</div>
+          <div class="time-slots">
+            <div class="time-btn">10:00</div>
+            <div class="time-btn">11:00</div>
+            <div class="time-btn selected">14:00</div>
+            <div class="time-btn">15:00</div>
+          </div>
+        </div>
+        <label class="obs-label">Observações</label>
+        <input class="obs-input" type="text" placeholder="Trazer chave de fenda..." />
+      </div>
+
+      <div>
+        <div class="summary-card">
+          <div class="sum-prof">
+            <div class="sum-photo">👷</div>
+            <div>
+              <div class="sum-name">José Almeida</div>
+              <div class="sum-sub">Eletricista Certificado</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="sum-row">
+            <span class="sum-row-label">Serviço</span>
+            <span class="sum-row-value">Instalação de chuveiro</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Data</span>
+            <span class="sum-row-value">18 Abr, 14:00</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Orçamento</span>
+            <span class="sum-row-value">R$ 150,00</span>
+          </div>
+          <div class="divider"></div>
+          <div class="sum-row">
+            <span class="sum-row-label sum-total">Total</span>
+            <span class="sum-row-value sum-total">R$ 150,00</span>
+          </div>
+          <button class="confirm-btn">Confirmar Agendamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="provider-section">
+    <div class="prov-title">Painel do Prestador</div>
+    <div class="prov-bar">
+      <div class="prov-bar-left">
+        <span class="prov-brand">Agenda Fácil</span>
+        <span class="breadcrumb">Início / Consultas</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input class="search-bar" type="text" placeholder="Buscar..." />
+        <div class="avatar-row">
+          <div class="avatar">JS</div>
+          <span style="font-size:12px;font-weight:500">João Silva</span>
+        </div>
+      </div>
+    </div>
+    <div class="prov-page-title">Tela de Agendamento</div>
+  </div>
+</div>
+<script src="agenda_facil.js"></script>
+</body>
+</html>
