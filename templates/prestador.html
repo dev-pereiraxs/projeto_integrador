@@ -14,25 +14,28 @@
 <body>
     <main id="form_container">
 
-        <!-- HEADER -->
         <div id="form_header">
             <h1 id="form_title">Criar conta de prestador</h1>
 
-            <button type="button" class="btn-default" onclick="window.location.href=' {{ url_for('index' )}} '">
+            <button type="button" class="btn-default" onclick="window.location.href='{{ url_for('index') }}'">
                 <i class="fa-solid fa-right-to-bracket"></i>
             </button>
         </div>
 
-        <!-- FORM -->
-        <form id="form">
+        {% if erro %}
+            <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold;">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+            </div>
+        {% endif %}
+
+        <form action="{{ url_for('salvar_prestador') }}" method="POST" id="form">
 
             <div id="input_container">
 
-                <!-- NOME -->
                 <div class="input-box">
                     <label class="form-label">Primeiro nome</label>
                     <div class="input-field">
-                        <input type="text" id="name" class="form-control" required>
+                        <input type="text" name="nome" id="name" class="form-control" required>
                         <i class="fa-regular fa-user"></i>
                     </div>
                 </div>
@@ -40,34 +43,31 @@
                 <div class="input-box">
                     <label class="form-label">Último nome</label>
                     <div class="input-field">
-                        <input type="text" id="last_name" class="form-control" required>
+                        <input type="text" name="sobrenome" id="last_name" class="form-control" required>
                         <i class="fa-regular fa-user"></i>
                     </div>
                 </div>
 
-                <!-- DATA -->
                 <div class="input-box">
                     <label class="form-label">Nascimento</label>
                     <div class="input-field">
-                        <input type="date" id="birthdate" class="form-control" required>
+                        <input type="date" name="data_nascimento" id="birthdate" class="form-control" required>
                     </div>
                 </div>
 
-                <!-- EMAIL -->
                 <div class="input-box">
                     <label class="form-label">E-mail</label>
                     <div class="input-field">
-                        <input type="email" id="email" class="form-control" required>
+                        <input type="email" name="email" id="email" class="form-control" required>
                         <i class="fa-regular fa-envelope"></i>
                     </div>
                 </div>
 
-                <!-- SENHA -->
                 <div class="input-box">
                     <label class="form-label">Senha</label>
 
                     <div class="input-field">
-                        <input type="password" id="password" class="form-control" required>
+                        <input type="password" name="senha" id="password" class="form-control" required>
                         <i class="fa-regular fa-eye-slash password-icon"></i>
                     </div>
 
@@ -79,29 +79,26 @@
                     </div>
                 </div>
 
-                <!-- CONFIRMAR SENHA -->
                 <div class="input-box">
                     <label class="form-label">Confirmar senha</label>
                     <div class="input-field">
-                        <input type="password" id="confirm_password" class="form-control" required>
+                        <input type="password" name="confirmar_senha" id="confirm_password" class="form-control" required>
                         <i class="fa-regular fa-eye-slash password-icon"></i>
                     </div>
                 </div>
 
-                <!-- GÊNERO -->
                 <div class="radio-container">
                     <label class="form-label">Gênero</label>
 
                     <div id="gender_inputs">
-                        <label><input type="radio" name="gender" value="female"> Feminino</label>
-                        <label><input type="radio" name="gender" value="male"> Masculino</label>
-                        <label><input type="radio" name="gender" value="other"> Outro</label>
+                        <label><input type="radio" name="sexo" value="Feminino" required> Feminino</label>
+                        <label><input type="radio" name="sexo" value="Masculino" required> Masculino</label>
+                        <label><input type="radio" name="sexo" value="Outro" required> Outro</label>
                     </div>
                 </div>
 
             </div>
 
-            <!-- SERVIÇOS -->
             <div class="services-container">
                 <label class="form-label">Áreas de atuação</label>
 
@@ -127,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- BOTÃO -->
             <button type="submit" class="btn-default">
                 Criar conta
             </button>
@@ -135,9 +131,7 @@
         </form>
     </main>
 
-    <!-- SCRIPT -->
     <script>
-
         // Mostrar senha
         document.querySelectorAll('.password-icon').forEach(icon => {
             icon.addEventListener('click', function () {
@@ -179,21 +173,19 @@
             });
         });
 
-        // SUBMIT
+        // SUBMIT ATUALIZADO
         document.getElementById('form').addEventListener('submit', function (e) {
-            e.preventDefault();
+            e.preventDefault(); // Segura o envio só para checar as senhas e as áreas
 
             const password = passwordInput.value;
             const confirmPassword = document.getElementById('confirm_password').value;
 
             const strongPassword =
                 password.length >= 8 &&
-                /[A-Z]/.test(password) &&
-                /[0-9]/.test(password) &&
-                /[^A-Za-z0-9]/.test(password);
+                /[0-9]/.test(password);
 
             if (!strongPassword) {
-                alert('Senha fraca!');
+                alert('Sua senha não atende aos requisitos de segurança!');
                 return;
             }
 
@@ -210,8 +202,15 @@
                 return;
             }
 
-            alert('Cadastro válido 🚀');
-            console.log({ password, selected });
+            // CRIA UM CAMPO OCULTO COM AS ÁREAS PARA O PYTHON
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'areas_atuacao';
+            hiddenInput.value = selected.join(', ');
+            this.appendChild(hiddenInput);
+
+            // AGORA SIM! MANDA PARA O PYTHON (Substitui os alerts e console.log antigos)
+            this.submit();
         });
 
     </script>
