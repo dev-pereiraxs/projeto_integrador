@@ -16,10 +16,22 @@
             <div class="logo">Agenda Fácil</div>
 
             <nav>
-                <a href=" {{ url_for('index') }}">Início</a>
-                <a href="{{ url_for('perfil') }}">Meus agendamentos</a>
-                <a href="{{ url_for('prestador') }}">Quero ser prestador</a>
-                <a href="{{ url_for('painel') }}">Painel do prestador</a>
+          <a href="/">Home</a>
+    <a href="/servicos">Serviços</a>
+
+    {% if session.get('tipo_usuario') != 'prestador' %}
+        <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
+    {% endif %}
+
+    {% if session.get('tipo_usuario') == 'prestador' %}
+        <a href="/painel" class="btn-painel">Meu Painel de Prestador</a>
+    {% endif %}
+
+    {% if session.get('usuario_logado') %}
+        <a href="/logout" class="btn-sair">Sair da Conta</a>
+    {% else %}
+        <a href="/login" class="btn-entrar">Entrar</a>
+    {% endif %}
             </nav>
         </div>
     </header>
