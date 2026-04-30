@@ -151,27 +151,87 @@ def formulario():
 def sucesso_servico():
     return render_template('sucessoservico.html')
 
+
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     email = request.form["email"]
     senha = request.form["senha"]
 
     conn = connectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
-    sql = "SELECT * FROM cadastro_clientes WHERE email = %s AND senha = %s"
-    cursor.execute(sql, (email, senha))
+    # 1ª TENTATIVA: Procura na tabela de PRESTADORES primeiro (Prioridade máxima!)
+    sql_prestador = "SELECT * FROM cadastro_prestadores WHERE email = %s AND senha = %s"
+    cursor.execute(sql_prestador, (email, senha))
+    usuario_prestador = cursor.fetchone()
 
-    usuario = cursor.fetchone()
+    if usuario_prestador:
+        # Achou na tabela de prestadores!
+        session["usuario_logado"] = email
+        session["tipo_usuario"] = "prestador"
+        cursor.close()
+        conn.close()
+        return redirect(url_for('servicos'))
 
+    # 2ª TENTATIVA: Se não for prestador, aí sim procura na tabela de CLIENTES
+    sql_cliente = "SELECT * FROM cadastro_clientes WHERE email = %s AND senha = %s"
+    cursor.execute(sql_cliente, (email, senha))
+    usuario_cliente = cursor.fetchone()
+
+    # Fechamos o banco aqui, pois acabaram as buscas
     cursor.close()
     conn.close()
 
-    if usuario:
+    if usuario_cliente:
+        # Achou na tabela de clientes!
         session["usuario_logado"] = email
+        session["tipo_usuario"] = "cliente"
         return redirect(url_for('servicos'))
+
     else:
+        # Se não achou em NENHUMA das duas tabelas, aí sim é erro!
         mensagem_erro = "E-mail ou senha incorretos. Tente novamente."
         return render_template("login.html", erro=mensagem_erro)
+
+
+@app.route("/salvar_prestador", methods=["POST"])
+def salvar_prestador():
+    nome = request.form["nome"]
+    sobrenome = request.form["sobrenome"]
+    data_nascimento = request.form["data_nascimento"]
+    sexo = request.form["sexo"]
+    email = request.form["email"]
+    senha = request.form["senha"]
+
+    # Aqui pegamos aquele input invisível que o JS criou!
+    areas_atuacao = request.form["areas_atuacao"]
+
+    conn = connectar()
+    cursor = conn.cursor()
+
+    sql = """
+    INSERT INTO cadastro_prestadores 
+    (nome, sobrenome, data_nascimento, sexo, email, senha, areas_atuacao)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    valores = (nome, sobrenome, data_nascimento, sexo, email, senha, areas_atuacao)
+
+    try:
+        cursor.execute(sql, valores)
+        conn.commit()
+        return redirect(url_for('index'))  # Manda de volta para a tela inicial
+
+    except mysql.connector.Error as err:
+        if err.errno == 1062:
+            mensagem_erro = "Este e-mail já está cadastrado como prestador."
+        else:
+            mensagem_erro = f"Erro interno: {err}"
+
+        return render_template("prestador.html", erro=mensagem_erro)
+
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == "__main__":
     app.run(debug=True)
