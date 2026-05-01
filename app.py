@@ -3,6 +3,7 @@ import mysql.connector
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
+from flask import jsonify
 
 load_dotenv()
 
@@ -273,6 +274,103 @@ def salvar_agendamento():
     finally:
         cursor.close()
         conn.close()
+
+
+@app.route("/salvar_servico_prestador", methods=["POST"])
+def salvar_servico_prestador():
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
+        return {"erro": "Acesso negado. Apenas prestadores podem anunciar."}, 401
+
+    dados = request.get_json()
+    email_prestador = session["usuario_logado"]
+
+    titulo = dados.get("titulo")
+    categoria = dados.get("categoria")
+    descricao = dados.get("descricao")
+    preco = dados.get("preco")
+
+    # PEGAMOS A DURAÇÃO AQUI AGORA!
+    duracao = dados.get("duracao")
+
+    conn = connectar()
+    cursor = conn.cursor()
+
+    # Atualizamos o SQL para incluir a duração
+    sql = """
+    INSERT INTO servicos_anunciados (prestador_email, titulo, descricao, preco, area_atuacao, duracao)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    valores = (email_prestador, titulo, descricao, preco, categoria, duracao)
+
+    try:
+        cursor.execute(sql, valores)
+        conn.commit()
+        return {"mensagem": "Serviço cadastrado com sucesso!"}, 200
+    except Exception as e:
+        return {"erro": f"Erro interno: {e}"}, 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route("/api/listar_servicos", methods=["GET"])
+def api_listar_servicos():
+    conn = connectar()
+    # dictionary=True é importante para o JS entender os nomes das colunas
+    cursor = conn.cursor(dictionary=True)
+
+    # Busca todos os serviços do mais recente para o mais antigo
+    cursor.execute("SELECT * FROM servicos_anunciados ORDER BY id DESC")
+    lista_servicos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # jsonify transforma a lista do Python em um formato que o JavaScript adora!
+    return jsonify(lista_servicos)
+
+
+# 1. Rota para buscar os serviços apenas do prestador logado
+@app.route("/api/meus_servicos", methods=["GET"])
+def api_meus_servicos():
+    if "usuario_logado" not in session:
+        return jsonify({"erro": "Usuário não logado"}), 401
+
+    email_prestador = session["usuario_logado"]
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    # Busca apenas onde o email bate com o do prestador logado
+    sql = "SELECT * FROM servicos_anunciados WHERE prestador_email = %s ORDER BY id DESC"
+    cursor.execute(sql, (email_prestador,))
+    meus_servicos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(meus_servicos)
+
+
+# 2. Rota para deletar um serviço do banco de dados
+@app.route("/api/excluir_servico/<int:id_servico>", methods=["DELETE"])
+def api_excluir_servico(id_servico):
+    if "usuario_logado" not in session:
+        return jsonify({"erro": "Usuário não logado"}), 401
+
+    email_prestador = session["usuario_logado"]
+
+    conn = connectar()
+    cursor = conn.cursor()
+
+    # Deleta o serviço pelo ID, mas garante que é do dono certo
+    sql = "DELETE FROM servicos_anunciados WHERE id = %s AND prestador_email = %s"
+    cursor.execute(sql, (id_servico, email_prestador))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"mensagem": "Serviço excluído com sucesso!"}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
