@@ -123,24 +123,50 @@ selectSubcategoria.addEventListener("change", () => {
 });
 
 // Submit
+// Submit
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  // Pega o botão para fazer um efeitinho de carregamento
+  const btnSubmit = form.querySelector("button");
+  btnSubmit.textContent = "Cadastrando...";
+  btnSubmit.disabled = true;
+
+  // Monta o pacote com os dados da tela
   const novoServico = {
     titulo: selectSubcategoria.value,
     categoria: selectCategoria.value.toLowerCase(),
     descricao: descricao.value,
     preco: document.getElementById("preco").value,
-    duracao: document.getElementById("duracao").value,
-    data: new Date().toLocaleString(),
-    status: "publicado"
+    duracao: document.getElementById("duracao").value
   };
 
-  const lista = JSON.parse(localStorage.getItem("servicos")) || [];
+  // Manda para a nova rota do Python
+  fetch('/salvar_servico_prestador', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(novoServico)
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Tira o botão do modo carregando
+    btnSubmit.textContent = "+ Cadastrar Serviço";
+    btnSubmit.disabled = false;
 
-  lista.push(novoServico);
-
-  localStorage.setItem("servicos", JSON.stringify(lista));
-
-  window.location.href = "/sucesso-servico";
+    if (data.erro) {
+      alert("Erro: " + data.erro);
+    } else {
+      alert("Sucesso! Serviço salvo no banco de dados.");
+      // Redireciona para o painel ou para a página de sucesso
+      window.location.href = "/servicos";
+    }
+  })
+  .catch(erro => {
+    console.error("Falha na comunicação:", erro);
+    alert("Ocorreu um erro de conexão.");
+    btnSubmit.textContent = "+ Cadastrar Serviço";
+    btnSubmit.disabled = false;
+  });
 });
