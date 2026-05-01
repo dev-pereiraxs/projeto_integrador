@@ -165,7 +165,6 @@ def autenticar():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # 1ª TENTATIVA: Procura na tabela de PRESTADORES primeiro (Prioridade máxima!)
     sql_prestador = "SELECT * FROM cadastro_prestadores WHERE email = %s AND senha = %s"
     cursor.execute(sql_prestador, (email, senha))
     usuario_prestador = cursor.fetchone()
@@ -178,23 +177,19 @@ def autenticar():
         conn.close()
         return redirect(url_for('servicos'))
 
-    # 2ª TENTATIVA: Se não for prestador, aí sim procura na tabela de CLIENTES
     sql_cliente = "SELECT * FROM cadastro_clientes WHERE email = %s AND senha = %s"
     cursor.execute(sql_cliente, (email, senha))
     usuario_cliente = cursor.fetchone()
 
-    # Fechamos o banco aqui, pois acabaram as buscas
     cursor.close()
     conn.close()
 
     if usuario_cliente:
-        # Achou na tabela de clientes!2
         session["usuario_logado"] = email
         session["tipo_usuario"] = "cliente"
         return redirect(url_for('servicos'))
 
     else:
-        # Se não achou em NENHUMA das duas tabelas, aí sim é erro!
         mensagem_erro = "E-mail ou senha incorretos. Tente novamente."
         return render_template("login.html", erro=mensagem_erro)
 
@@ -208,7 +203,6 @@ def salvar_prestador():
     email = request.form["email"]
     senha = request.form["senha"]
 
-    # Aqui pegamos aquele input invisível que o JS criou!
     areas_atuacao = request.form["areas_atuacao"]
 
     conn = connectar()
@@ -241,13 +235,10 @@ def salvar_prestador():
 
 @app.route("/salvar_agendamento", methods=["POST"])
 def salvar_agendamento():
-    # 1. Trava de segurança: garantir que tem alguém logado
     if "usuario_logado" not in session:
         return {"erro": "Usuário não está logado."}, 401
 
     email_cliente = session["usuario_logado"]
-
-    # 2. Recebe o pacote JSON que o JavaScript vai enviar
     dados = request.get_json()
 
     servico = dados.get("servico")
@@ -255,7 +246,6 @@ def salvar_agendamento():
     data_servico = dados.get("data")
     horario = dados.get("horario")
 
-    # 3. Salva tudo no banco de dados
     conn = connectar()
     cursor = conn.cursor()
 
@@ -289,7 +279,6 @@ def salvar_servico_prestador():
     descricao = dados.get("descricao")
     preco = dados.get("preco")
 
-    # PEGAMOS A DURAÇÃO AQUI AGORA!
     duracao = dados.get("duracao")
 
     conn = connectar()
@@ -315,7 +304,6 @@ def salvar_servico_prestador():
 @app.route("/api/listar_servicos", methods=["GET"])
 def api_listar_servicos():
     conn = connectar()
-    # dictionary=True é importante para o JS entender os nomes das colunas
     cursor = conn.cursor(dictionary=True)
 
     # Busca todos os serviços do mais recente para o mais antigo
@@ -325,7 +313,6 @@ def api_listar_servicos():
     cursor.close()
     conn.close()
 
-    # jsonify transforma a lista do Python em um formato que o JavaScript adora!
     return jsonify(lista_servicos)
 
 
@@ -340,7 +327,6 @@ def api_meus_servicos():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # Busca apenas onde o email bate com o do prestador logado
     sql = "SELECT * FROM servicos_anunciados WHERE prestador_email = %s ORDER BY id DESC"
     cursor.execute(sql, (email_prestador,))
     meus_servicos = cursor.fetchall()
@@ -350,8 +336,6 @@ def api_meus_servicos():
 
     return jsonify(meus_servicos)
 
-
-# 2. Rota para deletar um serviço do banco de dados
 @app.route("/api/excluir_servico/<int:id_servico>", methods=["DELETE"])
 def api_excluir_servico(id_servico):
     if "usuario_logado" not in session:
@@ -362,7 +346,6 @@ def api_excluir_servico(id_servico):
     conn = connectar()
     cursor = conn.cursor()
 
-    # Deleta o serviço pelo ID, mas garante que é do dono certo
     sql = "DELETE FROM servicos_anunciados WHERE id = %s AND prestador_email = %s"
     cursor.execute(sql, (id_servico, email_prestador))
     conn.commit()
