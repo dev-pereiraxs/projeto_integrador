@@ -3,10 +3,7 @@ const pendentesEl = document.getElementById("pendentes");
 const andamentoEl = document.getElementById("andamento");
 const concluidosEl = document.getElementById("concluidos");
 
-// Agora começa vazio. O MySQL vai preencher!
 let pedidos = [];
-
-// 🔥 1. BUSCA OS SERVIÇOS NO BANCO DE DADOS
 function carregarMeusServicos() {
   fetch('/api/meus_servicos')
     .then(response => response.json())
@@ -49,14 +46,12 @@ function render() {
     return;
   }
 
-  // Desenhando os cards com os dados do banco
   pedidos.forEach((p) => {
     const card = document.createElement("div");
     card.className = "card";
 
-    // O banco manda a data na coluna "criado_em". Vamos formatar bonitinho:
     const dataFormatada = p.criado_em ? new Date(p.criado_em).toLocaleDateString('pt-BR') : "Recente";
-    const statusServico = p.status || "Publicado"; // Se não tiver status, fica "Publicado"
+    const statusServico = p.status || "Publicado";
 
     card.innerHTML = `
       <div>
@@ -89,7 +84,6 @@ window.remover = function(id) {
     return;
   }
 
-  // Manda a ordem de DELETE para o Python passando o ID
   fetch('/api/excluir_servico/' + id, {
     method: 'DELETE'
   })
@@ -98,7 +92,6 @@ window.remover = function(id) {
     if (data.erro) {
       alert("Erro: " + data.erro);
     } else {
-      // Se deu certo, busca a lista atualizada do banco e desenha de novo
       carregarMeusServicos();
     }
   })
@@ -108,5 +101,4 @@ window.remover = function(id) {
   });
 }
 
-// 🔥 DÁ O START NA PÁGINA (Chama a busca inicial)
 carregarMeusServicos();
