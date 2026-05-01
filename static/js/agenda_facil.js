@@ -1,15 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // NOVA TRAVA DE SEGURANÇA:
+  const tituloEl = document.getElementById("servico-titulo");
+  if (!tituloEl) {
+      return; // Se não estiver na tela de agendamento, desliga o JS aqui.
+  }
+
+  // PEGA O SERVIÇO DO LOCAL STORAGE
   const servico = JSON.parse(localStorage.getItem("servicoSelecionado"));
 
   if (!servico) {
-    alert("Nenhum serviço selecionado!");
+    alert("Nenhum serviço selecionado! Escolha um serviço primeiro.");
+    // Manda de volta pra vitrine de serviços, pra não dar loop!
     window.location.href = "/servicos";
     return;
   }
 
-  // ELEMENTOS
-  const tituloEl = document.getElementById("servico-titulo");
+  // ELEMENTOS DA TELA (Declarados apenas uma vez!)
   const precoEl = document.getElementById("servico-preco");
   const totalEl = document.getElementById("servico-total");
   const dataEl = document.querySelectorAll(".sum-row-value")[1];
@@ -21,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let dataSelecionada = "";
   let horarioSelecionado = "";
 
-  // PREENCHE
+  // PREENCHE O HTML COM OS DADOS DO SERVIÇO
   const precoFormatado = "R$ " + (servico.preco || "0.00");
 
   tituloEl.textContent = servico.titulo;
@@ -31,12 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔥 ANIMAÇÃO DIA
   dias.forEach(dia => {
     dia.addEventListener("click", () => {
-
       dias.forEach(d => d.classList.remove("selected"));
       dia.classList.add("selected");
-
       dataSelecionada = dia.textContent + " Abr";
-
       atualizarResumo();
     });
   });
@@ -44,12 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔥 HORÁRIO
   horarios.forEach(h => {
     h.addEventListener("click", () => {
-
       horarios.forEach(t => t.classList.remove("selected"));
       h.classList.add("selected");
-
       horarioSelecionado = h.textContent;
-
       atualizarResumo();
     });
   });
@@ -60,10 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 🔥 RIPPLE EFFECT
+  // 🔥 RIPPLE EFFECT (Efeito de clique do botão)
   function rippleEffect(e) {
     const button = e.currentTarget;
-
     const circle = document.createElement("span");
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
     circle.style.top = `${e.clientY - button.offsetTop - radius}px`;
 
     const ripple = button.getElementsByClassName("ripple")[0];
-
     if (ripple) {
       ripple.remove();
     }
@@ -82,10 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
     button.appendChild(circle);
   }
 
-  // aplica ripple no botão
   confirmBtn.addEventListener("click", rippleEffect);
 
-  // 🔥 CONFIRMAR AGENDAMENTO COM LOADING
+  // 🔥 CONFIRMAR AGENDAMENTO SALVANDO NO BANCO DE DADOS (MYSQL)
   confirmBtn.addEventListener("click", () => {
 
     if (!dataSelecionada || !horarioSelecionado) {
@@ -93,38 +91,53 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Coloca o botão em modo "carregando"
     confirmBtn.classList.add("loading");
     confirmBtn.textContent = "Agendando...";
 
-    setTimeout(() => {
-
-      const agendamento = {
+    // Prepara o pacote de dados
+    const dadosAgendamento = {
         servico: servico.titulo,
         preco: servico.preco,
         data: dataSelecionada,
-        horario: horarioSelecionado,
-        criadoEm: new Date().toLocaleString()
-      };
+        horario: horarioSelecionado
+    };
 
-      const lista = JSON.parse(localStorage.getItem("agendamentos")) || [];
+    // Manda os dados para o Python usando fetch
+    fetch('/salvar_agendamento', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosAgendamento)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Tira o botão do modo carregando
+        confirmBtn.classList.remove("loading");
+        confirmBtn.textContent = "Confirmar Agendamento";
 
-      lista.push(agendamento);
+        if (data.erro) {
+            alert("Erro: " + data.erro);
+        } else {
+            // Deu certo! Mostra a mensagem
+            mostrarToast("Agendamento salvo no banco de dados!");
 
-      localStorage.setItem("agendamentos", JSON.stringify(lista));
-
-      confirmBtn.classList.remove("loading");
-      confirmBtn.textContent = "Confirmar Agendamento";
-
-      mostrarToast("Agendamento realizado com sucesso!");
-
-      setTimeout(() => {
-        window.location.href = "/perfil";
-      }, 1500);
-
-    }, 1500); // simula loading
+            // Depois de 1.5s, manda para a tela inicial
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1500);
+        }
+    })
+    .catch(erro => {
+        console.error("Falha na comunicação com o servidor:", erro);
+        alert("Ocorreu um erro de conexão.");
+        confirmBtn.classList.remove("loading");
+        confirmBtn.textContent = "Confirmar Agendamento";
+    });
   });
 
-  // 🔥 TOAST
+  // 🔥 FUNÇÃO TOAST (Notificação bonita que tinha sumido do seu código)
   function mostrarToast(msg) {
     const toast = document.createElement("div");
     toast.className = "toast show";
