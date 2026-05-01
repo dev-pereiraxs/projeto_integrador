@@ -3,160 +3,681 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Agenda Fácil</title>
-<link rel="stylesheet" href="../static/agendamento.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='agendamento.css') }}">
+<title>Agenda Fácil – Agendamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080d1f;
+  --bg2:       #0d1530;
+  --glass:     rgba(255,255,255,0.055);
+  --glass-b:   rgba(255,255,255,0.09);
+  --border:    rgba(255,255,255,0.10);
+  --border-h:  rgba(255,255,255,0.18);
+  --blue:      #3b82f6;
+  --blue-d:    #2563eb;
+  --blue-g:    linear-gradient(135deg,#2563eb,#1d4ed8);
+  --text:      #f0f4ff;
+  --muted:     rgba(200,210,255,0.55);
+  --gold:      #f59e0b;
+  --green:     #4ade80;
+  --radius:    14px;
+  --radius-sm: 9px;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BG GLOW ─────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 15%, rgba(37,99,235,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 45% at 80% 80%, rgba(99,38,220,.15) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(14,20,60,.9) 0%, transparent 100%);
+}
+
+/* ── HEADER ──────────────────────────────────────── */
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 36px;
+  border-bottom: 0.5px solid var(--border);
+  background: rgba(8,13,31,.85);
+  backdrop-filter: blur(16px);
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--blue-g);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-text { font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
+.nav { display: flex; align-items: center; gap: 24px; }
+.nav-link { font-size: 14px; color: var(--muted); cursor: pointer; transition: color .2s; }
+.nav-link:hover { color: var(--text); }
+.avatar-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--glass); border: 0.5px solid var(--border);
+  border-radius: 99px; padding: 5px 12px 5px 5px;
+  cursor: pointer;
+}
+.avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--blue-g);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+}
+.avatar-pill span { font-size: 13px; font-weight: 500; }
+
+/* ── BODY ────────────────────────────────────────── */
+.body {
+  position: relative; z-index: 1;
+  max-width: 960px; margin: 0 auto;
+  padding: 36px 24px 60px;
+}
+
+.page-title {
+  font-size: 30px; font-weight: 700; letter-spacing: -.5px;
+  margin-bottom: 24px;
+}
+
+/* ── GLASS CARD ──────────────────────────────────── */
+.glass {
+  background: var(--glass);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ── PROF CARD ───────────────────────────────────── */
+.prof-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+.prof-left { display: flex; align-items: center; gap: 16px; }
+.prof-photo {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg,#1e40af,#3b82f6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+  border: 2px solid rgba(59,130,246,.35);
+}
+.prof-name { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+.prof-sub { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.stars { display: flex; align-items: center; gap: 2px; }
+.star { color: var(--gold); font-size: 14px; }
+.rating-text { font-size: 12px; color: var(--muted); margin-left: 4px; }
+.badge-verified {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(74,222,128,.08);
+  border: 0.5px solid rgba(74,222,128,.25);
+  border-radius: 99px; padding: 6px 14px;
+  font-size: 12px; font-weight: 600; color: var(--green);
+  white-space: nowrap;
+}
+
+/* ── CATEGORY BADGE ──────────────────────────────── */
+.cat-badge {
+  display: inline-flex; align-items: center;
+  background: rgba(59,130,246,.15);
+  border: 0.5px solid rgba(59,130,246,.3);
+  border-radius: 99px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: #93c5fd;
+  margin-bottom: 8px;
+}
+
+/* ── SERVIÇO INFO ────────────────────────────────── */
+.servico-info {
+  padding: 16px 20px; margin-bottom: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.servico-titulo { font-size: 18px; font-weight: 700; }
+.servico-desc { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.servico-meta { display: flex; align-items: center; gap: 16px; margin-top: 4px; }
+.servico-meta-item { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.servico-preco-badge {
+  font-size: 16px; font-weight: 700; color: #93c5fd;
+  background: rgba(59,130,246,.12);
+  border-radius: 8px; padding: 3px 10px;
+}
+
+/* ── METRICS ─────────────────────────────────────── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.metric-card {
+  background: var(--glass);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .2s;
+}
+.metric-card:hover { border-color: var(--border-h); }
+.metric-icon { font-size: 18px; }
+.metric-label { font-size: 12px; color: var(--muted); }
+.metric-value { font-size: 22px; font-weight: 700; }
+
+/* ── TWO-COL ─────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── CALENDAR ────────────────────────────────────── */
+.cal-panel { padding: 22px; }
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.cal-month { font-size: 15px; font-weight: 700; }
+.cal-nav { display: flex; gap: 6px; }
+.cal-btn {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--glass-b); border: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 15px; color: var(--muted);
+  transition: all .2s; user-select: none;
+}
+.cal-btn:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 4px;
+}
+.cal-dow {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  text-align: center; padding: 4px 0;
+}
+.cal-day {
+  aspect-ratio: 1; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; cursor: default;
+  color: rgba(200,210,255,.3);
+  transition: all .18s;
+  position: relative;
+}
+.cal-day.available {
+  color: var(--text); cursor: pointer;
+}
+.cal-day.available:hover { background: var(--glass-b); }
+.cal-day.available.has-dot::after {
+  content: ''; position: absolute; bottom: 3px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue);
+}
+.cal-day.selected {
+  background: var(--blue-g);
+  color: white; font-weight: 700; cursor: pointer;
+}
+
+/* ── TIME SLOTS ──────────────────────────────────── */
+.section-title {
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .6px;
+  margin: 20px 0 10px;
+}
+.time-slots { display: flex; gap: 8px; flex-wrap: wrap; }
+.time-btn {
+  padding: 8px 16px; border-radius: 9px;
+  background: var(--glass-b); border: 0.5px solid var(--border);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .18s; color: var(--text);
+  font-family: 'Outfit', sans-serif;
+}
+.time-btn:hover { border-color: var(--border-h); background: rgba(255,255,255,.1); }
+.time-btn.selected {
+  background: var(--blue-g); border-color: transparent; color: white;
+}
+
+/* ── OBSERVATIONS ────────────────────────────────── */
+.obs-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--muted); text-transform: uppercase; letter-spacing: .6px;
+  margin: 20px 0 8px;
+}
+.obs-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--glass-b); border: 0.5px solid var(--border);
+  border-radius: 9px; color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .2s;
+}
+.obs-input::placeholder { color: var(--muted); }
+.obs-input:focus { border-color: var(--blue); }
+
+/* ── SUMMARY CARD ────────────────────────────────── */
+.summary-card {
+  background: var(--glass);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  position: relative; overflow: hidden;
+}
+.summary-card::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sum-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.sum-prof { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.sum-photo {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg,#1e40af,#3b82f6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; border: 2px solid rgba(59,130,246,.3);
+  flex-shrink: 0;
+}
+.sum-name { font-size: 14px; font-weight: 700; }
+.sum-sub { font-size: 12px; color: var(--muted); }
+.divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+.sum-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 8px; margin-bottom: 10px;
+}
+.sum-row:last-of-type { margin-bottom: 0; }
+.sum-row-label { font-size: 13px; color: var(--muted); flex-shrink: 0; }
+.sum-row-value { font-size: 13px; font-weight: 600; text-align: right; }
+.sum-total { font-size: 15px; font-weight: 700; }
+.sum-total-value { font-size: 18px; font-weight: 700; color: #93c5fd; }
+.confirm-btn {
+  margin-top: 18px; width: 100%; padding: 13px;
+  background: var(--blue-g); border: none; border-radius: 10px;
+  color: white; font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  letter-spacing: .2px; transition: opacity .2s, transform .15s;
+}
+.confirm-btn:hover { opacity: .9; transform: translateY(-1px); }
+.confirm-btn:active { transform: translateY(0); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 720px) {
+  .two-col { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(2,1fr); }
+  .header { padding: 14px 18px; }
+  .body { padding: 24px 14px 40px; }
+}
+</style>
 </head>
 <body>
-<div class="af-root">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="3" stroke="white" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <span class="logo-text">Agenda Fácil</span>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5"/>
+        <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
-    <div class="nav">
-      <span class="nav-link">Início</span>
-      <div class="avatar-row">
-        <div class="avatar">JS</div>
-        <span style="font-size:13px;font-weight:500">João Silva</span>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:4px"><path d="M3 4.5l3 3 3-3" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-    </div>
+    <span class="logo-text">Agenda Fácil</span>
   </div>
-
-  <div class="body">
-    <div class="page-title">Agendar Serviço</div>
-
-    <div class="glass prof-card">
-      <div class="prof-left">
-        <div class="prof-photo">👷</div>
-        <div>
-          <div class="prof-name">José Almeida</div>
-          <div class="prof-sub">Eletricista Certificado</div>
-          <div class="stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            <span style="font-size:13px;font-weight:600;color:#f59e0b;margin-left:2px">4,8</span>
-            <span class="rating-text">(127 avaliações)</span>
-          </div>
-        </div>
-      </div>
-      <div class="badge-verified">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Verificado
-      </div>
+  <div class="nav">
+    <span class="nav-link" onclick="history.back()">← Início</span>
+    <div class="avatar-pill">
+      <div class="avatar" id="user-initials">JS</div>
+      <span id="user-name">João Silva</span>
     </div>
-
-    <div class="metrics">
-      <div class="metric-card">
-        <div class="metric-icon">📅</div>
-        <div class="metric-label">Serviços Ativos</div>
-        <div class="metric-value">8</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon">📋</div>
-        <div class="metric-label">Atendimentos do Dia</div>
-        <div class="metric-value">5</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon">🕐</div>
-        <div class="metric-label">Solicitações</div>
-        <div class="metric-value">3</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon">💰</div>
-        <div class="metric-label">Ganhos do Mês</div>
-        <div class="metric-value" style="font-size:16px">R$ 3.200</div>
-      </div>
-    </div>
-
-    <div class="two-col">
-      <div class="glass" style="padding:22px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <span class="cal-month">Abril 2024</span>
-          <div class="cal-nav">
-            <div class="cal-btn">‹</div>
-            <div class="cal-btn">›</div>
-          </div>
-        </div>
-        <div class="cal-grid">
-          <div class="cal-dow">S</div><div class="cal-dow">T</div><div class="cal-dow">Q</div><div class="cal-dow">Q</div><div class="cal-dow">S</div><div class="cal-dow">S</div><div class="cal-dow">D</div>
-          <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div>
-          <div class="cal-day available">8</div><div class="cal-day available">9</div><div class="cal-day">10</div><div class="cal-day available">11</div><div class="cal-day available">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
-          <div class="cal-day">15</div><div class="cal-day available">16</div><div class="cal-day available">17</div><div class="cal-day selected">18</div><div class="cal-day available">19</div><div class="cal-day">20</div><div class="cal-day">21</div>
-          <div class="cal-day">22</div><div class="cal-day available">23</div><div class="cal-day">24</div><div class="cal-day available">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div>
-          <div class="cal-day available">29</div><div class="cal-day">30</div>
-        </div>
-        <div style="margin-top:20px">
-          <div class="section-title">Horários Disponíveis</div>
-          <div class="time-slots">
-            <div class="time-btn">10:00</div>
-            <div class="time-btn">11:00</div>
-            <div class="time-btn selected">14:00</div>
-            <div class="time-btn">15:00</div>
-          </div>
-        </div>
-        <label class="obs-label">Observações</label>
-        <input class="obs-input" type="text" placeholder="Trazer chave de fenda..." />
-      </div>
-
-      <div>
-        <div class="summary-card">
-          <div class="sum-prof">
-            <div class="sum-photo">👷</div>
-            <div>
-              <div class="sum-name">José Almeida</div>
-              <div class="sum-sub">Eletricista Certificado</div>
-            </div>
-          </div>
-          <div class="divider"></div>
-         <div class="sum-row">
-            <span class="sum-row-label">Serviço</span>
-            <span class="sum-row-value" id="servico-titulo">Instalação de chuveiro</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Data</span>
-            <span class="sum-row-value">18 Abr, 14:00</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Orçamento</span>
-            <span class="sum-row-value" id="servico-preco">R$ 150,00</span>
-          </div>
-          <div class="divider"></div>
-          <div class="sum-row">
-            <span class="sum-row-label sum-total">Total</span>
-            <span class="sum-row-value sum-total" id="servico-total">R$ 150,00</span>
-          </div>
-          <button class="confirm-btn">Confirmar Agendamento</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="provider-section">
-    <div class="prov-title">Painel do Prestador</div>
-    <div class="prov-bar">
-      <div class="prov-bar-left">
-        <span class="prov-brand">Agenda Fácil</span>
-        <span class="breadcrumb">Início / Consultas</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <input class="search-bar" type="text" placeholder="Buscar..." />
-        <div class="avatar-row">
-          <div class="avatar">JS</div>
-          <span style="font-size:12px;font-weight:500">João Silva</span>
-        </div>
-      </div>
-    </div>
-    <div class="prov-page-title">Tela de Agendamento</div>
   </div>
 </div>
+
+<!-- BODY -->
+<div class="body">
+  <div class="page-title">Agendar Serviço</div>
+
+  <!-- PROVIDER CARD -->
+  <div class="glass prof-card">
+    <div class="prof-left">
+      <div class="prof-photo">👷</div>
+      <div>
+        <div class="prof-name">José Almeida</div>
+        <div class="prof-sub">Eletricista Certificado</div>
+        <div class="stars">
+          <span class="star">★</span><span class="star">★</span>
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          <span style="font-size:13px;font-weight:700;color:var(--gold);margin-left:4px">4,8</span>
+          <span class="rating-text">(127 avaliações)</span>
+        </div>
+      </div>
+    </div>
+    <div class="badge-verified">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Verificado
+    </div>
+  </div>
+
+  <!-- SERVICE INFO (filled dynamically) -->
+  <div class="glass servico-info" id="servico-info-card">
+    <div class="cat-badge" id="info-categoria">Geral</div>
+    <div class="servico-titulo" id="info-titulo">Carregando serviço...</div>
+    <div class="servico-desc" id="info-descricao"></div>
+    <div class="servico-meta">
+      <span class="servico-meta-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M7 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        Duração: <strong id="info-duracao">-</strong>h
+      </span>
+      <span class="servico-preco-badge" id="info-preco">R$ 0,00</span>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-icon">📅</div>
+      <div class="metric-label">Serviços Ativos</div>
+      <div class="metric-value">8</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">📋</div>
+      <div class="metric-label">Atendimentos do Dia</div>
+      <div class="metric-value">5</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">🕐</div>
+      <div class="metric-label">Solicitações</div>
+      <div class="metric-value">3</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">💰</div>
+      <div class="metric-label">Ganhos do Mês</div>
+      <div class="metric-value" style="font-size:17px">R$ 3.200</div>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN -->
+  <div class="two-col">
+
+    <!-- LEFT: CALENDAR + TIMES -->
+    <div class="glass cal-panel">
+      <div class="cal-header">
+        <span class="cal-month" id="cal-month-label">Maio 2025</span>
+        <div class="cal-nav">
+          <div class="cal-btn" id="cal-prev">‹</div>
+          <div class="cal-btn" id="cal-next">›</div>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+
+      <div class="section-title">Horários Disponíveis</div>
+      <div class="time-slots" id="time-slots">
+        <div class="time-btn" data-time="09:00">09:00</div>
+        <div class="time-btn" data-time="10:00">10:00</div>
+        <div class="time-btn" data-time="11:00">11:00</div>
+        <div class="time-btn" data-time="14:00">14:00</div>
+        <div class="time-btn" data-time="15:00">15:00</div>
+        <div class="time-btn" data-time="16:00">16:00</div>
+      </div>
+
+      <label class="obs-label">Observações</label>
+      <input class="obs-input" type="text" id="obs-input" placeholder="Ex: Trazer chave de fenda..." />
+    </div>
+
+    <!-- RIGHT: SUMMARY -->
+    <div class="summary-card">
+      <div class="sum-title">Sumário</div>
+      <div class="sum-prof">
+        <div class="sum-photo">👷</div>
+        <div>
+          <div class="sum-name">José Almeida</div>
+          <div class="sum-sub">Eletricista Certificado</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="sum-row">
+        <span class="sum-row-label">Serviço</span>
+        <span class="sum-row-value" id="sum-titulo" style="max-width:160px">—</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-row-label">Categoria</span>
+        <span class="sum-row-value" id="sum-categoria">—</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-row-label">Data</span>
+        <span class="sum-row-value" id="sum-data">Selecione uma data</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-row-label">Horário</span>
+        <span class="sum-row-value" id="sum-hora">—</span>
+      </div>
+      <div class="sum-row">
+        <span class="sum-row-label">Orçamento</span>
+        <span class="sum-row-value" id="sum-preco">R$ —</span>
+      </div>
+      <div class="divider"></div>
+      <div class="sum-row">
+        <span class="sum-row-label sum-total">Total</span>
+        <span class="sum-total-value" id="sum-total">R$ —</span>
+      </div>
+      <button class="confirm-btn" id="btn-confirmar">Confirmar Agendamento</button>
+    </div>
+
+  </div>
+</div>
+
 <script>
-  const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+/* ─────────────────────────────────────────
+   1. LEITURA DOS DADOS DO SERVIÇO
+   Vem dos parâmetros de URL passados pelo
+   botão "Agendar" do criarCard().
+   Também aceita variável global window.servicoAtual.
+───────────────────────────────────────── */
+function getServicoData() {
+  // Prioridade 1: window.servicoAtual (injetado pelo Flask/JS)
+  if (window.servicoAtual) return window.servicoAtual;
+
+  // Prioridade 2: sessionStorage (set pelo botão Agendar)
+  const stored = sessionStorage.getItem('servicoAgendamento');
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+
+  // Prioridade 3: URL query params
+  const p = new URLSearchParams(location.search);
+  if (p.get('titulo')) {
+    return {
+      titulo:       p.get('titulo')     || '',
+      preco:        p.get('preco')      || '0.00',
+      area_atuacao: p.get('categoria')  || p.get('area_atuacao') || 'Geral',
+      descricao:    p.get('descricao')  || '',
+      duracao:      p.get('duracao')    || '-'
+    };
+  }
+
+  // Fallback demo
+  return {
+    titulo:       'Instalação de chuveiro',
+    preco:        '150.00',
+    area_atuacao: 'Elétrica',
+    descricao:    'Instalação completa de chuveiro elétrico com verificação da fiação.',
+    duracao:      '2'
+  };
+}
+
+const servico = getServicoData();
+
+/* ── Preenche os campos ──────────────────────────── */
+function formatPreco(v) {
+  const n = parseFloat(String(v).replace(',', '.')) || 0;
+  return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+
+document.getElementById('info-categoria').textContent  = servico.area_atuacao || servico.categoria || 'Geral';
+document.getElementById('info-titulo').textContent     = servico.titulo || '—';
+document.getElementById('info-descricao').textContent  = servico.descricao || '';
+document.getElementById('info-duracao').textContent    = servico.duracao || '-';
+document.getElementById('info-preco').textContent      = formatPreco(servico.preco);
+
+document.getElementById('sum-titulo').textContent      = servico.titulo || '—';
+document.getElementById('sum-categoria').textContent   = servico.area_atuacao || servico.categoria || 'Geral';
+document.getElementById('sum-preco').textContent       = formatPreco(servico.preco);
+document.getElementById('sum-total').textContent       = formatPreco(servico.preco);
+
+/* ─────────────────────────────────────────
+   2. CALENDÁRIO
+───────────────────────────────────────── */
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DOWS = ['S','T','Q','Q','S','S','D'];
+
+let curYear  = new Date().getFullYear();
+let curMonth = new Date().getMonth();
+let selectedDate = null;
+let selectedTime = null;
+
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  document.getElementById('cal-month-label').textContent =
+    MONTHS_PT[curMonth] + ' ' + curYear;
+
+  // Day-of-week headers
+  DOWS.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow'; el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(curYear, curMonth, 1).getDay(); // 0=Sun
+  // Shift: week starts Monday (0=Mon…6=Sun)
+  const startOffset = (firstDay + 6) % 7;
+  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  for (let i = 0; i < startOffset; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day'; grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el  = document.createElement('div');
+    const dt  = new Date(curYear, curMonth, d);
+    const dow = dt.getDay(); // 0=Sun,6=Sat
+    const isPast    = dt < today;
+    const isWeekend = dow === 0 || dow === 6;
+
+    el.textContent = d;
+    if (isPast || isWeekend) {
+      el.className = 'cal-day';
+    } else {
+      el.className = 'cal-day available has-dot';
+      el.addEventListener('click', () => selectDate(d, el));
+    }
+
+    if (selectedDate &&
+        selectedDate.getDate()     === d &&
+        selectedDate.getMonth()    === curMonth &&
+        selectedDate.getFullYear() === curYear) {
+      el.className = 'cal-day selected';
+      el.addEventListener('click', () => selectDate(d, el));
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+function selectDate(day, el) {
+  selectedDate = new Date(curYear, curMonth, day);
+  buildCalendar();
+  updateSummary();
+}
+
+document.getElementById('cal-prev').addEventListener('click', () => {
+  curMonth--; if (curMonth < 0) { curMonth = 11; curYear--; }
+  buildCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', () => {
+  curMonth++; if (curMonth > 11) { curMonth = 0; curYear++; }
+  buildCalendar();
+});
+
+buildCalendar();
+
+/* ─────────────────────────────────────────
+   3. TIME SLOTS
+───────────────────────────────────────── */
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTime = btn.dataset.time;
+    updateSummary();
+  });
+});
+
+/* ─────────────────────────────────────────
+   4. ATUALIZA SUMÁRIO
+───────────────────────────────────────── */
+function updateSummary() {
+  const dataEl = document.getElementById('sum-data');
+  const horaEl = document.getElementById('sum-hora');
+
+  if (selectedDate) {
+    const dd = String(selectedDate.getDate()).padStart(2,'0');
+    const mm = MONTHS_PT[selectedDate.getMonth()].slice(0,3);
+    dataEl.textContent = `${dd} ${mm}, ${curYear}`;
+  }
+  if (selectedTime) {
+    horaEl.textContent = selectedTime;
+  }
+}
+
+/* ─────────────────────────────────────────
+   5. CONFIRMAR
+───────────────────────────────────────── */
+document.getElementById('btn-confirmar').addEventListener('click', () => {
+  if (!selectedDate || !selectedTime) {
+    alert('Por favor, selecione uma data e horário.');
+    return;
+  }
+  const payload = {
+    servico,
+    data: selectedDate.toISOString().split('T')[0],
+    hora: selectedTime,
+    obs:  document.getElementById('obs-input').value
+  };
+  console.log('Agendamento confirmado:', payload);
+  // → Aqui você pode fazer fetch('/agendar', { method:'POST', body: JSON.stringify(payload) })
+  alert(`Agendamento confirmado!\n${servico.titulo} – ${selectedDate.toLocaleDateString('pt-BR')} às ${selectedTime}`);
+});
+
+/* ─────────────────────────────────────────
+   6. HELPER PARA O BOTÃO "AGENDAR" DO criarCard
+   Cole este trecho no seu agenda_facil.js:
+
+   document.addEventListener('click', e => {
+     const btn = e.target.closest('.btn-agendar');
+     if (!btn) return;
+     const idx = btn.dataset.index;
+     const s   = servicos[idx];          // seu array de serviços
+     sessionStorage.setItem('servicoAgendamento', JSON.stringify(s));
+     window.location.href = '/agendamento';
+   });
+───────────────────────────────────────── */
 </script>
-
-<script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
-
 </body>
 </html>
