@@ -151,6 +151,10 @@ def formulario():
 def sucesso_servico():
     return render_template('sucessoservico.html')
 
+@app.route('/agendamentos')
+def agendamentos():
+    return render_template('agendamento.html')
+
 
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
@@ -183,7 +187,7 @@ def autenticar():
     conn.close()
 
     if usuario_cliente:
-        # Achou na tabela de clientes!
+        # Achou na tabela de clientes!2
         session["usuario_logado"] = email
         session["tipo_usuario"] = "cliente"
         return redirect(url_for('servicos'))
@@ -229,6 +233,43 @@ def salvar_prestador():
 
         return render_template("prestador.html", erro=mensagem_erro)
 
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route("/salvar_agendamento", methods=["POST"])
+def salvar_agendamento():
+    # 1. Trava de segurança: garantir que tem alguém logado
+    if "usuario_logado" not in session:
+        return {"erro": "Usuário não está logado."}, 401
+
+    email_cliente = session["usuario_logado"]
+
+    # 2. Recebe o pacote JSON que o JavaScript vai enviar
+    dados = request.get_json()
+
+    servico = dados.get("servico")
+    preco = dados.get("preco")
+    data_servico = dados.get("data")
+    horario = dados.get("horario")
+
+    # 3. Salva tudo no banco de dados
+    conn = connectar()
+    cursor = conn.cursor()
+
+    sql = """
+    INSERT INTO agendamentos (cliente_email, servico, preco, data_servico, horario)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    valores = (email_cliente, servico, preco, data_servico, horario)
+
+    try:
+        cursor.execute(sql, valores)
+        conn.commit()
+        return {"mensagem": "Agendamento salvo com sucesso no banco!"}, 200
+    except Exception as e:
+        return {"erro": f"Erro interno: {e}"}, 500
     finally:
         cursor.close()
         conn.close()

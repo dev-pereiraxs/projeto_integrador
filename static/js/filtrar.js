@@ -39,11 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const usuario = localStorage.getItem("usuarioLogado");
 
-        if (!usuario) {
-          alert("Você precisa estar logado para agendar!");
-          window.location.href = "/login";
-          return;
-        }
+       if (usuarioLogado === "") {
+    alert("Você precisa estar logado para agendar!");
+    window.location.href = "/login";
+    return;
+}
 
         const servicoSelecionado = listaAtual[i];
 
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         // 👉 vai para página de agendamento
-        window.location.href = "/agendamento.html";
+        window.location.href = "/agendamentos";
       });
     });
   }

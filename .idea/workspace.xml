@@ -35,7 +35,9 @@
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/servicos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/sucesso.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/prestador.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prestador.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/filtrar.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/filtrar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/agenda_facil.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/agenda_facil.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/agendamento.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/agendamento.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/servicos.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/servicos.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,22 +57,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Lucas/OneDrive - SENAC - SP/projeto_integrador/templates",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Lucas\OneDrive - SENAC - SP\projeto_integrador\templates" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Lucas\OneDrive - SENAC - SP\projeto_integrador\static\js" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
