@@ -96,7 +96,15 @@
     </div>
 
     <!-- SCRIPT DE FILTRO + RENDER -->
+    <script>
+        const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+    </script>
+
     <script src="../static/js/filtrar.js"></script>
+    <script src="../static/js/agenda_facil.js"></script>
+
+</body>
+</html>
 
 </body>
 </html>

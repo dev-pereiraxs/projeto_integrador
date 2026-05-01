@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Agenda Fácil</title>
 <link rel="stylesheet" href="../static/agendamento.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='agendamento.css') }}">
 </head>
 <body>
 <div class="af-root">
@@ -111,9 +111,9 @@
             </div>
           </div>
           <div class="divider"></div>
-          <div class="sum-row">
+         <div class="sum-row">
             <span class="sum-row-label">Serviço</span>
-            <span class="sum-row-value">Instalação de chuveiro</span>
+            <span class="sum-row-value" id="servico-titulo">Instalação de chuveiro</span>
           </div>
           <div class="sum-row">
             <span class="sum-row-label">Data</span>
@@ -121,12 +121,12 @@
           </div>
           <div class="sum-row">
             <span class="sum-row-label">Orçamento</span>
-            <span class="sum-row-value">R$ 150,00</span>
+            <span class="sum-row-value" id="servico-preco">R$ 150,00</span>
           </div>
           <div class="divider"></div>
           <div class="sum-row">
             <span class="sum-row-label sum-total">Total</span>
-            <span class="sum-row-value sum-total">R$ 150,00</span>
+            <span class="sum-row-value sum-total" id="servico-total">R$ 150,00</span>
           </div>
           <button class="confirm-btn">Confirmar Agendamento</button>
         </div>
@@ -152,6 +152,11 @@
     <div class="prov-page-title">Tela de Agendamento</div>
   </div>
 </div>
-<script src="agenda_facil.js"></script>
+<script>
+  const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+</script>
+
+<script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
+
 </body>
 </html>
