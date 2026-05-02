@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil do Prestador – Agenda Fácil</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #0f1b3d;
+      --navy2:     #162244;
+      --navy3:     #1d2d5a;
+      --blue:      #2563eb;
+      --blue-l:    #3b82f6;
+      --blue-gl:   linear-gradient(135deg,#2563eb,#1d4ed8);
+      --sidebar-w: 220px;
+      --white:     #ffffff;
+      --surface:   #f4f6fb;
+      --border:    #e4e9f4;
+      --text:      #1a2340;
+      --muted:     #6b7a99;
+      --gold:      #f59e0b;
+      --green:     #10b981;
+      --radius:    16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a3a8f 0%, #0a1230 60%, #060c1f 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ─────────────────────────────── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 60px;
+      background: rgba(10,18,48,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px; height: 32px;
+      background: var(--blue-gl);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .brand-icon svg { width: 18px; height: 18px; }
+
+    .brand-name {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .topbar-link {
+      color: rgba(255,255,255,.6);
+      font-size: 14px;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .topbar-link:hover { color: #fff; }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 99px;
+      padding: 4px 12px 4px 4px;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--blue-gl);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+    }
+
+    .user-pill span { font-size: 13px; color: #fff; font-weight: 500; }
+    .user-pill svg { color: rgba(255,255,255,.5); }
+
+    /* ── LAYOUT ─────────────────────────────── */
+    .shell {
+      display: flex;
+      flex: 1;
+      padding: 24px;
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── SIDEBAR ────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: rgba(10,18,48,.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: fit-content;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: rgba(255,255,255,.55);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+
+    .nav-item.active {
+      background: var(--blue-gl);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+    }
+
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .nav-divider {
+      height: 1px;
+      background: rgba(255,255,255,.08);
+      margin: 8px 0;
+    }
+
+    /* ── MAIN ───────────────────────────────── */
+    .main { flex: 1; min-width: 0; }
+
+    /* breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+    }
+    .breadcrumb a { color: rgba(255,255,255,.5); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    .breadcrumb span { color: rgba(255,255,255,.85); }
+
+    /* ── PROFILE CARD ───────────────────────── */
+    .profile-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    }
+
+    .profile-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .avatar-img {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+    }
+
+    .avatar-placeholder {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--blue-gl);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700;
+      color: #fff;
+      border: 3px solid var(--border);
+    }
+
+    .avatar-badge {
+      position: absolute;
+      bottom: 0; right: -4px;
+      width: 26px; height: 26px;
+      background: var(--blue);
+      border-radius: 50%;
+      border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+    }
+
+    .profile-info { flex: 1; }
+
+    .profile-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .profile-role {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .profile-stars {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .stars { color: var(--gold); letter-spacing: 1px; }
+    .rating-num { font-weight: 700; color: var(--text); }
+
+    .verified-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      border-radius: 99px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .profile-bio {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── TABS ───────────────────────────────── */
+    .tabs-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .tab-btn:hover { color: var(--blue); }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* ── CONTENT CARD ───────────────────────── */
+    .content-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 40px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+
+    /* tab panels */
+    .tab-panel { display: none; padding: 20px; }
+    .tab-panel.active { display: block; }
+
+    /* serviço item */
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .service-item:hover {
+      border-color: var(--blue-l);
+      background: #f0f5ff;
+    }
+
+    .service-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #eff6ff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .service-info { flex: 1; }
+
+    .service-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .service-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .service-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .service-arrow { color: var(--muted); }
+
+    /* avaliações */
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 20px 0 14px;
+    }
+
+    .review-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+
+    .review-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .reviewer-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--blue-gl);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff;
+    }
+
+    .reviewer-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .reviewer-date {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .review-stars { color: var(--gold); font-size: 15px; }
+
+    .review-text {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* sobre tab */
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .about-item {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .about-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 4px;
+    }
+
+    .about-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* empty state */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* agendar btn */
+    .btn-agendar-wrap {
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-agendar {
+      width: 100%;
+      padding: 13px;
+      background: var(--blue-gl);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn-agendar:hover { opacity: .9; transform: translateY(-1px); }
+
+    @media (max-width: 700px) {
+      .shell { flex-direction: column; padding: 12px; }
+      .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 10px; }
+      .nav-divider { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a class="brand" href="/">
+      <div class="brand-icon">
+        <svg viewBox="0 0 18 18" fill="none">
+          <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5"/>
+          <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">Agenda Fácil</span>
+    </a>
+
+    <div class="topbar-right">
+      <a href="/" class="topbar-link">Início</a>
+
+      {% if session.get('usuario_logado') %}
+      <div class="user-pill">
+        <div class="user-avatar">
+          {{ (session.get('usuario_nome','?'))[0]|upper }}
+        </div>
+        <span>{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+          <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      {% else %}
+      <a href="/login" class="topbar-link">Entrar</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="/painel" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        Usuários
+      </a>
+
+      <a href="/servicos" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/>
+          <path d="M16 3l-4 4-4-4"/>
+        </svg>
+        Prestadores
+      </a>
+
+      <a href="/servicos" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+        </svg>
+        Serviços
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        Avaliações
+      </a>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        Sobre
+      </a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <a href="/servicos">Usuários</a>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M4 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Serviços</span>
+      </div>
+
+      <!-- PERFIL -->
+      <div class="profile-card">
+        <div class="profile-top">
+
+          <!-- AVATAR -->
+          <div class="avatar-wrap">
+            <div class="avatar-placeholder" id="avatar-initials">
+              {{ (prestador.nome or '?')[0]|upper }}
+            </div>
+            <div class="avatar-badge">{{ agendamentos_count or '0' }}</div>
+          </div>
+
+          <!-- INFO -->
+          <div class="profile-info">
+            <div class="profile-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+            <div class="profile-role">{{ prestador.areas_atuacao or 'Prestador de Serviços' }}</div>
+            <div class="profile-stars">
+              <span class="stars">★★★★★</span>
+              <span class="rating-num">4,8</span>
+              <span>· {{ agendamentos_count or 0 }} Jobs</span>
+            </div>
+          </div>
+
+          <!-- BADGE -->
+          <div class="verified-badge">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2.5 7l3 3 6-6" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Verificado
+          </div>
+
+        </div>
+
+        <!-- BIO -->
+        <div class="profile-bio">
+          Profissional especializado em {{ prestador.areas_atuacao or 'serviços gerais' }},
+          comprometido com qualidade, pontualidade e satisfação do cliente em cada atendimento.
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs-bar" style="margin-top:20px;">
+          <button class="tab-btn active" onclick="switchTab('servicos', this)">Serviços Oferecidos</button>
+          <button class="tab-btn" onclick="switchTab('avaliacoes', this)">Avaliações</button>
+          <button class="tab-btn" onclick="switchTab('sobre', this)">Sobre</button>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO DAS TABS -->
+      <div class="content-card">
+
+        <!-- TAB: SERVIÇOS -->
+        <div class="tab-panel active" id="tab-servicos">
+          {% if servicos %}
+            {% for s in servicos %}
+            <div class="service-item" style="margin:12px 12px 0;">
+              <div class="service-icon">
+                {% if 'eletr' in s.area_atuacao|lower %}💡
+                {% elif 'hidra' in s.area_atuacao|lower %}🔧
+                {% elif 'mecân' in s.area_atuacao|lower or 'mecani' in s.area_atuacao|lower %}🔩
+                {% elif 'reform' in s.area_atuacao|lower %}🏗️
+                {% elif 'limpez' in s.area_atuacao|lower %}🧹
+                {% elif 'ti' in s.area_atuacao|lower or 'tecnol' in s.area_atuacao|lower %}💻
+                {% else %}⚙️{% endif %}
+              </div>
+              <div class="service-info">
+                <div class="service-name">{{ s.titulo }}</div>
+                <div class="service-meta">{{ s.duracao }}h · {{ s.area_atuacao }}</div>
+              </div>
+              <div class="service-price">R$ {{ "%.2f"|format(s.preco) }}</div>
+              <svg class="service-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty">Nenhum serviço cadastrado ainda.</div>
+          {% endif %}
+
+          <div class="btn-agendar-wrap">
+            <button class="btn-agendar" onclick="window.location.href='/servicos'">
+              Agendar um Serviço
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB: AVALIAÇÕES -->
+        <div class="tab-panel" id="tab-avaliacoes" style="padding:20px;">
+          <div class="section-title">Avaliações</div>
+
+          <!-- avaliações fictícias (placeholder até ter tabela de reviews) -->
+          <div class="review-card">
+            <div class="review-top">
+              <div class="reviewer">
+                <div class="reviewer-avatar">A</div>
+                <div>
+                  <div class="reviewer-name">Ana Oliveira</div>
+                  <div class="reviewer-date">8 meses atrás</div>
+                </div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-text">Ótimo profissional! Rápido e eficiente. Nota 10.</div>
+          </div>
+
+          <div class="review-card">
+            <div class="review-top">
+              <div class="reviewer">
+                <div class="reviewer-avatar">R</div>
+                <div>
+                  <div class="reviewer-name">Ricardo Lopes</div>
+                  <div class="reviewer-date">2 semanas atrás</div>
+                </div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-text">Excelente atendimento. Trabalho bem feito e preço justo.</div>
+          </div>
+        </div>
+
+        <!-- TAB: SOBRE -->
+        <div class="tab-panel" id="tab-sobre" style="padding:20px;">
+          <div class="section-title">Informações</div>
+          <div class="about-grid">
+            <div class="about-item">
+              <div class="about-label">Nome completo</div>
+              <div class="about-value">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+            </div>
+            <div class="about-item">
+              <div class="about-label">E-mail</div>
+              <div class="about-value">{{ prestador.email }}</div>
+            </div>
+            <div class="about-item">
+              <div class="about-label">Áreas de atuação</div>
+              <div class="about-value">{{ prestador.areas_atuacao or '—' }}</div>
+            </div>
+            <div class="about-item">
+              <div class="about-label">Serviços realizados</div>
+              <div class="about-value">{{ agendamentos_count or 0 }} jobs</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- content-card -->
+
+    </main>
+  </div><!-- shell -->
+
+  <script>
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + name).classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

@@ -5,6 +5,19 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="../static/servicos.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .usuario-nome {
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.12);
+            padding: 5px 12px;
+            border-radius: 999px;
+        }
+    </style>
     <title>Agenda Fácil</title>
 </head>
 
@@ -16,22 +29,27 @@
             <div class="logo">Agenda Fácil</div>
 
             <nav>
-          <a href="/">Home</a>
-    <a href="/servicos">Serviços</a>
+                <a href="/">Home</a>
+                <a href="/servicos">Serviços</a>
 
-    {% if session.get('tipo_usuario') != 'prestador' %}
-        <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
-    {% endif %}
+                {% if session.get('tipo_usuario') != 'prestador' %}
+                <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
+                {% endif %}
 
-    {% if session.get('tipo_usuario') == 'prestador' %}
-        <a href="/painel" class="btn-painel">Meu Painel de Prestador</a>
-    {% endif %}
+                {% if session.get('tipo_usuario') == 'prestador' %}
+                <a href="/painel" class="btn-painel">Meu Painel de Prestador</a>
+                {% endif %}
 
-    {% if session.get('usuario_logado') %}
-        <a href="/logout" class="btn-sair">Sair da Conta</a>
-    {% else %}
-        <a href="/login" class="btn-entrar">Entrar</a>
-    {% endif %}
+                {% if session.get('usuario_logado') %}
+                <span class="usuario-nome">
+                    👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+                </span>
+                <a href="/logout" class="btn-sair" title="Sair da conta">
+                    🚪 Sair
+                </a>
+                {% else %}
+                <a href="/login" class="btn-entrar">Entrar</a>
+                {% endif %}
             </nav>
         </div>
     </header>
@@ -44,12 +62,10 @@
         <!-- BUSCA + FILTRO -->
         <div class="flex flex-col md:flex-row gap-3 mb-6">
 
-            <input id="busca" type="text"
-                placeholder="Buscar serviço..."
+            <input id="busca" type="text" placeholder="Buscar serviço..."
                 class="flex-1 p-3 rounded-lg border border-gray-300" />
 
-            <select id="filtroCategoria"
-                class="p-3 rounded-lg border border-gray-300">
+            <select id="filtroCategoria" class="p-3 rounded-lg border border-gray-300">
 
                 <option value="todas">Todas as categorias</option>
                 <option value="tecnologia">Tecnologia</option>
@@ -64,12 +80,25 @@
         </div>
 
         <!-- GRID DINÂMICO (AGORA VAZIO) -->
-        <div id="lista-servicos"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="lista-servicos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <!-- OS CARDS SERÃO INSERIDOS AUTOMATICAMENTE PELO JS -->
+            {% for s in servicos %}
+            <div class="bg-white p-5 rounded-xl shadow">
+
+                <h2 class="text-lg font-bold">{{ s.titulo }}</h2>
+                <p class="text-gray-600">{{ s.descricao }}</p>
+                <p class="font-semibold mt-2">R$ {{ s.preco }}</p>
+
+                <button class="btn-agendar mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
+                    data-servico='{{ s | tojson }}'>
+                    Agendar
+                </button>
+
+            </div>
+            {% endfor %}
 
         </div>
+
 
         <!-- CTA -->
         <div class="orcamentos-card col-span-full flex justify-center mt-10">
@@ -104,7 +133,9 @@
     <script src="../static/js/agenda_facil.js"></script>
 
 </body>
+
 </html>
 
 </body>
+
 </html>
