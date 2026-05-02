@@ -542,10 +542,29 @@
 
   <div class="hero">
     <div class="hero-inner">
-      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
+      <!-- AVATAR COM UPLOAD (só aparece se for o próprio prestador logado) -->
+      {% if session.get('usuario_logado') == prestador.email %}
+        <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
+          {% if prestador.foto %}
+            <img src="{{ prestador.foto }}" id="fotoPreview"
+                 style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
+          {% else %}
+            <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
+          {% endif %}
+          <span style="position:absolute;bottom:0;right:0;background:#2563eb;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</span>
+        </label>
+        <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+      {% else %}
+        {% if prestador.foto %}
+          <img src="{{ prestador.foto }}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
+        {% else %}
+          <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
+        {% endif %}
+      {% endif %}
+
       <div>
         <div class="hero-badge">✔ Prestador Verificado</div>
-        <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+        <div class="hero-name" id="heroNome">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
         <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
         <div class="hero-stats">
           <div class="hero-stat"><span class="hero-stat-val">{{ servicos|length }}</span><span
@@ -558,7 +577,43 @@
               class="hero-stat-label">Avaliação</span></div>
         </div>
       </div>
+
+      {% if session.get('usuario_logado') == prestador.email %}
+      <button onclick="abrirModalEditar()" style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
+          ✏️ Editar Perfil
+      </button>
+      {% endif %}
     </div>
+  </div>
+
+  <!-- MODAL EDITAR PERFIL (prestador) -->
+  <div id="modalEditar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;margin:16px;max-height:90vh;overflow-y:auto;">
+          <h3 style="margin-bottom:20px;font-size:18px;">Editar Perfil</h3>
+          <div style="display:grid;gap:12px;">
+              <input id="editNome"      placeholder="Primeiro nome"  style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+              <input id="editSobrenome" placeholder="Último nome"    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+              <input id="editTelefone"  placeholder="Telefone"       style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+              <input id="editCidade"    placeholder="Cidade, Estado" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+              <textarea id="editBio"   placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
+                        style="padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical;"></textarea>
+
+              <hr style="border:none;border-top:1px solid #eee;">
+
+              <label style="font-size:13px;font-weight:600;color:#374151;">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
+              <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg"
+                     style="padding:8px;border:1px solid #ddd;border-radius:8px;font-size:13px;">
+              <button type="button" onclick="uploadCertificado()"
+                      style="padding:9px;background:#f1f5f9;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">
+                  ⬆️ Enviar Certificado
+              </button>
+              <div id="certStatus" style="font-size:12px;color:#10b981;"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:20px;">
+              <button onclick="salvarPerfil()" style="flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Salvar</button>
+              <button onclick="fecharModal()"  style="flex:1;padding:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;">Cancelar</button>
+          </div>
+      </div>
   </div>
 
   <div class="page">
@@ -682,6 +737,77 @@
       document.getElementById('tab-' + name).classList.add('active');
     }
   </script>
+
+    <script>
+        function abrirModalEditar() {
+            document.getElementById("editNome").value      = "{{ prestador.nome or '' }}";
+            document.getElementById("editSobrenome").value = "{{ prestador.sobrenome or '' }}";
+            document.getElementById("editTelefone").value  = "{{ prestador.telefone or '' }}";
+            document.getElementById("editCidade").value    = "{{ prestador.cidade or '' }}";
+            document.getElementById("editBio").value       = "{{ prestador.bio or '' }}";
+            document.getElementById("modalEditar").style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalEditar").style.display = "none";
+        }
+
+        async function salvarPerfil() {
+            const dados = {
+                nome:      document.getElementById("editNome").value.trim(),
+                sobrenome: document.getElementById("editSobrenome").value.trim(),
+                telefone:  document.getElementById("editTelefone").value.trim(),
+                cidade:    document.getElementById("editCidade").value.trim(),
+                bio:       document.getElementById("editBio").value.trim(),
+            };
+            if (!dados.nome) { alert("Nome é obrigatório"); return; }
+
+            const res  = await fetch("/editar_perfil_prestador", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(dados)
+            });
+            const data = await res.json();
+            if (data.erro) { alert("Erro: " + data.erro); }
+            else { fecharModal(); location.reload(); }
+        }
+
+        async function uploadFoto(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const form = new FormData();
+            form.append("foto", file);
+            const res  = await fetch("/salvar_foto", { method: "POST", body: form });
+            const data = await res.json();
+            if (data.erro) { alert("Erro: " + data.erro); return; }
+            const preview = document.getElementById("fotoPreview");
+            if (preview.tagName === "IMG") {
+                preview.src = data.url + "?t=" + Date.now();
+            } else {
+                const img = document.createElement("img");
+                img.src   = data.url;
+                img.id    = "fotoPreview";
+                img.style = "width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);";
+                preview.replaceWith(img);
+            }
+        }
+
+        async function uploadCertificado() {
+            const input = document.getElementById("inputCert");
+            const file  = input.files[0];
+            if (!file) { alert("Selecione um arquivo"); return; }
+            const form = new FormData();
+            form.append("certificado", file);
+            const res  = await fetch("/salvar_certificado", { method: "POST", body: form });
+            const data = await res.json();
+            document.getElementById("certStatus").textContent = data.erro ? "Erro: " + data.erro : "✅ " + data.mensagem;
+        }
+
+        document.getElementById("modalEditar").addEventListener("click", function(e) {
+            if (e.target === this) fecharModal();
+        });
+    </script>
+
 </body>
 
 </html>

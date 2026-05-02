@@ -65,73 +65,65 @@
             telefone.value = v;
         });
 
-        form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
+
+            const categoria = document.getElementById("categoria").value;
+            if (!categoria) {
+                alert("Selecione uma categoria");
+                return;
+            }
 
             btn.innerText = "Enviando...";
             btn.disabled = true;
 
-            const categoria = document.getElementById("categoria").value;
-
-            if (!categoria) {
-                alert("Selecione uma categoria");
-                btn.innerText = "Enviar";
-                btn.disabled = false;
-                return;
-            }
-
-            let emailPrestador = "";
-
-            if (categoria === "Tecnologia") {
-                emailPrestador = "tecnologia@email.com";
-            } else if (categoria === "Hidráulica") {
-                emailPrestador = "hidraulica@email.com";
-            } else if (categoria === "Elétrica") {
-                emailPrestador = "eletrica@email.com";
-            } else if (categoria === "Reformas") {
-                emailPrestador = "reformas@email.com";
-            }
-
             const emailCliente = document.getElementById("email").value;
-
-            const dados = {
+            const dadosBase = {
                 nome: document.getElementById("nome").value,
                 email: emailCliente || "Não informado",
                 telefone: telefone.value,
                 categoria: categoria,
                 descricao: document.getElementById("descricao").value,
-                email_prestador: emailPrestador
             };
 
-            // 📩 SEMPRE envia para prestador
-            const envioPrestador = emailjs.send(
-                "service_b6ejlqp",
-                "template_ju6fbyc",
-                dados
-            );
+            try {
+                // 1. Busca todos os prestadores da categoria no banco
+                const res = await fetch(`/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoria)}`);
+                const prestadores = await res.json();
 
-            // 📩 SÓ envia para cliente se ele colocou email
-            let promessas = [envioPrestador];
+                let promessas = [];
 
-            if (emailCliente) {
-                const envioCliente = emailjs.send(
-                    "service_b6ejlqp",
-                    "template_a9a80tv",
-                    dados
-                );
-                promessas.push(envioCliente);
-            }
-
-            Promise.all(promessas)
-                .then(() => {
-                    window.location.href = "sucesso.html";
-                })
-                .catch((error) => {
-                    console.log(error);
-                    alert("Erro ao enviar");
+                if (prestadores.length === 0) {
+                    alert("Nenhum prestador disponível para esta categoria no momento.");
                     btn.innerText = "Enviar";
                     btn.disabled = false;
+                    return;
+                }
+
+                // 2. Envia email para CADA prestador da área
+                prestadores.forEach(p => {
+                    const envio = emailjs.send("service_b6ejlqp", "template_ju6fbyc", {
+                        ...dadosBase,
+                        email_prestador: p.email,
+                        nome_prestador: p.nome + " " + p.sobrenome
+                    });
+                    promessas.push(envio);
                 });
+
+                // 3. Envia confirmação para o cliente (se informou email)
+                if (emailCliente) {
+                    promessas.push(emailjs.send("service_b6ejlqp", "template_a9a80tv", dadosBase));
+                }
+
+                await Promise.all(promessas);
+                window.location.href = "/sucesso";
+
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao enviar. Tente novamente.");
+                btn.innerText = "Enviar";
+                btn.disabled = false;
+            }
         });
 
     </script>
