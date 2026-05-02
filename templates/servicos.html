@@ -5,19 +5,6 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="../static/servicos.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .usuario-nome {
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(255,255,255,0.12);
-            padding: 5px 12px;
-            border-radius: 999px;
-        }
-    </style>
     <title>Agenda Fácil</title>
 </head>
 
@@ -41,12 +28,11 @@
                 {% endif %}
 
                 {% if session.get('usuario_logado') %}
-                <span class="usuario-nome">
+                <a href="/meu_perfil"
+                    style="color:#fff;font-size:14px;font-weight:500;text-decoration:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:5px 12px;border-radius:99px;">
                     👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-                </span>
-                <a href="/logout" class="btn-sair" title="Sair da conta">
-                    🚪 Sair
                 </a>
+                <a href="/logout" class="btn-sair">🚪 Sair</a>
                 {% else %}
                 <a href="/login" class="btn-entrar">Entrar</a>
                 {% endif %}
