@@ -9,8 +9,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
-CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+CLIENT_ID     = "GOOGLE_CLIENT_ID_REMOVIDO"
+CLIENT_SECRET = "GOOGLE_CLIENT_SECRET_REMOVIDO"
 
 # =========================
 # GOOGLE AUTH
@@ -18,6 +18,8 @@ CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 oauth = OAuth(app)
 google = oauth.register(
     name="google",
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
@@ -499,7 +501,7 @@ def perfil_prestador(email):
     conn.close()
 
     return render_template(
-        "perfil_prestador.html",
+        "perfil-prestador.html",
         prestador=prestador,
         servicos=servicos,
         agendamentos_pendentes=agendamentos_pendentes,
@@ -535,7 +537,7 @@ def perfil_cliente():
     cursor.close()
     conn.close()
 
-    return render_template("perfil_cliente.html", cliente=cliente, agendamentos=agendamentos)
+    return render_template("perfil-cliente.html", cliente=cliente, agendamentos=agendamentos)
 
 # =========================
 # PERFIL DO PRESTADOR LOGADO
@@ -686,6 +688,182 @@ def atualizar_status(id):
     conn.close()
 
     return jsonify({"mensagem": "Status atualizado!"})
+
+
+# =========================
+# API: PRESTADORES POR CATEGORIA (para orçamentos)
+# =========================
+@app.route("/api/prestadores_por_categoria")
+def prestadores_por_categoria():
+    categoria = request.args.get("categoria", "").lower()
+    if not categoria:
+        return jsonify([])
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT nome, sobrenome, email
+        FROM cadastro_prestadores
+        WHERE LOWER(areas_atuacao) LIKE %s
+    """, (f"%{categoria}%",))
+
+    dados = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return jsonify(dados)
+
+# =========================
+# UPLOAD DE FOTO DE PERFIL
+# =========================
+UPLOAD_FOLDER = os.path.join("static", "uploads", "fotos")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/salvar_foto", methods=["POST"])
+def salvar_foto():
+    if "usuario_logado" not in session:
+        return jsonify({"erro": "não logado"}), 401
+
+    file = request.files.get("foto")
+    if not file or not allowed_file(file.filename):
+        return jsonify({"erro": "Arquivo inválido. Use PNG, JPG ou WEBP."}), 400
+
+    ext = file.filename.rsplit(".", 1)[1].lower()
+    email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
+    filename = f"{email_safe}.{ext}"
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(filepath)
+
+    url = "/" + filepath.replace("\\", "/")
+
+    conn = connectar()
+    cursor = conn.cursor()
+    tipo = session.get("tipo_usuario", "cliente")
+
+    if tipo == "prestador":
+        cursor.execute("UPDATE cadastro_prestadores SET foto = %s WHERE email = %s",
+                       (url, session["usuario_logado"]))
+    else:
+        cursor.execute("UPDATE cadastro_clientes SET foto = %s WHERE email = %s",
+                       (url, session["usuario_logado"]))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"mensagem": "Foto salva!", "url": url})
+
+# =========================
+# UPLOAD DE CERTIFICADO (PRESTADOR)
+# =========================
+CERT_FOLDER = os.path.join("static", "uploads", "certificados")
+os.makedirs(CERT_FOLDER, exist_ok=True)
+ALLOWED_CERT = {"pdf", "png", "jpg", "jpeg"}
+
+@app.route("/salvar_certificado", methods=["POST"])
+def salvar_certificado():
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
+        return jsonify({"erro": "Acesso negado"}), 401
+
+    file = request.files.get("certificado")
+    if not file:
+        return jsonify({"erro": "Nenhum arquivo enviado"}), 400
+
+    ext = file.filename.rsplit(".", 1)[1].lower() if "." in file.filename else ""
+    if ext not in ALLOWED_CERT:
+        return jsonify({"erro": "Use PDF, PNG ou JPG"}), 400
+
+    import time
+    email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
+    filename = f"{email_safe}_{int(time.time())}.{ext}"
+    filepath = os.path.join(CERT_FOLDER, filename)
+    file.save(filepath)
+
+    url = "/" + filepath.replace("\\", "/")
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT certificados FROM cadastro_prestadores WHERE email = %s",
+                   (session["usuario_logado"],))
+    row = cursor.fetchone()
+    existentes = row["certificados"] or "" if row else ""
+    novos = (existentes + "," + url).strip(",")
+
+    cursor.execute("UPDATE cadastro_prestadores SET certificados = %s WHERE email = %s",
+                   (novos, session["usuario_logado"]))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"mensagem": "Certificado salvo!", "url": url})
+
+# =========================
+# EDITAR PERFIL CLIENTE
+# =========================
+@app.route("/editar_perfil_cliente", methods=["POST"])
+def editar_perfil_cliente():
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
+        return jsonify({"erro": "Acesso negado"}), 401
+
+    dados = request.get_json()
+    nome     = dados.get("nome", "").strip()
+    sobrenome = dados.get("sobrenome", "").strip()
+    telefone = dados.get("telefone", "").strip()
+    cidade   = dados.get("cidade", "").strip()
+
+    if not nome:
+        return jsonify({"erro": "Nome é obrigatório"}), 400
+
+    conn = connectar()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE cadastro_clientes
+        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s
+        WHERE email = %s
+    """, (nome, sobrenome, telefone, cidade, session["usuario_logado"]))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    session["usuario_nome"] = nome + " " + sobrenome
+    return jsonify({"mensagem": "Perfil atualizado!"})
+
+# =========================
+# EDITAR PERFIL PRESTADOR
+# =========================
+@app.route("/editar_perfil_prestador", methods=["POST"])
+def editar_perfil_prestador():
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
+        return jsonify({"erro": "Acesso negado"}), 401
+
+    dados = request.get_json()
+    nome      = dados.get("nome", "").strip()
+    sobrenome = dados.get("sobrenome", "").strip()
+    telefone  = dados.get("telefone", "").strip()
+    cidade    = dados.get("cidade", "").strip()
+    bio       = dados.get("bio", "").strip()
+
+    if not nome:
+        return jsonify({"erro": "Nome é obrigatório"}), 400
+
+    conn = connectar()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE cadastro_prestadores
+        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s, bio = %s
+        WHERE email = %s
+    """, (nome, sobrenome, telefone, cidade, bio, session["usuario_logado"]))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    session["usuario_nome"] = nome + " " + sobrenome
+    return jsonify({"mensagem": "Perfil atualizado!"})
 
 # =========================
 if __name__ == "__main__":

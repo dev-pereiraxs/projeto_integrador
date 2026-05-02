@@ -456,11 +456,59 @@
     <!-- HERO -->
     <div class="hero">
         <div class="hero-inner">
-            <div class="hero-avatar">{{ (cliente.nome or '?')[0]|upper }}</div>
+            <!-- AVATAR COM UPLOAD -->
+            <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
+                {% if cliente.foto %}
+                <img src="{{ cliente.foto }}" id="fotoPreview"
+                    style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
+                {% else %}
+                <div class="hero-avatar" id="fotoPreview">{{ (cliente.nome or '?')[0]|upper }}</div>
+                {% endif %}
+                <span
+                    style="position:absolute;bottom:0;right:0;background:#2563eb;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</span>
+            </label>
+            <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+
             <div>
                 <div class="hero-badge">👤 Cliente</div>
-                <div class="hero-name" style="margin-top:6px;">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
+                <div class="hero-name" style="margin-top:6px;" id="heroNome">{{ cliente.nome }} {{ cliente.sobrenome }}
+                </div>
                 <div class="hero-email">{{ cliente.email }}</div>
+            </div>
+
+            <button onclick="abrirModalEditar()"
+                style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
+                ✏️ Editar Perfil
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PERFIL -->
+    <div id="modalEditar"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:420px;margin:16px;">
+            <h3 style="margin-bottom:20px;font-size:18px;">Editar Perfil</h3>
+
+            <div style="display:grid;gap:12px;">
+                <input id="editNome" placeholder="Primeiro nome"
+                    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+                <input id="editSobrenome" placeholder="Último nome"
+                    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+                <input id="editTelefone" placeholder="Telefone"
+                    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+                <input id="editCidade" placeholder="Cidade, Estado"
+                    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:20px;">
+                <button onclick="salvarPerfil()"
+                    style="flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">
+                    Salvar
+                </button>
+                <button onclick="fecharModal()"
+                    style="flex:1;padding:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;">
+                    Cancelar
+                </button>
             </div>
         </div>
     </div>
@@ -582,6 +630,81 @@
                 alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
             }
         }
+    </script>
+
+
+    <script>
+        // Preenche modal com dados atuais
+        function abrirModalEditar() {
+            document.getElementById("editNome").value = "{{ cliente.nome or '' }}";
+            document.getElementById("editSobrenome").value = "{{ cliente.sobrenome or '' }}";
+            document.getElementById("editTelefone").value = "{{ cliente.telefone or '' }}";
+            document.getElementById("editCidade").value = "{{ cliente.cidade or '' }}";
+            document.getElementById("modalEditar").style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalEditar").style.display = "none";
+        }
+
+        async function salvarPerfil() {
+            const dados = {
+                nome: document.getElementById("editNome").value.trim(),
+                sobrenome: document.getElementById("editSobrenome").value.trim(),
+                telefone: document.getElementById("editTelefone").value.trim(),
+                cidade: document.getElementById("editCidade").value.trim(),
+            };
+
+            if (!dados.nome) { alert("Nome é obrigatório"); return; }
+
+            const res = await fetch("/editar_perfil_cliente", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+            const data = await res.json();
+
+            if (data.erro) {
+                alert("Erro: " + data.erro);
+            } else {
+                document.getElementById("heroNome").textContent = dados.nome + " " + dados.sobrenome;
+                fecharModal();
+                alert("Perfil atualizado! A página vai recarregar.");
+                location.reload();
+            }
+        }
+
+        async function uploadFoto(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const form = new FormData();
+            form.append("foto", file);
+
+            const res = await fetch("/salvar_foto", { method: "POST", body: form });
+            const data = await res.json();
+
+            if (data.erro) {
+                alert("Erro: " + data.erro);
+            } else {
+                const preview = document.getElementById("fotoPreview");
+                // Se já é img, atualiza src; senão substitui div por img
+                if (preview.tagName === "IMG") {
+                    preview.src = data.url + "?t=" + Date.now();
+                } else {
+                    const img = document.createElement("img");
+                    img.src = data.url;
+                    img.id = "fotoPreview";
+                    img.style = "width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);";
+                    preview.replaceWith(img);
+                }
+            }
+        }
+
+        // Fecha modal clicando fora
+        document.getElementById("modalEditar").addEventListener("click", function (e) {
+            if (e.target === this) fecharModal();
+        });
     </script>
 
 </body>
