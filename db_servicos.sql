@@ -1,56 +1,78 @@
-CREATE DATABASE IF NOT EXISTS servicos;
+-- =============================================
+--  Agenda Fácil — Banco de Dados Completo
+--  Execute do zero no MySQL / phpMyAdmin
+-- =============================================
+
+DROP DATABASE IF EXISTS servicos;
+CREATE DATABASE servicos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE servicos;
 
-CREATE TABLE IF NOT EXISTS cadastro_clientes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    sobrenome VARCHAR(100) NOT NULL,
-    idade INT NULL, 
-    email VARCHAR(255) NOT NULL UNIQUE,
-    senha VARCHAR(255) NULL
+-- =============================================
+-- 1. CLIENTES
+-- =============================================
+CREATE TABLE cadastro_clientes (
+    id              INT           AUTO_INCREMENT PRIMARY KEY,
+    nome            VARCHAR(100)  NOT NULL,
+    sobrenome       VARCHAR(100)  NOT NULL,
+    data_nascimento DATE,
+    sexo            VARCHAR(20),
+    email           VARCHAR(150)  NOT NULL UNIQUE,
+    senha           VARCHAR(255),
+    criado_em       DATETIME      DEFAULT CURRENT_TIMESTAMP
 );
 
-select * from cadastro_clientes;
-drop table cadastro_clientes;
-
-ALTER TABLE cadastro_clientes CHANGE idade data_nascimento DATE;
-ALTER TABLE cadastro_clientes ADD sexo VARCHAR(20);;
-
-
-
-
-
-==============================================================
-
-
-CREATE DATABASE IF NOT EXISTS servicos;
-USE servicos;
-
-CREATE TABLE IF NOT EXISTS cadastro_clientes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    sobrenome VARCHAR(100) NOT NULL,
-    idade INT NULL, 
-    email VARCHAR(255) NOT NULL UNIQUE,
-    senha VARCHAR(255) NULL
-);
-
-select * from cadastro_clientes;
-drop table cadastro_clientes;
-
-ALTER TABLE cadastro_clientes CHANGE idade data_nascimento DATE;
-ALTER TABLE cadastro_clientes ADD sexo VARCHAR(20);
-
-
+-- =============================================
+-- 2. PRESTADORES
+-- =============================================
 CREATE TABLE cadastro_prestadores (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    sobrenome VARCHAR(100) NOT NULL,
-    data_nascimento DATE NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    senha VARCHAR(255) NOT NULL,
-    sexo VARCHAR(20) NOT NULL,
-    areas_atuacao TEXT NOT NULL
+    id              INT           AUTO_INCREMENT PRIMARY KEY,
+    nome            VARCHAR(100)  NOT NULL,
+    sobrenome       VARCHAR(100)  NOT NULL,
+    data_nascimento DATE,
+    sexo            VARCHAR(20),
+    email           VARCHAR(150)  NOT NULL UNIQUE,
+    senha           VARCHAR(255)  NOT NULL,
+    areas_atuacao   TEXT,
+    criado_em       DATETIME      DEFAULT CURRENT_TIMESTAMP
 );
 
-select * from cadastro_prestadores;
+-- =============================================
+-- 3. SERVIÇOS ANUNCIADOS
+-- =============================================
+CREATE TABLE servicos_anunciados (
+    id              INT            AUTO_INCREMENT PRIMARY KEY,
+    prestador_email VARCHAR(150)   NOT NULL,
+    titulo          VARCHAR(150)   NOT NULL,
+    descricao       TEXT,
+    preco           DECIMAL(10,2)  NOT NULL,
+    area_atuacao    VARCHAR(100),
+    duracao         VARCHAR(50),
+    criado_em       DATETIME       DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (prestador_email)
+        REFERENCES cadastro_prestadores(email)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+-- =============================================
+-- 4. AGENDAMENTOS
+-- =============================================
+CREATE TABLE agendamentos (
+    id              INT            AUTO_INCREMENT PRIMARY KEY,
+    cliente_email   VARCHAR(150)   NOT NULL,
+    prestador_email VARCHAR(150),
+    servico         VARCHAR(200)   NOT NULL,
+    preco           DECIMAL(10,2),
+    data_servico    DATE           NOT NULL,
+    horario         VARCHAR(10)    NOT NULL,
+    status          ENUM('pendente','confirmado','em_andamento','concluido','cancelado')
+                                   DEFAULT 'pendente',
+    observacoes     TEXT,
+    criado_em       DATETIME       DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_cliente   (cliente_email),
+    INDEX idx_prestador (prestador_email),
+    INDEX idx_status    (status),
+    INDEX idx_data      (data_servico)
+);

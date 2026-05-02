@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   // NOVA TRAVA DE SEGURANÇA:
   const tituloEl = document.getElementById("servico-titulo");
   if (!tituloEl) {
-      return; // Se não estiver na tela de agendamento, desliga o JS aqui.
+    return; // Se não estiver na tela de agendamento, desliga o JS aqui.
   }
 
   // PEGA O SERVIÇO DO LOCAL STORAGE
@@ -36,19 +35,29 @@ document.addEventListener("DOMContentLoaded", () => {
   totalEl.textContent = precoFormatado;
 
   // 🔥 ANIMAÇÃO DIA
-  dias.forEach(dia => {
+  dias.forEach((dia) => {
     dia.addEventListener("click", () => {
-      dias.forEach(d => d.classList.remove("selected"));
+      dias.forEach((d) => d.classList.remove("selected"));
       dia.classList.add("selected");
       dataSelecionada = dia.textContent + " Abr";
       atualizarResumo();
     });
   });
 
+  // função de puxar as info do card do serviço selecionado e preencher o resumo do agendamento
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-agendar");
+    if (!btn) return;
+    const idx = btn.dataset.index;
+    const s = servicos[idx]; // seu array de serviços
+    sessionStorage.setItem("servicoAgendamento", JSON.stringify(s));
+    window.location.href = "/agendamento";
+  });
+
   // 🔥 HORÁRIO
-  horarios.forEach(h => {
+  horarios.forEach((h) => {
     h.addEventListener("click", () => {
-      horarios.forEach(t => t.classList.remove("selected"));
+      horarios.forEach((t) => t.classList.remove("selected"));
       h.classList.add("selected");
       horarioSelecionado = h.textContent;
       atualizarResumo();
@@ -85,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔥 CONFIRMAR AGENDAMENTO SALVANDO NO BANCO DE DADOS (MYSQL)
   confirmBtn.addEventListener("click", () => {
-
     if (!dataSelecionada || !horarioSelecionado) {
       alert("Selecione uma data e horário!");
       return;
@@ -97,44 +105,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Prepara o pacote de dados
     const dadosAgendamento = {
-        servico: servico.titulo,
-        preco: servico.preco,
-        data: dataSelecionada,
-        horario: horarioSelecionado
+      servico: servico.titulo,
+      preco: servico.preco,
+      data: dataSelecionada,
+      horario: horarioSelecionado,
     };
 
     // Manda os dados para o Python usando fetch
-    fetch('/salvar_agendamento', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosAgendamento)
+    fetch("/salvar_agendamento", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dadosAgendamento),
     })
-    .then(response => response.json())
-    .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         // Tira o botão do modo carregando
         confirmBtn.classList.remove("loading");
         confirmBtn.textContent = "Confirmar Agendamento";
 
         if (data.erro) {
-            alert("Erro: " + data.erro);
+          alert("Erro: " + data.erro);
         } else {
-            // Deu certo! Mostra a mensagem
-            mostrarToast("Agendamento salvo no banco de dados!");
+          // Deu certo! Mostra a mensagem
+          mostrarToast("Agendamento salvo no banco de dados!");
 
-            // Depois de 1.5s, manda para a tela inicial
-            setTimeout(() => {
-                window.location.href = "/";
-            }, 1500);
+          // Depois de 1.5s, manda para a tela inicial
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1500);
         }
-    })
-    .catch(erro => {
+      })
+      .catch((erro) => {
         console.error("Falha na comunicação com o servidor:", erro);
         alert("Ocorreu um erro de conexão.");
         confirmBtn.classList.remove("loading");
         confirmBtn.textContent = "Confirmar Agendamento";
-    });
+      });
   });
 
   // 🔥 FUNÇÃO TOAST (Notificação bonita que tinha sumido do seu código)
@@ -151,4 +159,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   }
 
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-agendar");
+    if (!btn) return;
+    const idx = btn.dataset.index;
+    const s = servicos[idx]; // seu array de serviços
+    sessionStorage.setItem("servicoAgendamento", JSON.stringify(s));
+    window.location.href = "/agendamento";
+  });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-agendar");
+    if (!btn) return;
+
+    const servico = JSON.parse(btn.dataset.servico);
+
+    localStorage.setItem("servicoSelecionado", JSON.stringify(servico));
+
+    window.location.href = "/agendamento";
+  });
+
+  document.querySelector(".prof-name").textContent =
+    servico.nome + " " + servico.sobrenome;
+
+  document.querySelector(".prof-sub").textContent =
+    servico.areas_atuacao || servico.area_atuacao || "Prestador";
+
+  document.querySelector(".sum-name").textContent =
+    servico.nome + " " + servico.sobrenome;
+
+  document.querySelector(".sum-sub").textContent =
+    servico.areas_atuacao || servico.area_atuacao || "Prestador";
+
+  const payload = {
+    servico: servico.titulo,
+    preco: servico.preco,
+    data: selectedDate.toISOString().split("T")[0],
+    horario: selectedTime,
+    prestador_email: servico.prestador_email, // 👈 IMPORTANTE
+  };
+
+  const servico = JSON.parse(localStorage.getItem("servicoSelecionado")) || {};
+  localStorage.setItem("servicoSelecionado", JSON.stringify(servico));
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Este arquivo roda na página de SERVIÇOS.
+    // Responsabilidade: capturar clique no botão "Agendar",
+    // salvar o serviço (com nome do prestador) no localStorage
+    // e redirecionar para /agendamento.
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-agendar");
+      if (!btn) return;
+
+      const servico = JSON.parse(btn.dataset.servico);
+      localStorage.setItem("servicoSelecionado", JSON.stringify(servico));
+      window.location.href = "/agendamento";
+    });
+  });
 });
