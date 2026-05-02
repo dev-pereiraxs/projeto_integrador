@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Perfil – Agenda Fácil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --blue: #2563eb;
+            --blue-gl: linear-gradient(135deg, #2563eb, #1d4ed8);
+            --green: #10b981;
+            --gold: #f59e0b;
+            --red: #ef4444;
+            --text: #1a2340;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --radius: 14px;
+            --navy: #0f172a;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f1f5f9;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--navy);
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--blue-gl);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-name {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topbar-link {
+            color: rgba(255, 255, 255, .55);
+            font-size: 13px;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all .2s;
+        }
+
+        .topbar-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .btn-logout {
+            font-size: 12px;
+            color: #f87171;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(248, 113, 113, .3);
+            transition: all .2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, .12);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            padding: 40px 24px 72px;
+        }
+
+        .hero-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .hero-avatar {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: var(--blue-gl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            border: 4px solid rgba(255, 255, 255, .2);
+            flex-shrink: 0;
+        }
+
+        .hero-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .hero-email {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .55);
+            margin-bottom: 12px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(37, 99, 235, .25);
+            border: 1px solid rgba(59, 130, 246, .4);
+            color: #93c5fd;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .page {
+            max-width: 860px;
+            margin: -36px auto 0;
+            padding: 0 24px 48px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+        }
+
+        .stat-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            padding: 0 20px;
+        }
+
+        .tab-btn {
+            padding: 13px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s;
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 16px;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* agendamento item */
+        .ag-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ag-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .ag-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ag-servico {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ag-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .ag-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .ag-preco {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .status-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .status-pendente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-confirmado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-em_andamento {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-concluido {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .status-cancelado {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-cancelar {
+            font-size: 11px;
+            color: var(--red);
+            background: none;
+            border: 1px solid rgba(239, 68, 68, .3);
+            border-radius: 6px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn-cancelar:hover {
+            background: rgba(239, 68, 68, .08);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .empty span {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--blue-gl);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Sora', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .2s;
+        }
+
+        .btn-primary:hover {
+            opacity: .88;
+        }
+
+        @media(max-width:600px) {
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                    <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
+                    <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+            <span class="brand-name">Agenda Fácil</span>
+        </a>
+        <div class="topbar-nav">
+            <a href="/servicos" class="topbar-link">Serviços</a>
+            <a href="/logout" class="btn-logout">🚪 Sair</a>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-avatar">{{ (cliente.nome or '?')[0]|upper }}</div>
+            <div>
+                <div class="hero-badge">👤 Cliente</div>
+                <div class="hero-name" style="margin-top:6px;">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
+                <div class="hero-email">{{ cliente.email }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+
+        <!-- STATS -->
+        {% set total = agendamentos|length %}
+        {% set concluidos = agendamentos|selectattr('status','equalto','concluido')|list|length %}
+        {% set pendentes = agendamentos|selectattr('status','in',['pendente','confirmado'])|list|length %}
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-val">{{ total }}</div>
+                <div class="stat-label">Total de agendamentos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="color:var(--green);">{{ concluidos }}</div>
+                <div class="stat-label">Concluídos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="color:var(--gold);">{{ pendentes }}</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+        </div>
+
+        <!-- CARD PRINCIPAL -->
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('agendamentos',this)">Meus Agendamentos</button>
+                <button class="tab-btn" onclick="switchTab('dados',this)">Meus Dados</button>
+            </div>
+
+            <!-- AGENDAMENTOS -->
+            <div class="tab-panel active" id="tab-agendamentos">
+                {% if agendamentos %}
+                {% for a in agendamentos %}
+                <div class="ag-item" id="ag-{{ a.id }}">
+                    <div class="ag-icon">
+                        {% set s = a.servico|lower %}
+                        {% if 'eletr' in s %}💡{% elif 'hidra' in s %}🔧{% elif 'mec' in s %}🔩{% elif 'reform' in s
+                        %}🏗️{% elif 'limpez' in s %}🧹{% elif 'ti' in s or 'tecnol' in s %}💻{% else %}⚙️{% endif %}
+                    </div>
+                    <div class="ag-info">
+                        <div class="ag-servico">{{ a.servico }}</div>
+                        <div class="ag-sub">
+                            📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
+                            · 🕐 {{ a.horario }}
+                            {% if a.prestador_nome %}· 👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
+                        </div>
+                    </div>
+                    <div class="ag-right">
+                        <div class="ag-preco">R$ {{ "%.2f"|format(a.preco) if a.preco else '—' }}</div>
+                        <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
+                        {% if a.status in ['pendente', 'confirmado'] %}
+                        <button class="btn-cancelar" onclick="cancelar({{ a.id }})">Cancelar</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty">
+                    <span>📅</span>
+                    Você ainda não tem agendamentos.
+                    <br><br>
+                    <a href="/servicos" class="btn-primary">Ver Serviços</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- DADOS -->
+            <div class="tab-panel" id="tab-dados">
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="info-label">Nome completo</div>
+                        <div class="info-value">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">E-mail</div>
+                        <div class="info-value">{{ cliente.email }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Data de nascimento</div>
+                        <div class="info-value">{{ cliente.data_nascimento.strftime('%d/%m/%Y') if
+                            cliente.data_nascimento else '—' }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">Gênero</div>
+                        <div class="info-value">{{ cliente.sexo or '—' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(name, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + name).classList.add('active');
+        }
+
+        async function cancelar(id) {
+            if (!confirm('Cancelar este agendamento?')) return;
+
+            const res = await fetch(`/api/cancelar_agendamento/${id}`, { method: 'PATCH' });
+            const data = await res.json();
+
+            if (data.mensagem) {
+                // Atualiza o badge visualmente sem recarregar
+                const item = document.getElementById('ag-' + id);
+                const badge = item.querySelector('.status-badge');
+                badge.className = 'status-badge status-cancelado';
+                badge.textContent = 'cancelado';
+                item.querySelector('.btn-cancelar').remove();
+            } else {
+                alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
+            }
+        }
+    </script>
+
+</body>
+
+</html>
