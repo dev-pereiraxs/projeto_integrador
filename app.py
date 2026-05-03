@@ -3,6 +3,7 @@ import mysql.connector
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
+import pathlib
 
 load_dotenv()
 
@@ -866,6 +867,9 @@ def editar_perfil_prestador():
 
     session["usuario_nome"] = nome + " " + sobrenome
     return jsonify({"mensagem": "Perfil atualizado!"})
+
+load_dotenv(dotenv_path=pathlib.Path(__file__).parent / ".env", override=True)
+print("CLIENT_ID:", os.getenv("CLIENT_ID"))
 
 # =========================
 if __name__ == "__main__":
