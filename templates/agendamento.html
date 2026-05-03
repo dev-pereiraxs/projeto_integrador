@@ -673,7 +673,8 @@
         </div>
         <span id="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
       </div>
-      <a href="/logout" style="color:#f87171;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);">
+      <a href="/logout"
+        style="color:#f87171;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);">
         🚪 Sair
       </a>
       {% else %}
@@ -1025,7 +1026,7 @@
     }
 
     /* =========================================================
-       8. CONFIRMAR AGENDAMENTO (ENVIA PRO FLASK)
+       8. CONFIRMAR AGENDAMENTO 
     ========================================================= */
     document.getElementById("btn-confirmar").addEventListener("click", async () => {
 
@@ -1033,6 +1034,10 @@
         alert("Selecione data e horário");
         return;
       }
+
+      const btn = document.getElementById("btn-confirmar");
+      btn.textContent = "Confirmando...";
+      btn.disabled = true;
 
       const payload = {
         servico: servico.titulo,
@@ -1046,9 +1051,7 @@
       try {
         const res = await fetch("/salvar_agendamento", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
@@ -1056,15 +1059,19 @@
 
         if (data.erro) {
           alert(data.erro);
+          btn.textContent = "Confirmar Agendamento";
+          btn.disabled = false;
           return;
         }
 
-        alert("Agendamento realizado com sucesso!");
-        window.location.href = "/";
+        // Redireciona para a página de confirmação com o id do agendamento
+        window.location.href = "/agendamento_confirmado?id=" + data.id;
 
       } catch (err) {
         console.error(err);
-        alert("Erro de conexão com servidor");
+        alert("Erro de conexão com o servidor. Tente novamente.");
+        btn.textContent = "Confirmar Agendamento";
+        btn.disabled = false;
       }
     });
 

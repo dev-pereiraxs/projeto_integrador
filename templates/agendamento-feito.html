@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendamento Confirmado — Agenda Fácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #080d1f;
+      --glass:  rgba(255,255,255,.055);
+      --glass-b:rgba(255,255,255,.09);
+      --border: rgba(255,255,255,.10);
+      --blue:   #3b82f6;
+      --blue-g: linear-gradient(135deg,#2563eb,#1d4ed8);
+      --text:   #f0f4ff;
+      --muted:  rgba(200,210,255,.55);
+      --green:  #4ade80;
+      --gold:   #f59e0b;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 25% 20%, rgba(37,99,235,.22) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 45% at 75% 75%, rgba(74,222,128,.12) 0%, transparent 65%);
+    }
+
+    /* ── CHECKMARK ANIMADO ── */
+    .success-ring {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 28px;
+    }
+
+    .success-ring svg {
+      width: 90px;
+      height: 90px;
+    }
+
+    .ring-track {
+      stroke: rgba(74,222,128,.15);
+    }
+
+    .ring-fill {
+      stroke: var(--green);
+      stroke-dasharray: 251;
+      stroke-dashoffset: 251;
+      animation: ring-draw .7s ease forwards .2s;
+    }
+
+    @keyframes ring-draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .check-path {
+      stroke: var(--green);
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: check-draw .4s ease forwards .85s;
+    }
+
+    @keyframes check-draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── CARD ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--glass);
+      border: .5px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 40px 36px 32px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      animation: fade-up .5s ease both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--green);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── DETALHES ── */
+    .details {
+      background: var(--glass-b);
+      border: .5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      gap: 12px;
+    }
+
+    .detail-row:not(:last-child) {
+      border-bottom: .5px solid var(--border);
+    }
+
+    .detail-label {
+      font-size: 13px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .detail-value.price {
+      color: #93c5fd;
+      font-size: 15px;
+    }
+
+    /* ── STATUS BADGE ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(74,222,128,.1);
+      border: .5px solid rgba(74,222,128,.25);
+      border-radius: 99px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    /* ── ID ── */
+    .booking-id {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .booking-id strong {
+      color: var(--text);
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    /* ── EMAIL NOTICE ── */
+    .email-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(59,130,246,.08);
+      border: .5px solid rgba(59,130,246,.25);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .email-notice span {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .email-notice p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .email-notice p strong {
+      color: #93c5fd;
+    }
+
+    /* ── BOTÕES ── */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn:hover  { opacity: .88; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--blue-g);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: var(--glass-b);
+      border: .5px solid var(--border);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- CHECKMARK ANIMADO -->
+    <div class="success-ring">
+      <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="ring-track" cx="45" cy="45" r="40" stroke-width="4" fill="none"/>
+        <circle class="ring-fill"  cx="45" cy="45" r="40" stroke-width="4" fill="none"
+                stroke-linecap="round"
+                transform="rotate(-90 45 45)"/>
+        <path class="check-path" d="M28 45l12 12 22-22"
+              stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h1>Agendamento Confirmado!</h1>
+    <p class="subtitle">
+      Seu serviço foi agendado com sucesso.<br>
+      Confira os detalhes abaixo.
+    </p>
+
+    <!-- ID DO AGENDAMENTO -->
+    <p class="booking-id">
+      Protocolo: <strong>#{{ ag.id }}</strong>
+    </p>
+
+    <!-- DETALHES -->
+    <div class="details">
+      <div class="detail-row">
+        <span class="detail-label">Serviço</span>
+        <span class="detail-value">{{ ag.servico }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Profissional</span>
+        <span class="detail-value">{{ ag.prestador_nome }} {{ ag.prestador_sobrenome }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Data</span>
+        <span class="detail-value">
+          {{ ag.data_servico.strftime('%d/%m/%Y') if ag.data_servico else '—' }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Horário</span>
+        <span class="detail-value">
+          {% if ag.horario %}
+            {{ ag.horario.strftime('%H:%M') if ag.horario.__class__.__name__ == 'timedelta' else ag.horario }}
+          {% else %}
+            —
+          {% endif %}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Valor</span>
+        <span class="detail-value price">
+          R$ {{ "%.2f"|format(ag.preco|float) }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value">
+          <span class="status-badge">✔ Pendente</span>
+        </span>
+      </div>
+      {% if ag.observacoes %}
+      <div class="detail-row">
+        <span class="detail-label">Obs.</span>
+        <span class="detail-value">{{ ag.observacoes }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- AVISO EMAIL -->
+    <div class="email-notice">
+      <span>📧</span>
+      <p>
+        Um email de confirmação foi enviado para
+        <strong>{{ ag.cliente_email }}</strong>
+        e para o profissional.
+      </p>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="btn-row">
+      <a href="/" class="btn btn-ghost">Início</a>
+      <a href="/meu_perfil" class="btn btn-primary">Ver meus agendamentos</a>
+    </div>
+
+  </div>
+
+</body>
+</html>

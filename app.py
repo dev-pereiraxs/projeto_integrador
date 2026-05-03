@@ -3,17 +3,58 @@ import mysql.connector
 from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
+import bcrypt
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 load_dotenv()
+
+# =========================
+# EMAIL via Brevo SMTP
+# =========================
+BREVO_SMTP_HOST  = "smtp-relay.brevo.com"
+BREVO_SMTP_PORT  = 587
+BREVO_SMTP_LOGIN = os.getenv("BREVO_SMTP_LOGIN")   # email da SUA CONTA no Brevo
+BREVO_SMTP_PASS  = os.getenv("BREVO_API_KEY")       # xsmtpsib-...
+EMAIL_REMETENTE  = os.getenv("EMAIL_REMETENTE")     # agendafacilintegrador@gmail.com
+
+def enviar_email(destinatario, assunto, corpo_html):
+    print(f"[EMAIL] ── TENTATIVA ──────────────────────")
+    print(f"[EMAIL] Para    : {destinatario}")
+    print(f"[EMAIL] Assunto : {assunto}")
+    print(f"[EMAIL] Login   : {BREVO_SMTP_LOGIN}")
+    print(f"[EMAIL] From    : {EMAIL_REMETENTE}")
+
+    if not destinatario or not BREVO_SMTP_PASS or not BREVO_SMTP_LOGIN:
+        print("[EMAIL] ⚠️  BREVO_SMTP_LOGIN, BREVO_API_KEY ou destinatário ausente no .env")
+        return False
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = assunto
+        msg["From"]    = f"Agenda Fácil <{EMAIL_REMETENTE}>"
+        msg["To"]      = destinatario
+        msg.attach(MIMEText(corpo_html, "html", "utf-8"))
+
+        with smtplib.SMTP(BREVO_SMTP_HOST, BREVO_SMTP_PORT) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(BREVO_SMTP_LOGIN, BREVO_SMTP_PASS)  # login = conta Brevo
+            smtp.sendmail(EMAIL_REMETENTE, destinatario, msg.as_string())
+
+        print("[EMAIL] ✅ Enviado com sucesso!")
+        return True
+
+    except Exception as e:
+        print(f"[EMAIL] ❌ {type(e).__name__}: {e}")
+        return False
 
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
-import os
-
-CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-
+CLIENT_ID     = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 # =========================
 # GOOGLE AUTH
@@ -55,9 +96,10 @@ def callback():
     if not user_info:
         return render_template("login.html", erro="Erro ao obter dados do Google.")
 
-    nome     = user_info.get("given_name", "")
+    nome      = user_info.get("given_name", "")
     sobrenome = user_info.get("family_name", "")
-    email    = user_info.get("email")
+    email     = user_info.get("email")
+    foto      = user_info.get("picture", "")   # ← foto do Google
 
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
@@ -67,9 +109,14 @@ def callback():
     prestador = cursor.fetchone()
 
     if prestador:
+        # Atualiza foto se tiver
+        if foto:
+            cursor.execute("UPDATE cadastro_prestadores SET foto_url = %s WHERE email = %s", (foto, email))
+            conn.commit()
         session["usuario_logado"] = email
         session["tipo_usuario"]   = "prestador"
         session["usuario_nome"]   = prestador["nome"] + " " + prestador["sobrenome"]
+        session["usuario_foto"]   = foto
         cursor.close()
         conn.close()
         return redirect(url_for("servicos"))
@@ -79,15 +126,19 @@ def callback():
     cliente = cursor.fetchone()
 
     if not cliente:
-        # Novo usuário: cria conta de cliente
         try:
             cursor.execute(
-                "INSERT INTO cadastro_clientes (nome, sobrenome, email) VALUES (%s, %s, %s)",
-                (nome, sobrenome, email)
+                "INSERT INTO cadastro_clientes (nome, sobrenome, email, foto_url) VALUES (%s, %s, %s, %s)",
+                (nome, sobrenome, email, foto)
             )
             conn.commit()
         except Exception as e:
             print("Erro ao criar conta Google:", e)
+    else:
+        # Atualiza foto se tiver
+        if foto:
+            cursor.execute("UPDATE cadastro_clientes SET foto_url = %s WHERE email = %s", (foto, email))
+            conn.commit()
 
     cursor.close()
     conn.close()
@@ -95,6 +146,7 @@ def callback():
     session["usuario_logado"] = email
     session["tipo_usuario"]   = "cliente"
     session["usuario_nome"]   = nome + " " + sobrenome
+    session["usuario_foto"]   = foto
     return redirect(url_for("servicos"))
 
 # =========================
@@ -154,45 +206,53 @@ def agendamentos():
 # =========================
 # AUTENTICAÇÃO
 # =========================
+def verificar_senha(senha_bytes, hash_salvo):
+    """Verifica bcrypt com proteção contra hash inválido/corrompido."""
+    try:
+        if isinstance(hash_salvo, str):
+            hash_salvo = hash_salvo.encode("utf-8")
+        if not hash_salvo.startswith(b"$2b$") and not hash_salvo.startswith(b"$2a$"):
+            return False
+        return bcrypt.checkpw(senha_bytes, hash_salvo)
+    except Exception:
+        return False
+
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     email = request.form["email"]
-    senha = request.form["senha"]
+    senha = request.form["senha"].encode("utf-8")
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
     # prestador
-    cursor.execute(
-        "SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s",
-        (email, senha)
-    )
+    cursor.execute("SELECT * FROM cadastro_prestadores WHERE email=%s", (email,))
     prestador = cursor.fetchone()
 
-    if prestador:
+    if prestador and prestador["senha"] and verificar_senha(senha, prestador["senha"]):
         session["usuario_logado"] = email
-        session["tipo_usuario"] = "prestador"
-        session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
+        session["tipo_usuario"]   = "prestador"
+        session["usuario_nome"]   = prestador["nome"] + " " + prestador["sobrenome"]
+        session["usuario_foto"]   = prestador.get("foto_url", "")
         cursor.close()
         conn.close()
         return redirect(url_for("servicos"))
 
     # cliente
-    cursor.execute(
-        "SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s",
-        (email, senha)
-    )
+    cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s", (email,))
     cliente = cursor.fetchone()
+
+    if cliente and cliente["senha"] and verificar_senha(senha, cliente["senha"]):
+        session["usuario_logado"] = email
+        session["tipo_usuario"]   = "cliente"
+        session["usuario_nome"]   = cliente["nome"] + " " + cliente["sobrenome"]
+        session["usuario_foto"]   = cliente.get("foto_url", "")
+        cursor.close()
+        conn.close()
+        return redirect(url_for("servicos"))
 
     cursor.close()
     conn.close()
-
-    if cliente:
-        session["usuario_logado"] = email
-        session["tipo_usuario"] = "cliente"
-        session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
-        return redirect(url_for("servicos"))
-
     return render_template("login.html", erro="E-mail ou senha inválidos")
 
 # =========================
@@ -200,13 +260,17 @@ def autenticar():
 # =========================
 @app.route("/salvar", methods=["POST"])
 def salvar():
+    senha_hash = bcrypt.hashpw(
+        request.form["senha"].encode("utf-8"), bcrypt.gensalt()
+    ).decode("utf-8")
+
     dados = (
         request.form["nome"],
         request.form["sobrenome"],
         request.form["data_nascimento"],
         request.form["sexo"],
         request.form["email"],
-        request.form["senha"]
+        senha_hash
     )
 
     conn = connectar()
@@ -233,13 +297,17 @@ def salvar():
 # =========================
 @app.route("/salvar_prestador", methods=["POST"])
 def salvar_prestador():
+    senha_hash = bcrypt.hashpw(
+        request.form["senha"].encode("utf-8"), bcrypt.gensalt()
+    ).decode("utf-8")
+
     dados = (
         request.form["nome"],
         request.form["sobrenome"],
         request.form["data_nascimento"],
         request.form["sexo"],
         request.form["email"],
-        request.form["senha"],
+        senha_hash,
         request.form["areas_atuacao"]
     )
 
@@ -263,7 +331,7 @@ def salvar_prestador():
         conn.close()
 
 # =========================
-# AGENDAMENTO (CORRIGIDO)
+# AGENDAMENTO COM EMAIL
 # =========================
 @app.route("/salvar_agendamento", methods=["POST"])
 def salvar_agendamento():
@@ -272,18 +340,25 @@ def salvar_agendamento():
 
     dados = request.get_json()
 
-    cliente_email = session["usuario_logado"]
+    cliente_email   = session["usuario_logado"]
     prestador_email = dados.get("prestador_email")
 
-    # Busca nome do cliente e do prestador para o email
-    conn = connectar()
+    conn   = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("SELECT nome, sobrenome FROM cadastro_clientes WHERE email = %s", (cliente_email,))
+    # Busca cliente (pode estar em clientes ou só ter email da sessão via Google)
+    cursor.execute("SELECT nome, sobrenome, email FROM cadastro_clientes WHERE email = %s", (cliente_email,))
     cliente = cursor.fetchone()
+    if not cliente:
+        # fallback: usa email da sessão diretamente
+        nome_session = session.get("usuario_nome", cliente_email)
+        cliente = {"nome": nome_session.split(" ")[0], "sobrenome": " ".join(nome_session.split(" ")[1:]), "email": cliente_email}
+        print(f"[AGENDAMENTO] Cliente não encontrado na tabela, usando sessão: {cliente}")
 
-    cursor.execute("SELECT nome, sobrenome FROM cadastro_prestadores WHERE email = %s", (prestador_email,))
+    cursor.execute("SELECT nome, sobrenome, email FROM cadastro_prestadores WHERE email = %s", (prestador_email,))
     prestador = cursor.fetchone()
+
+    print(f"[AGENDAMENTO] cliente={cliente}, prestador={prestador}, prestador_email={prestador_email}")
 
     valores = (
         cliente_email,
@@ -306,15 +381,111 @@ def salvar_agendamento():
         conn.commit()
         agendamento_id = cursor.lastrowid
 
-        nome_cliente   = f"{cliente['nome']} {cliente['sobrenome']}" if cliente else cliente_email
-        nome_prestador = f"{prestador['nome']} {prestador['sobrenome']}" if prestador else prestador_email
+        nome_cliente   = f"{cliente['nome']} {cliente['sobrenome']}".strip()   if cliente   else cliente_email
+        nome_prestador = f"{prestador['nome']} {prestador['sobrenome']}".strip() if prestador else prestador_email
+
+        print(f"[AGENDAMENTO] Agendamento #{agendamento_id} salvo. Enviando emails...")
+        print(f"[AGENDAMENTO] Email cliente: {cliente.get('email') if cliente else 'N/A'}")
+        print(f"[AGENDAMENTO] Email prestador: {prestador.get('email') if prestador else 'N/A'}")
+
+        servico_nm  = dados.get("servico", "")
+        data_fmt    = dados.get("data", "")
+        horario_fmt = dados.get("horario", "")
+        preco_raw   = dados.get("preco", 0)
+        preco_fmt   = f"R$ {float(preco_raw):.2f}".replace(".", ",")
+        obs_txt     = dados.get("obs", "") or "Nenhuma"
+
+        # ── EMAIL PARA O CLIENTE ──────────────────────────────────
+        if cliente and cliente.get("email"):
+            html_cliente = f"""
+            <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+              <div style="background:#2563eb;padding:24px 28px;">
+                <h1 style="color:#fff;margin:0;font-size:20px;">&#10003; Agendamento Confirmado</h1>
+              </div>
+              <div style="padding:28px;">
+                <p style="color:#374151;">Olá, <strong>{nome_cliente}</strong>!</p>
+                <p style="color:#374151;margin-bottom:16px;">Seu agendamento foi realizado com sucesso. Veja os detalhes:</p>
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;width:120px;">Serviço</td>
+                    <td style="padding:10px 14px;font-weight:600;">{servico_nm}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Profissional</td>
+                    <td style="padding:10px 14px;font-weight:600;">{nome_prestador}</td>
+                  </tr>
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Data</td>
+                    <td style="padding:10px 14px;font-weight:600;">{data_fmt}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Horário</td>
+                    <td style="padding:10px 14px;font-weight:600;">{horario_fmt}</td>
+                  </tr>
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Valor</td>
+                    <td style="padding:10px 14px;font-weight:600;color:#2563eb;">{preco_fmt}</td>
+                  </tr>
+                </table>
+                <p style="color:#6b7280;font-size:13px;margin-top:16px;">Em caso de dúvidas, entre em contato com o profissional.</p>
+                <a href="http://127.0.0.1:5000/agendamento_confirmado?id={agendamento_id}"
+                   style="display:inline-block;margin-top:16px;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">
+                  Ver Agendamento
+                </a>
+              </div>
+            </div>"""
+            enviar_email(cliente["email"], f"✅ Agendamento confirmado — {servico_nm}", html_cliente)
+
+        # ── EMAIL PARA O PRESTADOR ────────────────────────────────
+        if prestador and prestador.get("email"):
+            html_prestador = f"""
+            <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+              <div style="background:#1d4ed8;padding:24px 28px;">
+                <h1 style="color:#fff;margin:0;font-size:20px;">&#128197; Novo Agendamento Recebido</h1>
+              </div>
+              <div style="padding:28px;">
+                <p style="color:#374151;">Olá, <strong>{nome_prestador}</strong>!</p>
+                <p style="color:#374151;margin-bottom:16px;">Você recebeu um novo agendamento:</p>
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;width:120px;">Cliente</td>
+                    <td style="padding:10px 14px;font-weight:600;">{nome_cliente}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Serviço</td>
+                    <td style="padding:10px 14px;font-weight:600;">{servico_nm}</td>
+                  </tr>
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Data</td>
+                    <td style="padding:10px 14px;font-weight:600;">{data_fmt}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Horário</td>
+                    <td style="padding:10px 14px;font-weight:600;">{horario_fmt}</td>
+                  </tr>
+                  <tr style="background:#f3f4f6;">
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Valor</td>
+                    <td style="padding:10px 14px;font-weight:600;color:#1d4ed8;">{preco_fmt}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;color:#6b7280;font-size:13px;">Observações</td>
+                    <td style="padding:10px 14px;">{obs_txt}</td>
+                  </tr>
+                </table>
+                <a href="http://127.0.0.1:5000/painel"
+                   style="display:inline-block;margin-top:16px;background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">
+                  Ver no Painel
+                </a>
+              </div>
+            </div>"""
+            enviar_email(prestador["email"], f"📅 Novo agendamento de {nome_cliente}", html_prestador)
 
         return jsonify({
             "mensagem": "Agendamento salvo!",
-            "id": agendamento_id,
-            "nome_cliente": nome_cliente,
+            "id":             agendamento_id,
+            "nome_cliente":   nome_cliente,
             "nome_prestador": nome_prestador,
-            "email_cliente": cliente_email,
+            "email_cliente":  cliente_email,
         }), 200
 
     except Exception as e:
@@ -606,6 +777,57 @@ def cancelar_agendamento(id):
     return jsonify({"mensagem": "Agendamento cancelado"})
 
 # =========================
+# TROCAR SENHA
+# =========================
+@app.route("/trocar_senha", methods=["POST"])
+def trocar_senha():
+    if "usuario_logado" not in session:
+        return jsonify({"erro": "não logado"}), 401
+
+    dados = request.get_json()
+    senha_atual  = dados.get("senha_atual", "").encode("utf-8")
+    senha_nova   = dados.get("senha_nova", "")
+    senha_conf   = dados.get("senha_confirmacao", "")
+
+    if senha_nova != senha_conf:
+        return jsonify({"erro": "As senhas novas não coincidem"}), 400
+
+    if len(senha_nova) < 6:
+        return jsonify({"erro": "A senha nova deve ter pelo menos 6 caracteres"}), 400
+
+    email = session["usuario_logado"]
+    tipo  = session.get("tipo_usuario")
+    tabela = "cadastro_prestadores" if tipo == "prestador" else "cadastro_clientes"
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(f"SELECT senha FROM {tabela} WHERE email = %s", (email,))
+    row = cursor.fetchone()
+
+    if not row or not row["senha"]:
+        cursor.close()
+        conn.close()
+        return jsonify({"erro": "Conta sem senha (login pelo Google). Defina uma senha primeiro."}), 400
+
+    hash_salvo = row["senha"]
+    if isinstance(hash_salvo, str):
+        hash_salvo = hash_salvo.encode("utf-8")
+
+    if not bcrypt.checkpw(senha_atual, hash_salvo):
+        cursor.close()
+        conn.close()
+        return jsonify({"erro": "Senha atual incorreta"}), 400
+
+    novo_hash = bcrypt.hashpw(senha_nova.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    cursor.execute(f"UPDATE {tabela} SET senha = %s WHERE email = %s", (novo_hash, email))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"mensagem": "Senha alterada com sucesso!"})
+
+# =========================
 # LOGOUT
 # =========================
 @app.route("/logout")
@@ -869,5 +1091,6 @@ def editar_perfil_prestador():
     return jsonify({"mensagem": "Perfil atualizado!"})
 
 # =========================
+
 if __name__ == "__main__":
     app.run(debug=True)
