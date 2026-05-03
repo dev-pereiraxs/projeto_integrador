@@ -456,6 +456,7 @@
     <!-- HERO -->
     <div class="hero">
         <div class="hero-inner">
+<<<<<<< HEAD
             <!-- AVATAR COM UPLOAD -->
             <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
                 {% if cliente.foto %}
@@ -510,6 +511,14 @@
                     Cancelar
                 </button>
             </div>
+=======
+            <div class="hero-avatar">{{ (cliente.nome or '?')[0]|upper }}</div>
+            <div>
+                <div class="hero-badge">👤 Cliente</div>
+                <div class="hero-name" style="margin-top:6px;">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
+                <div class="hero-email">{{ cliente.email }}</div>
+            </div>
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         </div>
     </div>
 
@@ -632,6 +641,7 @@
         }
     </script>
 
+<<<<<<< HEAD
 
     <script>
         // Preenche modal com dados atuais
@@ -707,6 +717,8 @@
         });
     </script>
 
+=======
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
 </body>
 
 </html>

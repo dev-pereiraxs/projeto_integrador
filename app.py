@@ -9,8 +9,13 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
+<<<<<<< HEAD
 CLIENT_ID     = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+=======
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
 
 # =========================
 # GOOGLE AUTH
@@ -18,8 +23,11 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 oauth = OAuth(app)
 google = oauth.register(
     name="google",
+<<<<<<< HEAD
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
+=======
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
@@ -501,7 +509,11 @@ def perfil_prestador(email):
     conn.close()
 
     return render_template(
+<<<<<<< HEAD
         "perfil-prestador.html",
+=======
+        "perfil_prestador.html",
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         prestador=prestador,
         servicos=servicos,
         agendamentos_pendentes=agendamentos_pendentes,
@@ -537,7 +549,11 @@ def perfil_cliente():
     cursor.close()
     conn.close()
 
+<<<<<<< HEAD
     return render_template("perfil-cliente.html", cliente=cliente, agendamentos=agendamentos)
+=======
+    return render_template("perfil_cliente.html", cliente=cliente, agendamentos=agendamentos)
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
 
 # =========================
 # PERFIL DO PRESTADOR LOGADO
@@ -689,6 +705,7 @@ def atualizar_status(id):
 
     return jsonify({"mensagem": "Status atualizado!"})
 
+<<<<<<< HEAD
 
 # =========================
 # API: PRESTADORES POR CATEGORIA (para orçamentos)
@@ -865,6 +882,8 @@ def editar_perfil_prestador():
     session["usuario_nome"] = nome + " " + sobrenome
     return jsonify({"mensagem": "Perfil atualizado!"})
 
+=======
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
 # =========================
 if __name__ == "__main__":
     app.run(debug=True)

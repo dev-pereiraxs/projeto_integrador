@@ -542,6 +542,7 @@
 
   <div class="hero">
     <div class="hero-inner">
+<<<<<<< HEAD
       <!-- AVATAR COM UPLOAD (só aparece se for o próprio prestador logado) -->
       {% if session.get('usuario_logado') == prestador.email %}
         <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
@@ -565,6 +566,12 @@
       <div>
         <div class="hero-badge">✔ Prestador Verificado</div>
         <div class="hero-name" id="heroNome">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+=======
+      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
+      <div>
+        <div class="hero-badge">✔ Prestador Verificado</div>
+        <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
         <div class="hero-stats">
           <div class="hero-stat"><span class="hero-stat-val">{{ servicos|length }}</span><span
@@ -577,6 +584,7 @@
               class="hero-stat-label">Avaliação</span></div>
         </div>
       </div>
+<<<<<<< HEAD
 
       {% if session.get('usuario_logado') == prestador.email %}
       <button onclick="abrirModalEditar()" style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
@@ -616,6 +624,11 @@
       </div>
   </div>
 
+=======
+    </div>
+  </div>
+
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
   <div class="page">
     <div>
       <div class="card">
@@ -737,6 +750,7 @@
       document.getElementById('tab-' + name).classList.add('active');
     }
   </script>
+<<<<<<< HEAD
 
     <script>
         function abrirModalEditar() {
@@ -808,6 +822,8 @@
         });
     </script>
 
+=======
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
 </body>
 
 </html>

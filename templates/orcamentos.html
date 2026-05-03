@@ -65,6 +65,7 @@
             telefone.value = v;
         });
 
+<<<<<<< HEAD
         form.addEventListener("submit", async function (e) {
             e.preventDefault();
 
@@ -79,11 +80,44 @@
 
             const emailCliente = document.getElementById("email").value;
             const dadosBase = {
+=======
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            btn.innerText = "Enviando...";
+            btn.disabled = true;
+
+            const categoria = document.getElementById("categoria").value;
+
+            if (!categoria) {
+                alert("Selecione uma categoria");
+                btn.innerText = "Enviar";
+                btn.disabled = false;
+                return;
+            }
+
+            let emailPrestador = "";
+
+            if (categoria === "Tecnologia") {
+                emailPrestador = "tecnologia@email.com";
+            } else if (categoria === "Hidráulica") {
+                emailPrestador = "hidraulica@email.com";
+            } else if (categoria === "Elétrica") {
+                emailPrestador = "eletrica@email.com";
+            } else if (categoria === "Reformas") {
+                emailPrestador = "reformas@email.com";
+            }
+
+            const emailCliente = document.getElementById("email").value;
+
+            const dados = {
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
                 nome: document.getElementById("nome").value,
                 email: emailCliente || "Não informado",
                 telefone: telefone.value,
                 categoria: categoria,
                 descricao: document.getElementById("descricao").value,
+<<<<<<< HEAD
             };
 
             try {
@@ -124,6 +158,40 @@
                 btn.innerText = "Enviar";
                 btn.disabled = false;
             }
+=======
+                email_prestador: emailPrestador
+            };
+
+            // 📩 SEMPRE envia para prestador
+            const envioPrestador = emailjs.send(
+                "service_b6ejlqp",
+                "template_ju6fbyc",
+                dados
+            );
+
+            // 📩 SÓ envia para cliente se ele colocou email
+            let promessas = [envioPrestador];
+
+            if (emailCliente) {
+                const envioCliente = emailjs.send(
+                    "service_b6ejlqp",
+                    "template_a9a80tv",
+                    dados
+                );
+                promessas.push(envioCliente);
+            }
+
+            Promise.all(promessas)
+                .then(() => {
+                    window.location.href = "sucesso.html";
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("Erro ao enviar");
+                    btn.innerText = "Enviar";
+                    btn.disabled = false;
+                });
+>>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         });
 
     </script>
