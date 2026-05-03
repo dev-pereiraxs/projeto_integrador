@@ -1,5 +1,6 @@
 -- =============================================
 --  Agenda Fácil — Banco de Dados Completo
+--  Gerado com base no app.py
 --  Execute do zero no MySQL / phpMyAdmin
 -- =============================================
 
@@ -11,43 +12,53 @@ USE servicos;
 -- 1. CLIENTES
 -- =============================================
 CREATE TABLE cadastro_clientes (
-    id              INT           AUTO_INCREMENT PRIMARY KEY,
-    nome            VARCHAR(100)  NOT NULL,
-    sobrenome       VARCHAR(100)  NOT NULL,
-    data_nascimento DATE,
-    sexo            VARCHAR(20),
-    email           VARCHAR(150)  NOT NULL UNIQUE,
-    senha           VARCHAR(255),
-    criado_em       DATETIME      DEFAULT CURRENT_TIMESTAMP
+    id               INT           AUTO_INCREMENT PRIMARY KEY,
+    nome             VARCHAR(100)  NOT NULL,
+    sobrenome        VARCHAR(100)  NOT NULL,
+    data_nascimento  DATE,
+    sexo             VARCHAR(20),
+    email            VARCHAR(150)  NOT NULL UNIQUE,
+    senha            VARCHAR(255),                      -- bcrypt hash
+    foto_url         VARCHAR(500),                      -- foto Google OAuth
+    foto             VARCHAR(500),                      -- foto upload manual
+    telefone         VARCHAR(20),
+    cidade           VARCHAR(100),
+    criado_em        DATETIME      DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =============================================
 -- 2. PRESTADORES
 -- =============================================
 CREATE TABLE cadastro_prestadores (
-    id              INT           AUTO_INCREMENT PRIMARY KEY,
-    nome            VARCHAR(100)  NOT NULL,
-    sobrenome       VARCHAR(100)  NOT NULL,
-    data_nascimento DATE,
-    sexo            VARCHAR(20),
-    email           VARCHAR(150)  NOT NULL UNIQUE,
-    senha           VARCHAR(255)  NOT NULL,
-    areas_atuacao   TEXT,
-    criado_em       DATETIME      DEFAULT CURRENT_TIMESTAMP
+    id               INT           AUTO_INCREMENT PRIMARY KEY,
+    nome             VARCHAR(100)  NOT NULL,
+    sobrenome        VARCHAR(100)  NOT NULL,
+    data_nascimento  DATE,
+    sexo             VARCHAR(20),
+    email            VARCHAR(150)  NOT NULL UNIQUE,
+    senha            VARCHAR(255)  NOT NULL,             -- bcrypt hash
+    areas_atuacao    TEXT,
+    foto_url         VARCHAR(500),                       -- foto Google OAuth
+    foto             VARCHAR(500),                       -- foto upload manual
+    telefone         VARCHAR(20),
+    cidade           VARCHAR(100),
+    bio              TEXT,                               -- descrição do prestador
+    certificados     TEXT,                               -- paths de certificados
+    criado_em        DATETIME      DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =============================================
 -- 3. SERVIÇOS ANUNCIADOS
 -- =============================================
 CREATE TABLE servicos_anunciados (
-    id              INT            AUTO_INCREMENT PRIMARY KEY,
-    prestador_email VARCHAR(150)   NOT NULL,
-    titulo          VARCHAR(150)   NOT NULL,
-    descricao       TEXT,
-    preco           DECIMAL(10,2)  NOT NULL,
-    area_atuacao    VARCHAR(100),
-    duracao         VARCHAR(50),
-    criado_em       DATETIME       DEFAULT CURRENT_TIMESTAMP,
+    id               INT            AUTO_INCREMENT PRIMARY KEY,
+    prestador_email  VARCHAR(150)   NOT NULL,
+    titulo           VARCHAR(150)   NOT NULL,
+    descricao        TEXT,
+    preco            DECIMAL(10,2)  NOT NULL,
+    area_atuacao     VARCHAR(100),
+    duracao          VARCHAR(50),
+    criado_em        DATETIME       DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (prestador_email)
         REFERENCES cadastro_prestadores(email)
@@ -59,17 +70,22 @@ CREATE TABLE servicos_anunciados (
 -- 4. AGENDAMENTOS
 -- =============================================
 CREATE TABLE agendamentos (
-    id              INT            AUTO_INCREMENT PRIMARY KEY,
-    cliente_email   VARCHAR(150)   NOT NULL,
-    prestador_email VARCHAR(150),
-    servico         VARCHAR(200)   NOT NULL,
-    preco           DECIMAL(10,2),
-    data_servico    DATE           NOT NULL,
-    horario         VARCHAR(10)    NOT NULL,
-    status          ENUM('pendente','confirmado','em_andamento','concluido','cancelado')
-                                   DEFAULT 'pendente',
-    observacoes     TEXT,
-    criado_em       DATETIME       DEFAULT CURRENT_TIMESTAMP,
+    id               INT            AUTO_INCREMENT PRIMARY KEY,
+    cliente_email    VARCHAR(150)   NOT NULL,
+    prestador_email  VARCHAR(150),
+    servico          VARCHAR(200)   NOT NULL,
+    preco            DECIMAL(10,2),
+    data_servico     DATE           NOT NULL,
+    horario          VARCHAR(10)    NOT NULL,
+    status           ENUM(
+                       'pendente',
+                       'confirmado',
+                       'em_andamento',
+                       'concluido',
+                       'cancelado'
+                     )              DEFAULT 'pendente',
+    observacoes      TEXT,
+    criado_em        DATETIME       DEFAULT CURRENT_TIMESTAMP,
 
     INDEX idx_cliente   (cliente_email),
     INDEX idx_prestador (prestador_email),
