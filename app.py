@@ -9,8 +9,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
-CLIENT_ID     = "GOOGLE_CLIENT_ID_REMOVIDO"
-CLIENT_SECRET = "GOOGLE_CLIENT_SECRET_REMOVIDO"
+CLIENT_ID     = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 # =========================
 # GOOGLE AUTH
