@@ -10,9 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
-CLIENT_ID     = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 # =========================
@@ -540,7 +538,7 @@ def perfil_cliente():
     cursor.close()
     conn.close()
 
-    return render_template("perfil_cliente.html", cliente=cliente, agendamentos=agendamentos)
+    return render_template("perfil-cliente.html", cliente=cliente, agendamentos=agendamentos)
 
 # =========================
 # PERFIL DO PRESTADOR LOGADO
@@ -869,7 +867,6 @@ def editar_perfil_prestador():
     return jsonify({"mensagem": "Perfil atualizado!"})
 
 load_dotenv(dotenv_path=pathlib.Path(__file__).parent / ".env", override=True)
-print("CLIENT_ID:", os.getenv("CLIENT_ID"))
 
 # =========================
 if __name__ == "__main__":
