@@ -2,127 +2,108 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../static/global.css">
-    <link rel="stylesheet" href="../static/servicos.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Agenda Fácil</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../static/global.css">
+  <link rel="stylesheet" href="../static/servicos.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Agenda Fácil</title>
 </head>
 
-<body class="bg-gray-100">
+<body>
 
-    <!-- MENU -->
-    <header class="topo text-white">
-        <div class="topo-container">
-            <div class="logo">Agenda Fácil</div>
+  <!-- NAVBAR -->
+  <header class="topo">
+    <div class="topo-container">
+      <div class="logo">Agenda Fácil</div>
 
-            <nav>
-                <a href="/">Home</a>
-                <a href="/servicos">Serviços</a>
+      <!-- Botão hamburger (só aparece no mobile) -->
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
-                {% if session.get('tipo_usuario') != 'prestador' %}
-                <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
-                {% endif %}
+      <nav id="navMenu">
+        <a href="/">Home</a>
+        <a href="/servicos">Serviços</a>
 
-                {% if session.get('tipo_usuario') == 'prestador' %}
-                <a href="/painel" class="btn-painel">Meu Painel de Prestador</a>
-                {% endif %}
+        {% if session.get('tipo_usuario') != 'prestador' %}
+        <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
+        {% endif %}
 
-                {% if session.get('usuario_logado') %}
-                <a href="/meu_perfil"
-                    style="color:#fff;font-size:14px;font-weight:500;text-decoration:none;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:5px 12px;border-radius:99px;">
-                    👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-                </a>
-                <a href="/logout" class="btn-sair">🚪 Sair</a>
-                {% else %}
-                <a href="/login" class="btn-entrar">Entrar</a>
-                {% endif %}
-            </nav>
-        </div>
-    </header>
+        {% if session.get('tipo_usuario') == 'prestador' %}
+        <a href="/painel" class="btn-painel">Meu Painel</a>
+        {% endif %}
 
-    <!-- CONTAINER -->
-    <div class="container mx-auto max-w-6xl p-6 md:p-10">
+        {% if session.get('usuario_logado') %}
+        <a href="/meu_perfil" class="btn-perfil">
+          👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+        </a>
+        <a href="/logout" class="btn-sair">🚪 Sair</a>
+        {% else %}
+        <a href="/login" class="btn-entrar">Entrar</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
 
-        <h1 class="text-2xl font-bold mb-6">Serviços Disponíveis</h1>
+  <!-- CONTEÚDO -->
+  <div class="page-wrapper">
 
-        <!-- BUSCA + FILTRO -->
-        <div class="flex flex-col md:flex-row gap-3 mb-6">
+    <h1 class="page-title">Serviços Disponíveis</h1>
 
-            <input id="busca" type="text" placeholder="Buscar serviço..."
-                class="flex-1 p-3 rounded-lg border border-gray-300" />
-
-            <select id="filtroCategoria" class="p-3 rounded-lg border border-gray-300">
-
-                <option value="todas">Todas as categorias</option>
-                <option value="tecnologia">Tecnologia</option>
-                <option value="mecanica">Mecânica</option>
-                <option value="eletrica">Elétrica</option>
-                <option value="hidraulica">Hidráulica</option>
-                <option value="reformas">Reformas</option>
-                <option value="limpeza">Limpeza</option>
-
-            </select>
-
-        </div>
-
-        <!-- GRID DINÂMICO (AGORA VAZIO) -->
-        <div id="lista-servicos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            {% for s in servicos %}
-            <div class="bg-white p-5 rounded-xl shadow">
-
-                <h2 class="text-lg font-bold">{{ s.titulo }}</h2>
-                <p class="text-gray-600">{{ s.descricao }}</p>
-                <p class="font-semibold mt-2">R$ {{ s.preco }}</p>
-
-                <button class="btn-agendar mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
-                    data-servico='{{ s | tojson }}'>
-                    Agendar
-                </button>
-
-            </div>
-            {% endfor %}
-
-        </div>
-
-
-        <!-- CTA -->
-        <div class="orcamentos-card col-span-full flex justify-center mt-10">
-
-            <div class="text-center bg-white p-8 rounded-xl shadow max-w-xl w-full">
-
-                <h2 class="text-xl font-semibold mb-2">
-                    Não achou seu serviço?
-                </h2>
-
-                <p class="text-gray-600 mb-4">
-                    Solicite um orçamento personalizado.
-                </p>
-
-                <a href="orcamentos.html"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-                    Solicitar orçamento
-                </a>
-
-            </div>
-
-        </div>
-
+    <!-- BUSCA + FILTRO -->
+    <div class="filtro-bar">
+      <input id="busca" type="text" placeholder="Buscar serviço..." />
+      <select id="filtroCategoria">
+        <option value="todas">Todas as categorias</option>
+        <option value="tecnologia">Tecnologia</option>
+        <option value="mecanica">Mecânica</option>
+        <option value="eletrica">Elétrica</option>
+        <option value="hidraulica">Hidráulica</option>
+        <option value="reformas">Reformas</option>
+        <option value="limpeza">Limpeza</option>
+      </select>
     </div>
 
-    <!-- SCRIPT DE FILTRO + RENDER -->
-    <script>
-        const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
-    </script>
+    <!-- GRID DE SERVIÇOS -->
+    <div id="lista-servicos" class="servicos-grid">
+      {% for s in servicos %}
+      <div class="card">
+        <h3>{{ s.titulo }}</h3>
+        <p>{{ s.descricao }}</p>
+        <span class="preco">R$ {{ s.preco }}</span>
+        <button class="btn-agendar" data-servico='{{ s | tojson }}'>Agendar</button>
+      </div>
+      {% endfor %}
+    </div>
 
-    <script src="../static/js/filtrar.js"></script>
-    <script src="../static/js/agenda_facil.js"></script>
+    <!-- CTA -->
+    <div class="orcamentos-card">
+      <div class="cta-box">
+        <h2>Não achou seu serviço?</h2>
+        <p>Solicite um orçamento personalizado.</p>
+        <a href="/orcamentos" class="btn-orcamento">Solicitar orçamento</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+
+    // Hamburger toggle
+    const toggle = document.getElementById('navToggle');
+    const menu   = document.getElementById('navMenu');
+    toggle.addEventListener('click', () => {
+      menu.classList.toggle('nav-open');
+      toggle.classList.toggle('nav-toggle--active');
+    });
+  </script>
+
+  <script src="../static/js/filtrar.js"></script>
+  <script src="../static/js/agenda_facil.js"></script>
 
 </body>
-
-</html>
-
-</body>
-
 </html>

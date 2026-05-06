@@ -1,28 +1,208 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Sucesso</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solicitação Enviada – Agenda Fácil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="../static/global.css">
+
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(160deg, #0a144a 0%, #1e3a8a 60%, #0e2756 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: #fff;
+        }
+
+        /* Partículas de fundo */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 55% 45% at 20% 20%, rgba(43, 115, 255, .22) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 80% 75%, rgba(16, 185, 129, .18) 0%, transparent 60%);
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, .07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 24px;
+            padding: 52px 48px 48px;
+            max-width: 460px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, .35);
+        }
+
+        /* Ícone animado */
+        .check-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            box-shadow: 0 0 0 12px rgba(16, 185, 129, .15), 0 8px 24px rgba(16, 185, 129, .4);
+            animation: popIn .5s cubic-bezier(.175, .885, .32, 1.275) both;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .check-wrap svg {
+            animation: drawCheck .4s .35s ease both;
+            stroke-dasharray: 30;
+            stroke-dashoffset: 30;
+        }
+
+        @keyframes drawCheck {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .title {
+            font-family: 'Sora', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            animation: fadeUp .45s .2s ease both;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, .65);
+            line-height: 1.65;
+            margin-bottom: 32px;
+            animation: fadeUp .45s .3s ease both;
+        }
+
+        .subtitle strong {
+            color: rgba(255, 255, 255, .9);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Info pill */
+        .info-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 99px;
+            padding: 8px 18px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .75);
+            margin-bottom: 28px;
+            animation: fadeUp .45s .4s ease both;
+        }
+
+        .info-pill span {
+            font-size: 16px;
+        }
+
+        /* Botão */
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #2b73ff, #1d44d9);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Sora', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .2s, transform .2s;
+            animation: fadeUp .45s .5s ease both;
+        }
+
+        .btn-home:hover {
+            opacity: .9;
+            transform: translateY(-2px);
+        }
+
+        /* Rodapé mínimo */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, .35);
+            animation: fadeUp .45s .6s ease both;
+        }
+    </style>
 </head>
 
-<body class="flex items-center justify-center h-screen bg-gray-100">
+<body>
 
-    <div class="bg-white p-10 rounded-xl shadow text-center max-w-md">
+    <div class="card">
 
-        <h1 class="text-2xl font-bold text-green-600 mb-4">
-            ✅ Solicitação enviada!
-        </h1>
+        <div class="check-wrap">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#fff" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 18l7 7 13-13" />
+            </svg>
+        </div>
 
-        <p class="text-gray-600 mb-6">
-            Seu orçamento já foi enviado para um dos nossos técnicos.<br><br>
+        <h1 class="title">Solicitação enviada!</h1>
+
+        <p class="subtitle">
+            Seu orçamento foi encaminhado para os profissionais da área.<br>
             Aguarde até <strong>2 horas</strong> para receber uma resposta.
         </p>
 
-        <a href="../principal.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-            Voltar ao início
+        <div class="info-pill">
+            <span>📩</span> Você receberá um contato em breve
+        </div>
+
+        <a href="{{ url_for('index') }}" class="btn-home">
+            ← Voltar ao início
         </a>
+
+        <p class="footer-note">Agenda Fácil · Conectando pessoas a profissionais</p>
 
     </div>
 

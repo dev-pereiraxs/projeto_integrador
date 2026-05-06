@@ -21,6 +21,7 @@
   --bg-gradient:     linear-gradient(160deg, #0a144a 0%, #2436a6 100%);
   --nav-gradient:    linear-gradient(to right, #0b1d4d, #1f3c88);
   --bg-light:        #f5f7fb;
+  --bg:              #f5f7fb;          /* alias de --bg-light (usado em painel.css) */
   --bg-glass:        rgba(255, 255, 255, 0.08);
 
   /* Superfícies */
@@ -312,3 +313,58 @@ input[type="checkbox"] { accent-color: var(--primary); }
 }
 .eyebrow-blue  { color: var(--primary);      }
 .eyebrow-light { color: var(--on-dark-soft); }
+
+/* ─────────────────────────────────────────────────────────────
+   10. FOOTER  — componente reutilizável
+       Substitui os blocos inline repetidos em cada página.
+       Uso: <footer class="footer"> ... </footer>
+───────────────────────────────────────────────────────────── */
+.footer {
+  background: #0f172a;
+  color: rgba(255, 255, 255, .55);
+  text-align: center;
+  padding: 32px 20px 24px;
+  font-size: 13px;
+  margin-top: 48px;
+}
+
+.footer__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer__brand {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.footer__tagline {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, .55);
+}
+
+.footer__links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.footer__links a {
+  color: rgba(255, 255, 255, .45);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer__links a:hover { color: rgba(255, 255, 255, .8); }
+
+.footer__copy {
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  padding-top: 14px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, .3);
+}

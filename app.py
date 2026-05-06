@@ -458,7 +458,7 @@ def agendamento_confirmado():
     if not ag:
         return redirect(url_for("servicos"))
 
-    return render_template("agendamento_confirmado.html", ag=ag)
+    return render_template("sucessoservico.html", ag=ag)
 
 # =========================
 # PERFIL DO PRESTADOR

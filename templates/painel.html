@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel do Prestador</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../static/global.css">
@@ -9,67 +10,62 @@
 </head>
 
 <body class="bg-[var(--bg)] text-[var(--text)]">
-  <div class="max-w-5xl mx-auto p-6">
+  <div class="painel-wrapper">
 
-    <h1 class="text-2xl font-semibold mb-1">Painel do Prestador</h1>
+    <!-- Cabeçalho -->
+    <div class="painel-header">
+      <h1>Painel do Prestador</h1>
+    </div>
 
-
-    <div class="grid grid-cols-3 text-center mb-6">
-      <div>
-        <h2 id="pendentes" class="text-xl font-bold text-[var(--pending)]">
-          0
-        </h2>
-        <p class="text-sm text-gray-500">Pendentes</p>
+    <!-- Cards de métricas -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div id="pendentes" class="metric-card__value">0</div>
+        <div class="metric-card__label">Pendentes</div>
       </div>
 
-      <div>
-        <h2 id="andamento" class="text-xl font-bold text-[var(--progress)]">
-          0
-        </h2>
-        <p class="text-sm text-gray-500">Em Andamento</p>
+      <div class="metric-card">
+        <div id="andamento" class="metric-card__value">0</div>
+        <div class="metric-card__label">Em Andamento</div>
       </div>
 
-      <div>
-        <h2 id="concluidos" class="text-xl font-bold text-[var(--done)]">
-          0
-        </h2>
-        <p class="text-sm text-gray-500">Concluídos</p>
+      <div class="metric-card">
+        <div id="concluidos" class="metric-card__value">0</div>
+        <div class="metric-card__label">Concluídos</div>
       </div>
     </div>
 
-
-    <div class="flex gap-4 mb-6">
+    <!-- Barra de ações -->
+    <div class="actions-bar">
       <button class="btn">Pedidos</button>
 
-
-      <a href=" {{ url_for('formulario')}}"
-        class="px-4 py-2 rounded-full text-sm text-white bg-[var(--progress)] hover:opacity-90">
+      <a href="{{ url_for('formulario') }}" class="btn-novo-servico">
         + Novo Serviço
       </a>
     </div>
 
+    <!-- Lista de pedidos -->
+    <div id="lista"></div>
 
-    <div id="lista" class="space-y-4"></div>
   </div>
-
 
   <script src="../static/js/pn.js"></script>
 
-<footer style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-  <div style="max-width:900px;margin:0 auto;">
-    <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-    <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
-      <a href="/"       style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
-      <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
-      <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
-      <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <strong class="footer-brand">Agenda Fácil</strong>
+      <p class="footer-tagline">Conectando pessoas a profissionais de confiança.</p>
+      <nav class="footer-links">
+        <a href="/">Início</a>
+        <a href="/servicos">Serviços</a>
+        <a href="/prestador">Seja Prestador</a>
+        <a href="/orcamentos">Orçamentos</a>
+      </nav>
+      <div class="footer-copy">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-      © 2025 Agenda Fácil. Todos os direitos reservados.
-    </div>
-  </div>
-</footer>
-</body>
+  </footer>
 
+</body>
 </html>

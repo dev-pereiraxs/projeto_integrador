@@ -1,53 +1,175 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Sucesso</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../static/painel.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serviço Cadastrado – Agenda Fácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/global.css">
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(160deg, #0a144a 0%, #1e3a8a 60%, #0e2756 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #fff;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 20% 20%, rgba(43,115,255,.22) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 80% 75%, rgba(16,185,129,.18) 0%, transparent 60%);
+    }
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 24px;
+      padding: 52px 48px 48px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    }
+    .check-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      box-shadow: 0 0 0 12px rgba(16,185,129,.15), 0 8px 24px rgba(16,185,129,.4);
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+    }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .check-wrap svg {
+      animation: drawCheck .4s .35s ease both;
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+    }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+    .title {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      animation: fadeUp .45s .2s ease both;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,.65);
+      line-height: 1.65;
+      margin-bottom: 32px;
+      animation: fadeUp .45s .3s ease both;
+    }
+    .subtitle strong { color: rgba(255,255,255,.9); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .info-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 99px;
+      padding: 8px 18px;
+      font-size: 13px;
+      color: rgba(255,255,255,.75);
+      margin-bottom: 28px;
+      animation: fadeUp .45s .4s ease both;
+    }
+    .info-pill span { font-size: 16px; }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeUp .45s .5s ease both;
+    }
+    .btn-painel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #2b73ff, #1d44d9);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .2s, transform .2s;
+    }
+    .btn-painel:hover { opacity: .9; transform: translateY(-2px); }
+    .btn-novo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 24px;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.85);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .btn-novo:hover { background: rgba(255,255,255,.15); }
+    .footer-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,.35);
+      animation: fadeUp .45s .6s ease both;
+    }
+  </style>
 </head>
-
-<body class="bg-[var(--bg)] flex items-center justify-center h-screen">
-
-  <div class="bg-white p-8 rounded-xl shadow text-center max-w-md">
-
-    
-    <div class="text-green-500 text-5xl mb-4">
-      ✔
+<body>
+  <div class="card">
+    <div class="check-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+           stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 18l7 7 13-13"/>
+      </svg>
     </div>
-
-    
-    <h1 class="text-xl font-semibold mb-2">
-      Serviço cadastrado com sucesso!
-    </h1>
-
-    <p class="text-gray-500 text-sm mb-6">
-      Seu serviço foi adicionado ao painel.
+    <h1 class="title">Serviço cadastrado!</h1>
+    <p class="subtitle">
+      Seu serviço foi adicionado com sucesso ao painel<br>
+      e já está <strong>disponível para agendamento</strong>.
     </p>
-
-   
-    <a href=" {{url_for('servicos')}}" class="btn-primary w-full block">
-      Concluir
-    </a>
-
-  </div>
-
-
-<footer style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-  <div style="max-width:900px;margin:0 auto;">
-    <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-    <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
-      <a href="/"       style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
-      <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
-      <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
-      <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+    <div class="info-pill">
+      <span>📋</span> Visível na listagem de serviços
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-      © 2025 Agenda Fácil. Todos os direitos reservados.
+    <div class="actions">
+      <a href="{{ url_for('painel') }}" class="btn-painel">📋 Ir para o Painel</a>
+      <a href="{{ url_for('formulario') }}" class="btn-novo">+ Cadastrar outro serviço</a>
     </div>
+    <p class="footer-note">Agenda Fácil · Conectando pessoas a profissionais</p>
   </div>
-</footer>
 </body>
 </html>

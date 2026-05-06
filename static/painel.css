@@ -10,6 +10,21 @@ body {
   background: var(--bg-light);
   color: var(--text);
   font-family: var(--font);
+  margin: 0;
+  padding: 0;
+}
+
+/* Container principal com padding lateral responsivo */
+.painel-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+@media (min-width: 640px) {
+  .painel-wrapper {
+    padding: 32px 24px;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -19,59 +34,85 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 
 .painel-header h1 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--text);
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .painel-header h1 {
+    font-size: 22px;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   CARDS DE MÉTRICAS (pendentes / em andamento / concluídos)
+   CARDS DE MÉTRICAS
 ───────────────────────────────────────────────────────────── */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Em mobile muito pequeno, empilha em coluna */
+@media (max-width: 380px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 .metric-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px 16px;
+  padding: 16px 12px;
   text-align: center;
   box-shadow: var(--shadow-xs);
+  min-width: 0; /* evita overflow no grid */
+}
+
+@media (min-width: 640px) {
+  .metric-card {
+    padding: 20px 16px;
+  }
 }
 
 .metric-card__value {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 4px;
 }
 
+@media (min-width: 640px) {
+  .metric-card__value {
+    font-size: 28px;
+  }
+}
+
 .metric-card__label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
   font-weight: 500;
 }
 
-/* Cores das métricas usando as variáveis globais */
-#pendentes {
-  color: var(--pending);
+@media (min-width: 480px) {
+  .metric-card__label {
+    font-size: 12px;
+  }
 }
 
-#andamento {
-  color: var(--progress);
-}
-
-#concluidos {
-  color: var(--done);
-}
+/* Cores das métricas */
+#pendentes  { color: var(--pending);  }
+#andamento  { color: var(--progress); }
+#concluidos { color: var(--done);     }
 
 /* ─────────────────────────────────────────────────────────────
    BARRA DE AÇÕES
@@ -79,22 +120,41 @@ body {
 .actions-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-/* Botão pill padrão do painel */
+/* Em mobile, os botões ocupam linha inteira */
+@media (max-width: 480px) {
+  .actions-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions-bar .btn,
+  .actions-bar .btn-novo-servico {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* Botão pill padrão */
 .btn {
   background: var(--card);
   border: 1px solid var(--border);
-  padding: 8px 18px;
+  padding: 10px 20px;
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;
   color: var(--text);
   cursor: pointer;
   transition: background .2s, border-color .2s;
+  white-space: nowrap;
+  min-height: 44px; /* área de toque mínima para mobile */
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn:hover {
@@ -104,7 +164,7 @@ body {
 
 /* Botão "+ Novo Serviço" */
 .btn-novo-servico {
-  padding: 8px 18px;
+  padding: 10px 20px;
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 600;
@@ -113,39 +173,15 @@ body {
   border: none;
   cursor: pointer;
   transition: opacity .2s;
+  white-space: nowrap;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .btn-novo-servico:hover {
   opacity: .88;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   CARD DE PEDIDO / ORDEM DE SERVIÇO
-───────────────────────────────────────────────────────────── */
-.pedido-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow .2s;
-}
-
-.pedido-card:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-/* Badge de status dentro do card */
-.badge {
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -158,28 +194,186 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   CARD DE PEDIDO
+───────────────────────────────────────────────────────────── */
+.pedido-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .2s;
+  flex-wrap: wrap;  /* permite quebrar linha em telas pequenas */
+}
+
+.pedido-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Info principal do pedido (título, cliente etc.) */
+.pedido-card__info {
+  flex: 1;
+  min-width: 0; /* permite truncar texto */
+}
+
+.pedido-card__info h3,
+.pedido-card__info p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ações/badge ficam em linha separada no mobile */
+.pedido-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .pedido-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pedido-card__info h3,
+  .pedido-card__info p {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .pedido-card__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* Badge de status */
+.badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────
    FORMULÁRIO DE NOVO SERVIÇO  (forms.html)
 ───────────────────────────────────────────────────────────── */
 
-/* Input do formulário */
+/* Container do formulário */
+.form-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+@media (min-width: 640px) {
+  .form-wrapper {
+    padding: 32px 24px;
+  }
+}
+
+.form-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 20px;
+}
+
+@media (min-width: 640px) {
+  .form-title {
+    font-size: 20px;
+  }
+}
+
+/* Card branco do formulário */
+.form-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 480px) {
+  .form-card {
+    padding: 24px;
+  }
+}
+
+/* Grupo de campo (label + input) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+}
+
+/* Linha com dois campos lado a lado */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Em telas muito pequenas, empilha os dois campos */
+@media (max-width: 400px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Input base */
 .input {
   display: block;
   width: 100%;
   padding: 10px 12px;
-  margin-top: 4px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-family: var(--font);
   font-size: 14px;
   color: var(--text-body);
-  background: var(--card);
+  background: var(--card, #fff);
   transition: border-color .2s, box-shadow .2s;
   outline: none;
+  box-sizing: border-box;
+  min-height: 44px;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .input:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(43, 115, 255, .12);
+}
+
+/* Textarea com altura maior */
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Select com ícone de seta */
+select.input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
 /* Botão primário do formulário */
@@ -198,6 +392,8 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: opacity .2s, transform .2s;
+  min-height: 48px;
+  margin-top: 4px;
 }
 
 .btn-primary:hover {
@@ -206,20 +402,72 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MOBILE
+   FOOTER
+───────────────────────────────────────────────────────────── */
+.site-footer {
+  background: #0f172a;
+  color: rgba(255, 255, 255, .55);
+  text-align: center;
+  padding: 32px 20px 24px;
+  font-size: 13px;
+  margin-top: 48px;
+}
+
+.footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  color: #fff;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.footer-tagline {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, .45);
+  text-decoration: none;
+  padding: 4px 0; /* área de toque maior em mobile */
+  transition: color .2s;
+}
+
+.footer-links a:hover {
+  color: rgba(255, 255, 255, .75);
+}
+
+.footer-copy {
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  padding-top: 14px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, .3);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE — ajustes gerais de touch
 ───────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
+  /* Garante que elementos clicáveis tenham área de toque mínima */
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .actions-bar {
-    flex-direction: column;
-    align-items: flex-start;
+  .footer-links {
+    gap: 14px;
   }
 }
