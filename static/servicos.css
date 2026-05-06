@@ -1,150 +1,272 @@
-:root {
-  --bg-body: #f5f7fb;
+/* ============================================================
+   servicos.css  —  Listagem de Serviços
+   Depende de: global.css
+   ============================================================ */
 
-  --azul-principal: #2563eb;
-  --azul-hover: #1e40af;
-
-  --azul-claro: #dbeafe;
-  --azul-texto: #1d4ed8;
-
-  --amarelo-claro: #fef3c7;
-  --amarelo-texto: #b45309;
-
-  --laranja-claro: #fde68a;
-  --laranja-texto: #92400e;
-
-  --verde-claro: #dcfce7;
-  --verde-texto: #166534;
-
-  --ciano-texto: #043531;
-  --ciano-claro: #00f1d1;
+/* ─────────────────────────────────────────────────────────────
+   PÁGINA
+───────────────────────────────────────────────────────────── */
+body {
+  background: var(--bg-light);
+  color: var(--text);
+  font-family: var(--font);
 }
 
-/* MENU */
+/* ─────────────────────────────────────────────────────────────
+   NAVBAR  (classe .topo usada no HTML)
+───────────────────────────────────────────────────────────── */
 .topo {
-  background: linear-gradient(to right, #0b1d4d, #1f3c88);
+  background: var(--nav-gradient);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .25);
 }
 
 .topo-container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-
+  margin-inline: auto;
+  padding: 14px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
+/* Logo */
 .logo {
-  font-weight: bold;
+  font-weight: 700;
   font-size: 18px;
-  color: white;
+  color: var(--on-dark);
+  white-space: nowrap;
 }
 
-/* LINKS */
+/* Links de navegação */
 .topo nav {
   display: flex;
-  gap: 24px;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .topo nav a {
-  color: white;
-  text-decoration: none;
-  position: relative;
+  color: var(--on-dark-soft);
   font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  transition: color .2s;
 }
 
-/* HOVER */
 .topo nav a:hover {
-  opacity: 0.8;
+  color: var(--on-dark);
 }
 
+/* Underline animado */
 .topo nav a::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: -4px;
-  width: 0%;
+  width: 0;
   height: 2px;
-  background: white;
-  transition: 0.3s;
+  background: var(--on-dark);
+  border-radius: 2px;
+  transition: width .3s ease;
 }
 
 .topo nav a:hover::after {
   width: 100%;
 }
 
-/* CARD */
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* Botões especiais na navbar */
+.btn-quero-ser-prestador,
+.btn-painel {
+  padding: 6px 16px !important;
+  border-radius: var(--radius-full) !important;
+  border: 1px solid rgba(255, 255, 255, .28) !important;
+  background: rgba(255, 255, 255, .1) !important;
+  font-size: 13px !important;
+  transition: background .2s !important;
+}
 
+.btn-quero-ser-prestador:hover,
+.btn-painel:hover {
+  background: rgba(255, 255, 255, .2) !important;
+}
+
+.btn-entrar {
+  padding: 7px 18px !important;
+  border-radius: var(--radius-full) !important;
+  background: var(--primary) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: opacity .2s !important;
+}
+
+.btn-entrar:hover {
+  opacity: .88 !important;
+}
+
+.btn-sair {
+  padding: 6px 14px !important;
+  border-radius: var(--radius-full) !important;
+  background: var(--cancel-bg) !important;
+  color: var(--cancel) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BUSCA + FILTRO
+───────────────────────────────────────────────────────────── */
+.filtro-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+#busca,
+#filtroCategoria {
+  padding: 11px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-body);
+  background: var(--card);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+#busca {
+  flex: 1;
+  min-width: 180px;
+}
+
+#busca:focus,
+#filtroCategoria:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(43, 115, 255, .12);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CARD DE SERVIÇO
+───────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  min-height: 260px;
-  transition: 0.2s;
+  min-height: 240px;
+  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--border);
+  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow);
 }
 
-/* TAG */
-.tag {
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-bottom: 5px;
-}
-
-.azul { background: var(--azul-claro); color: var(--azul-texto); }
-.amarelo { background: var(--amarelo-claro); color: var(--amarelo-texto); }
-.laranja { background: var(--laranja-claro); color: var(--laranja-texto); }
-.verde { background: var(--verde-claro); color: var(--verde-texto); }
-.ciano { background: var(--ciano-claro); color: var(--ciano-texto); }
-
-/* PREÇO */
+/* Preço */
 .preco {
-  position: flex;
-  top: 15px;
-  right: 15px;
-  color: var(--azul-texto);
-  font-weight: bold;
-}
-
-/* TEXTO */
-.card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tag-blue-txt);
   margin-top: 10px;
-  font-weight: 600;
 }
 
+/* Título */
+.card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+  color: var(--text);
+}
+
+/* Descrição */
 .card p {
-  color: var(--cinza-texto);
   font-size: 14px;
-  margin-top: 5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-top: 6px;
   flex-grow: 1;
 }
 
-/* BOTÃO */
-.card button {
-  margin-top: 15px;
-  background: var(--azul-principal);
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
+/* Botão de agendar */
+.btn-agendar {
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background .2s, transform .2s;
+  align-self: flex-start;
 }
 
-.card button:hover {
-  background: var(--azul-hover);
+.btn-agendar:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
 }
 
-/* ORÇAMENTO */
+/* ─────────────────────────────────────────────────────────────
+   CTA — SOLICITAR ORÇAMENTO
+───────────────────────────────────────────────────────────── */
 .orcamentos-card {
-  background: var(--bg-body);
-  padding: 15px;
+  padding: 20px 0;
+}
+
+.orcamentos-card .cta-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 520px;
+  margin-inline: auto;
+  box-shadow: var(--shadow-xs);
+}
+
+.orcamentos-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.orcamentos-card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .topo-container {
+    padding: 12px 16px;
+  }
+
+  .topo nav {
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .filtro-bar {
+    flex-direction: column;
+  }
+
+  #busca {
+    width: 100%;
+  }
 }

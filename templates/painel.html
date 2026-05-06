@@ -1,63 +1,75 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Painel do Prestador</title>
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel do Prestador</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../static/global.css">
+  <link rel="stylesheet" href="../static/painel.css">
+</head>
 
-   
-    <script src="https://cdn.tailwindcss.com"></script>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+  <div class="max-w-5xl mx-auto p-6">
 
-  
-    <link rel="stylesheet" href="../static/painel.css" />
-  </head>
+    <h1 class="text-2xl font-semibold mb-1">Painel do Prestador</h1>
 
-  <body class="bg-[var(--bg)] text-[var(--text)]">
-    <div class="max-w-5xl mx-auto p-6">
-      
-      <h1 class="text-2xl font-semibold mb-1">Painel do Prestador</h1>
 
-      
-      <div class="grid grid-cols-3 text-center mb-6">
-        <div>
-          <h2 id="pendentes" class="text-xl font-bold text-[var(--pending)]">
-            0
-          </h2>
-          <p class="text-sm text-gray-500">Pendentes</p>
-        </div>
-
-        <div>
-          <h2 id="andamento" class="text-xl font-bold text-[var(--progress)]">
-            0
-          </h2>
-          <p class="text-sm text-gray-500">Em Andamento</p>
-        </div>
-
-        <div>
-          <h2 id="concluidos" class="text-xl font-bold text-[var(--done)]">
-            0
-          </h2>
-          <p class="text-sm text-gray-500">Concluídos</p>
-        </div>
+    <div class="grid grid-cols-3 text-center mb-6">
+      <div>
+        <h2 id="pendentes" class="text-xl font-bold text-[var(--pending)]">
+          0
+        </h2>
+        <p class="text-sm text-gray-500">Pendentes</p>
       </div>
 
-      
-      <div class="flex gap-4 mb-6">
-        <button class="btn">Pedidos</button>
-
-        
-        <a
-          href=" {{ url_for('formulario')}}"
-          class="px-4 py-2 rounded-full text-sm text-white bg-[var(--progress)] hover:opacity-90"
-        >
-          + Novo Serviço
-        </a>
+      <div>
+        <h2 id="andamento" class="text-xl font-bold text-[var(--progress)]">
+          0
+        </h2>
+        <p class="text-sm text-gray-500">Em Andamento</p>
       </div>
 
-     
-      <div id="lista" class="space-y-4"></div>
+      <div>
+        <h2 id="concluidos" class="text-xl font-bold text-[var(--done)]">
+          0
+        </h2>
+        <p class="text-sm text-gray-500">Concluídos</p>
+      </div>
     </div>
 
-    
-    <script src="../static/js/pn.js"></script>
-  </body>
+
+    <div class="flex gap-4 mb-6">
+      <button class="btn">Pedidos</button>
+
+
+      <a href=" {{ url_for('formulario')}}"
+        class="px-4 py-2 rounded-full text-sm text-white bg-[var(--progress)] hover:opacity-90">
+        + Novo Serviço
+      </a>
+    </div>
+
+
+    <div id="lista" class="space-y-4"></div>
+  </div>
+
+
+  <script src="../static/js/pn.js"></script>
+
+<footer style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+  <div style="max-width:900px;margin:0 auto;">
+    <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+    <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
+      <a href="/"       style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
+      <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
+      <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
+      <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+      © 2025 Agenda Fácil. Todos os direitos reservados.
+    </div>
+  </div>
+</footer>
+</body>
+
 </html>

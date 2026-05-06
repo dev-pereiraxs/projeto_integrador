@@ -1,0 +1,314 @@
+/* ============================================================
+   global.css  —  Agenda Fácil  |  Design System
+   Importar ANTES de qualquer outro CSS de página:
+   <link rel="stylesheet" href="../static/global.css">
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;700;800&display=swap");
+
+/* ─────────────────────────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────────────────────────── */
+:root {
+
+  /* Marca */
+  --primary:         #2b73ff;
+  --primary-dark:    #1d44d9;
+  --primary-light:   #818cf8;
+  --primary-soft:    #eef2ff;
+
+  /* Fundos */
+  --bg-gradient:     linear-gradient(160deg, #0a144a 0%, #2436a6 100%);
+  --nav-gradient:    linear-gradient(to right, #0b1d4d, #1f3c88);
+  --bg-light:        #f5f7fb;
+  --bg-glass:        rgba(255, 255, 255, 0.08);
+
+  /* Superfícies */
+  --card:            #ffffff;
+  --card-alt:        #f6f8ff;
+
+  /* Texto — fundos escuros */
+  --on-dark:         #ffffff;
+  --on-dark-soft:    rgba(255, 255, 255, 0.75);
+  --on-dark-faint:   rgba(255, 255, 255, 0.40);
+
+  /* Texto — fundos claros */
+  --text:            #1f2937;
+  --text-body:       #272727;
+  --text-soft:       #404044;
+  --text-muted:      #6b7280;
+
+  /* Bordas */
+  --border:          #e5e7eb;
+  --border-glass:    rgba(255, 255, 255, 0.20);
+  --border-focus:    #2b73ff;
+
+  /* Status */
+  --pending:         #f59e0b;
+  --pending-bg:      #fef3c7;
+  --progress:        #1148a1;
+  --progress-bg:     #dbeafe;
+  --done:            #10b981;
+  --done-bg:         #d1fae5;
+  --cancel:          #ef4444;
+  --cancel-bg:       #fee2e2;
+
+  /* Tags */
+  --tag-blue-bg:     #dbeafe;  --tag-blue-txt:    #1d4ed8;
+  --tag-yellow-bg:   #fef3c7;  --tag-yellow-txt:  #b45309;
+  --tag-green-bg:    #dcfce7;  --tag-green-txt:   #166534;
+  --tag-cyan-bg:     #ccfbf1;  --tag-cyan-txt:    #0f766e;
+
+  /* Geometria */
+  --radius-sm:       8px;
+  --radius:          12px;
+  --radius-lg:       16px;
+  --radius-full:     9999px;
+
+  /* Sombras */
+  --shadow-xs:       0 1px 4px  rgba(0,0,0,.07);
+  --shadow-sm:       0 4px 14px rgba(0,0,0,.08);
+  --shadow:          0 8px 28px rgba(0,0,0,.13);
+  --shadow-lg:       0 18px 52px rgba(0,0,0,.22);
+
+  /* Tipografia */
+  --font:            "Poppins",  sans-serif;
+  --font-alt:        "Manrope",  sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. RESET
+───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+img    { display: block; max-width: 100%; }
+a      { text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+ul, ol { list-style: none; }
+
+/* ─────────────────────────────────────────────────────────────
+   3. BASE
+───────────────────────────────────────────────────────────── */
+body {
+  font-family: var(--font);
+  color: var(--text-body);
+  background: var(--bg-light);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 { line-height: 1.3; }
+
+/* ─────────────────────────────────────────────────────────────
+   4. LAYOUT
+───────────────────────────────────────────────────────────── */
+.container {
+  width: min(1100px, 90%);
+  margin-inline: auto;
+}
+
+/* Páginas com fundo gradiente (landing, login, cadastro) */
+.page-shell {
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  color: var(--on-dark);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. BOTÕES
+───────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.btn:hover  { transform: translateY(-2px); box-shadow: var(--shadow); }
+.btn:active { transform: translateY(0);    box-shadow: none; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+.btn-primary:hover { opacity: .92; }
+
+.btn-secondary {
+  background: #fff;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.btn-ghost {
+  background: var(--bg-glass);
+  color: var(--on-dark);
+  border: 1px solid var(--border-glass);
+}
+
+.btn-danger { background: var(--cancel); color: #fff; }
+
+.btn-sm { padding: 6px 14px;  font-size: 13px; }
+.btn-lg { padding: 14px 28px; font-size: 16px; }
+
+/* btn-default  — usado nos forms de auth */
+.btn-default {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  cursor: pointer;
+  transition: background .2s, transform .2s, box-shadow .2s;
+  box-shadow: var(--shadow-xs);
+}
+.btn-default:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. FORMULÁRIOS — componentes reutilizáveis
+───────────────────────────────────────────────────────────── */
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+  letter-spacing: .3px;
+}
+
+/* Wrapper input + ícone */
+.input-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  height: 46px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.input-field:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(43,115,255,.12);
+}
+
+.input-field i {
+  font-size: 14px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.input-field .password-icon {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: color .2s;
+}
+.input-field .password-icon:hover { color: var(--primary); }
+
+.form-control {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-body);
+  min-width: 0;
+}
+.form-control::placeholder { color: var(--text-muted); }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset !important;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+  padding: 10px 0;
+}
+
+select.form-control { cursor: pointer; }
+
+input[type="radio"],
+input[type="checkbox"] { accent-color: var(--primary); }
+
+/* input-box — agrupamento label + input-field */
+.input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. BADGES DE STATUS
+───────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-pending  { background: var(--pending-bg);  color: var(--pending);  }
+.badge-progress { background: var(--progress-bg); color: var(--progress); }
+.badge-done     { background: var(--done-bg);     color: var(--done);     }
+.badge-cancel   { background: var(--cancel-bg);   color: var(--cancel);   }
+
+/* Compatibilidade com nomes antigos */
+.pendente  { background: var(--pending-bg);  color: var(--pending);  }
+.andamento { background: var(--progress-bg); color: var(--progress); }
+.concluido { background: var(--done-bg);     color: var(--done);     }
+.cancelado { background: var(--cancel-bg);   color: var(--cancel);   }
+
+/* ─────────────────────────────────────────────────────────────
+   8. TAGS DE CATEGORIA
+───────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag.azul    { background: var(--tag-blue-bg);   color: var(--tag-blue-txt);   }
+.tag.amarelo { background: var(--tag-yellow-bg); color: var(--tag-yellow-txt); }
+.tag.verde   { background: var(--tag-green-bg);  color: var(--tag-green-txt);  }
+.tag.ciano   { background: var(--tag-cyan-bg);   color: var(--tag-cyan-txt);   }
+
+/* ─────────────────────────────────────────────────────────────
+   9. EYEBROW / RÓTULOS DE SEÇÃO
+───────────────────────────────────────────────────────────── */
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--on-dark-soft);
+  margin-bottom: 8px;
+}
+.eyebrow-blue  { color: var(--primary);      }
+.eyebrow-light { color: var(--on-dark-soft); }

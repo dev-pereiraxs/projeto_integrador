@@ -673,7 +673,8 @@
         </div>
         <span id="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
       </div>
-      <a href="/logout" style="color:#f87171;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);">
+      <a href="/logout"
+        style="color:#f87171;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);">
         🚪 Sair
       </a>
       {% else %}
@@ -1059,8 +1060,7 @@
           return;
         }
 
-        alert("Agendamento realizado com sucesso!");
-        window.location.href = "/";
+        window.location.href = "/agendamento_confirmado?id=" + (data.id || "");
 
       } catch (err) {
         console.error(err);
@@ -1070,6 +1070,24 @@
 
   </script>
 
+
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+    <div style="max-width:900px;margin:0 auto;">
+      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
+        <a href="/" style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
+        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
+        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
+        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+      </div>
+      <div
+        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>

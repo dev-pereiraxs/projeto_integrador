@@ -1,81 +1,225 @@
-:root {
-  --bg: #f9fafb;
-  --card: #ffffff;
-  --border: #e5e7eb;
+/* ============================================================
+   painel.css  —  Painel do Prestador + Formulário de Serviço
+   Depende de: global.css  +  Tailwind CDN (utilitários)
+   ============================================================ */
 
-  --text: #111827;
-  --text-light: #6b7280;
-
-  --pending: #f59e0b;
-  --progress: #1148a1;
-  --done: #10b981;
-
-  --cancel: #ef4444;
+/* ─────────────────────────────────────────────────────────────
+   PÁGINA
+───────────────────────────────────────────────────────────── */
+body {
+  background: var(--bg-light);
+  color: var(--text);
+  font-family: var(--font);
 }
 
-/* Botão padrão */
-.btn {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Card */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+/* ─────────────────────────────────────────────────────────────
+   CABEÇALHO DA PÁGINA
+───────────────────────────────────────────────────────────── */
+.painel-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-/* Badge */
-.badge {
-  padding: 4px 10px;
-  border-radius: 999px;
+.painel-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CARDS DE MÉTRICAS (pendentes / em andamento / concluídos)
+───────────────────────────────────────────────────────────── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+}
+
+.metric-card__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.metric-card__label {
   font-size: 12px;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
-/* Status */
-.pendente {
-  background: #fef3c7;
+/* Cores das métricas usando as variáveis globais */
+#pendentes {
   color: var(--pending);
 }
 
-.andamento {
-  background: #dbeafe;
+#andamento {
   color: var(--progress);
 }
 
-.concluido {
-  background: #d1fae5;
+#concluidos {
   color: var(--done);
 }
 
-.cancelado {
-  background: #fee2e2;
-  color: var(--cancel);
+/* ─────────────────────────────────────────────────────────────
+   BARRA DE AÇÕES
+───────────────────────────────────────────────────────────── */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-/* Inputs (para reaproveitar no forms.html) */
-.input {
-  width: 100%;
+/* Botão pill padrão do painel */
+.btn {
+  background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 4px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
 }
 
+.btn:hover {
+  background: var(--card-alt);
+  border-color: var(--primary);
+}
+
+/* Botão "+ Novo Serviço" */
+.btn-novo-servico {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--progress);
+  border: none;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.btn-novo-servico:hover {
+  opacity: .88;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CARD DE PEDIDO / ORDEM DE SERVIÇO
+───────────────────────────────────────────────────────────── */
+.pedido-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .2s;
+}
+
+.pedido-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Badge de status dentro do card */
+.badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LISTA DE PEDIDOS
+───────────────────────────────────────────────────────────── */
+#lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FORMULÁRIO DE NOVO SERVIÇO  (forms.html)
+───────────────────────────────────────────────────────────── */
+
+/* Input do formulário */
+.input {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 4px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-body);
+  background: var(--card);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(43, 115, 255, .12);
+}
+
+/* Botão primário do formulário */
 .btn-primary {
-  background: linear-gradient(90deg, #042681, #0c51e6);
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+
+.btn-primary:hover {
+  opacity: .92;
+  transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

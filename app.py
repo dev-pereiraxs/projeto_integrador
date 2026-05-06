@@ -502,7 +502,7 @@ def perfil_prestador(email):
     conn.close()
 
     return render_template(
-        "perfil_prestador.html",
+        "perfil-prestador.html",
         prestador=prestador,
         servicos=servicos,
         agendamentos_pendentes=agendamentos_pendentes,
@@ -816,6 +816,7 @@ def editar_perfil_cliente():
     sobrenome = dados.get("sobrenome", "").strip()
     telefone = dados.get("telefone", "").strip()
     cidade   = dados.get("cidade", "").strip()
+    sexo     = dados.get("sexo", "").strip()
 
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
@@ -824,9 +825,9 @@ def editar_perfil_cliente():
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE cadastro_clientes
-        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s
+        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s, sexo = %s
         WHERE email = %s
-    """, (nome, sobrenome, telefone, cidade, session["usuario_logado"]))
+    """, (nome, sobrenome, telefone, cidade, sexo, session["usuario_logado"]))
     conn.commit()
     cursor.close()
     conn.close()
@@ -848,6 +849,7 @@ def editar_perfil_prestador():
     telefone  = dados.get("telefone", "").strip()
     cidade    = dados.get("cidade", "").strip()
     bio       = dados.get("bio", "").strip()
+    sexo      = dados.get("sexo", "").strip()
 
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
@@ -856,9 +858,9 @@ def editar_perfil_prestador():
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE cadastro_prestadores
-        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s, bio = %s
+        SET nome = %s, sobrenome = %s, telefone = %s, cidade = %s, bio = %s, sexo = %s
         WHERE email = %s
-    """, (nome, sobrenome, telefone, cidade, bio, session["usuario_logado"]))
+    """, (nome, sobrenome, telefone, cidade, bio, sexo, session["usuario_logado"]))
     conn.commit()
     cursor.close()
     conn.close()

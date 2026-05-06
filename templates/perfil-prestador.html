@@ -528,50 +528,32 @@
     </a>
     <div class="topbar-nav">
       <a href="/servicos" class="topbar-link">Serviços</a>
-      {% if session.get('usuario_logado') %}
       <a href="/meu_perfil" class="user-pill">
-        <div class="user-pill-av">{{ (session.get('usuario_nome','?'))[0]|upper }}</div>
-        <span>{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
+        <div class="user-pill-av"></div>
       </a>
-      <a href="/logout" class="btn-logout">🚪 Sair</a>
-      {% else %}
+      <a href="/logout" class="btn-logout"> Sair</a>
       <a href="/login" class="topbar-link">Entrar</a>
-      {% endif %}
     </div>
   </div>
 
   <div class="hero">
     <div class="hero-inner">
-<<<<<<< HEAD
       <!-- AVATAR COM UPLOAD (só aparece se for o próprio prestador logado) -->
-      {% if session.get('usuario_logado') == prestador.email %}
-        <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
-          {% if prestador.foto %}
-            <img src="{{ prestador.foto }}" id="fotoPreview"
-                 style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
-          {% else %}
-            <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
-          {% endif %}
-          <span style="position:absolute;bottom:0;right:0;background:#2563eb;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</span>
-        </label>
-        <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
-      {% else %}
-        {% if prestador.foto %}
-          <img src="{{ prestador.foto }}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
-        {% else %}
-          <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
-        {% endif %}
-      {% endif %}
+      <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
+        <img src="{{ prestador.foto }}" id="fotoPreview"
+          style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
+        <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
+        <span
+          style="position:absolute;bottom:0;right:0;background:#2563eb;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</span>
+      </label>
+      <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+      <img src="{{ prestador.foto }}"
+        style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
+      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
 
       <div>
         <div class="hero-badge">✔ Prestador Verificado</div>
-        <div class="hero-name" id="heroNome">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
-=======
-      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
-      <div>
-        <div class="hero-badge">✔ Prestador Verificado</div>
         <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
->>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
         <div class="hero-stats">
           <div class="hero-stat"><span class="hero-stat-val">{{ servicos|length }}</span><span
@@ -584,51 +566,59 @@
               class="hero-stat-label">Avaliação</span></div>
         </div>
       </div>
-<<<<<<< HEAD
 
       {% if session.get('usuario_logado') == prestador.email %}
-      <button onclick="abrirModalEditar()" style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
-          ✏️ Editar Perfil
+      <button onclick="abrirModalEditar()"
+        style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
+        ✏️ Editar Perfil
       </button>
       {% endif %}
     </div>
   </div>
 
   <!-- MODAL EDITAR PERFIL (prestador) -->
-  <div id="modalEditar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
-      <div style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;margin:16px;max-height:90vh;overflow-y:auto;">
-          <h3 style="margin-bottom:20px;font-size:18px;">Editar Perfil</h3>
-          <div style="display:grid;gap:12px;">
-              <input id="editNome"      placeholder="Primeiro nome"  style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-              <input id="editSobrenome" placeholder="Último nome"    style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-              <input id="editTelefone"  placeholder="Telefone"       style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-              <input id="editCidade"    placeholder="Cidade, Estado" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-              <textarea id="editBio"   placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
-                        style="padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical;"></textarea>
+  <div id="modalEditar"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+    <div
+      style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;margin:16px;max-height:90vh;overflow-y:auto;">
+      <h3 style="margin-bottom:20px;font-size:18px;">Editar Perfil</h3>
+      <div style="display:grid;gap:12px;">
+        <input id="editNome" placeholder="Primeiro nome" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+        <input id="editSobrenome" placeholder="Último nome"
+          style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+        <input id="editTelefone" placeholder="Telefone" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+        <input id="editCidade" placeholder="Cidade, Estado"
+          style="padding:10px;border:1px solid #ddd;border-radius:8px;">
+        <select id="editSexo"
+          style="padding:10px;border:1px solid #ddd;border-radius:8px;background:#fff;font-size:14px;">
+          <option value="">Gênero</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Outro">Outro</option>
+        </select>
+        <textarea id="editBio" placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
+          style="padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical;"></textarea>
 
-              <hr style="border:none;border-top:1px solid #eee;">
+        <hr style="border:none;border-top:1px solid #eee;">
 
-              <label style="font-size:13px;font-weight:600;color:#374151;">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
-              <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg"
-                     style="padding:8px;border:1px solid #ddd;border-radius:8px;font-size:13px;">
-              <button type="button" onclick="uploadCertificado()"
-                      style="padding:9px;background:#f1f5f9;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">
-                  ⬆️ Enviar Certificado
-              </button>
-              <div id="certStatus" style="font-size:12px;color:#10b981;"></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:20px;">
-              <button onclick="salvarPerfil()" style="flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Salvar</button>
-              <button onclick="fecharModal()"  style="flex:1;padding:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;">Cancelar</button>
-          </div>
+        <label style="font-size:13px;font-weight:600;color:#374151;">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
+        <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg"
+          style="padding:8px;border:1px solid #ddd;border-radius:8px;font-size:13px;">
+        <button type="button" onclick="uploadCertificado()"
+          style="padding:9px;background:#f1f5f9;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">
+          ⬆️ Enviar Certificado
+        </button>
+        <div id="certStatus" style="font-size:12px;color:#10b981;"></div>
       </div>
-  </div>
-
-=======
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button onclick="salvarPerfil()"
+          style="flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Salvar</button>
+        <button onclick="fecharModal()"
+          style="flex:1;padding:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;">Cancelar</button>
+      </div>
     </div>
   </div>
 
->>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
   <div class="page">
     <div>
       <div class="card">
@@ -750,80 +740,97 @@
       document.getElementById('tab-' + name).classList.add('active');
     }
   </script>
-<<<<<<< HEAD
 
-    <script>
-        function abrirModalEditar() {
-            document.getElementById("editNome").value      = "{{ prestador.nome or '' }}";
-            document.getElementById("editSobrenome").value = "{{ prestador.sobrenome or '' }}";
-            document.getElementById("editTelefone").value  = "{{ prestador.telefone or '' }}";
-            document.getElementById("editCidade").value    = "{{ prestador.cidade or '' }}";
-            document.getElementById("editBio").value       = "{{ prestador.bio or '' }}";
-            document.getElementById("modalEditar").style.display = "flex";
-        }
+  <script>
+    function abrirModalEditar() {
+      document.getElementById("editNome").value = "{{ prestador.nome or '' }}";
+      document.getElementById("editSobrenome").value = "{{ prestador.sobrenome or '' }}";
+      document.getElementById("editTelefone").value = "{{ prestador.telefone or '' }}";
+      document.getElementById("editCidade").value = "{{ prestador.cidade or '' }}";
+      document.getElementById("editSexo").value = "{{ prestador.sexo or '' }}";
+      document.getElementById("editBio").value = "{{ prestador.bio or '' }}";
+      document.getElementById("modalEditar").style.display = "flex";
+    }
 
-        function fecharModal() {
-            document.getElementById("modalEditar").style.display = "none";
-        }
+    function fecharModal() {
+      document.getElementById("modalEditar").style.display = "none";
+    }
 
-        async function salvarPerfil() {
-            const dados = {
-                nome:      document.getElementById("editNome").value.trim(),
-                sobrenome: document.getElementById("editSobrenome").value.trim(),
-                telefone:  document.getElementById("editTelefone").value.trim(),
-                cidade:    document.getElementById("editCidade").value.trim(),
-                bio:       document.getElementById("editBio").value.trim(),
-            };
-            if (!dados.nome) { alert("Nome é obrigatório"); return; }
+    async function salvarPerfil() {
+      const dados = {
+        nome: document.getElementById("editNome").value.trim(),
+        sobrenome: document.getElementById("editSobrenome").value.trim(),
+        telefone: document.getElementById("editTelefone").value.trim(),
+        cidade: document.getElementById("editCidade").value.trim(),
+        sexo: document.getElementById("editSexo").value,
+        bio: document.getElementById("editBio").value.trim(),
+      };
+      if (!dados.nome) { alert("Nome é obrigatório"); return; }
 
-            const res  = await fetch("/editar_perfil_prestador", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(dados)
-            });
-            const data = await res.json();
-            if (data.erro) { alert("Erro: " + data.erro); }
-            else { fecharModal(); location.reload(); }
-        }
+      const res = await fetch("/editar_perfil_prestador", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      });
+      const data = await res.json();
+      if (data.erro) { alert("Erro: " + data.erro); }
+      else { fecharModal(); location.reload(); }
+    }
 
-        async function uploadFoto(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const form = new FormData();
-            form.append("foto", file);
-            const res  = await fetch("/salvar_foto", { method: "POST", body: form });
-            const data = await res.json();
-            if (data.erro) { alert("Erro: " + data.erro); return; }
-            const preview = document.getElementById("fotoPreview");
-            if (preview.tagName === "IMG") {
-                preview.src = data.url + "?t=" + Date.now();
-            } else {
-                const img = document.createElement("img");
-                img.src   = data.url;
-                img.id    = "fotoPreview";
-                img.style = "width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);";
-                preview.replaceWith(img);
-            }
-        }
+    async function uploadFoto(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const form = new FormData();
+      form.append("foto", file);
+      const res = await fetch("/salvar_foto", { method: "POST", body: form });
+      const data = await res.json();
+      if (data.erro) { alert("Erro: " + data.erro); return; }
+      const preview = document.getElementById("fotoPreview");
+      if (preview.tagName === "IMG") {
+        preview.src = data.url + "?t=" + Date.now();
+      } else {
+        const img = document.createElement("img");
+        img.src = data.url;
+        img.id = "fotoPreview";
+        img.style = "width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);";
+        preview.replaceWith(img);
+      }
+    }
 
-        async function uploadCertificado() {
-            const input = document.getElementById("inputCert");
-            const file  = input.files[0];
-            if (!file) { alert("Selecione um arquivo"); return; }
-            const form = new FormData();
-            form.append("certificado", file);
-            const res  = await fetch("/salvar_certificado", { method: "POST", body: form });
-            const data = await res.json();
-            document.getElementById("certStatus").textContent = data.erro ? "Erro: " + data.erro : "✅ " + data.mensagem;
-        }
+    async function uploadCertificado() {
+      const input = document.getElementById("inputCert");
+      const file = input.files[0];
+      if (!file) { alert("Selecione um arquivo"); return; }
+      const form = new FormData();
+      form.append("certificado", file);
+      const res = await fetch("/salvar_certificado", { method: "POST", body: form });
+      const data = await res.json();
+      document.getElementById("certStatus").textContent = data.erro ? "Erro: " + data.erro : "✅ " + data.mensagem;
+    }
 
-        document.getElementById("modalEditar").addEventListener("click", function(e) {
-            if (e.target === this) fecharModal();
-        });
-    </script>
+    document.getElementById("modalEditar").addEventListener("click", function (e) {
+      if (e.target === this) fecharModal();
+    });
+  </script>
 
-=======
->>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
+
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+    <div style="max-width:900px;margin:0 auto;">
+      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
+        <a href="/" style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
+        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
+        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
+        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+      </div>
+      <div
+        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>
