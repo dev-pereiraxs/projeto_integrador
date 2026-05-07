@@ -4,7 +4,7 @@
    <link rel="stylesheet" href="../static/global.css">
    ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;700;800&family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap");
 
 /* ─────────────────────────────────────────────────────────────
    1. DESIGN TOKENS
@@ -21,7 +21,7 @@
   --bg-gradient:     linear-gradient(160deg, #0a144a 0%, #2436a6 100%);
   --nav-gradient:    linear-gradient(to right, #0b1d4d, #1f3c88);
   --bg-light:        #f5f7fb;
-  --bg:              #f5f7fb;          /* alias de --bg-light (usado em painel.css) */
+  --bg:              #f5f7fb;
   --bg-glass:        rgba(255, 255, 255, 0.08);
 
   /* Superfícies */
@@ -75,6 +75,12 @@
   /* Tipografia */
   --font:            "Poppins",  sans-serif;
   --font-alt:        "Manrope",  sans-serif;
+  --font-display:    "Sora",     sans-serif;
+  --font-ui:         "DM Sans",  sans-serif;
+
+  /* Layout */
+  --navbar-h:        58px;
+  --content-max:     1200px;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -112,7 +118,6 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
   margin-inline: auto;
 }
 
-/* Páginas com fundo gradiente (landing, login, cadastro) */
 .page-shell {
   background: var(--bg-gradient);
   min-height: 100vh;
@@ -120,7 +125,262 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   5. BOTÕES
+   5. NAVBAR  —  componente global unificado
+   HTML:
+     <header class="navbar">
+       <div class="navbar-inner">
+         <a class="navbar-brand" href="/">
+           <span class="navbar-brand-mark"><i class="..."></i></span>
+           Agenda Fácil
+         </a>
+         <button class="navbar-toggle" aria-label="Menu">
+           <span></span><span></span><span></span>
+         </button>
+         <nav class="navbar-links">
+           <a class="navbar-link" href="/servicos">Serviços</a>
+           <a class="navbar-link navbar-link--ghost" href="/perfil">Meu Perfil</a>
+           <a class="navbar-link navbar-link--danger" href="/logout">Sair</a>
+         </nav>
+       </div>
+     </header>
+   JS: toggling class "open" em .navbar-toggle e .navbar-links
+───────────────────────────────────────────────────────────── */
+.navbar {
+  background: var(--nav-gradient);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .28);
+}
+
+.navbar-inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: 0 24px;
+  height: var(--navbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+}
+
+/* ── Logo ── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--on-dark);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.navbar-brand-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navbar-brand-mark img,
+.navbar-brand-mark i {
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  font-size: 15px;
+}
+
+/* ── Links ── */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-link {
+  color: var(--on-dark-soft);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: color .2s, background .2s;
+  white-space: nowrap;
+  font-family: var(--font);
+}
+
+.navbar-link:hover {
+  color: var(--on-dark);
+  background: rgba(255, 255, 255, .08);
+}
+
+.navbar-link.active { color: var(--on-dark); }
+
+/* Ghost pill */
+.navbar-link--ghost {
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .07);
+}
+.navbar-link--ghost:hover { background: rgba(255, 255, 255, .16); }
+
+/* Primary pill */
+.navbar-link--primary {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+.navbar-link--primary:hover { background: var(--primary-dark); color: #fff; }
+
+/* Danger / logout */
+.navbar-link--danger {
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, .28);
+}
+.navbar-link--danger:hover {
+  background: rgba(239, 68, 68, .12);
+  color: #fca5a5;
+}
+
+/* User pill com avatar */
+.navbar-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: var(--radius-full);
+  padding: 4px 14px 4px 4px;
+  text-decoration: none;
+  transition: background .2s;
+}
+.navbar-user-pill:hover { background: rgba(255, 255, 255, .18); }
+
+.navbar-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.navbar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── Hamburger button ── */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 7px;
+  border-radius: var(--radius-sm);
+  transition: background .2s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.navbar-toggle:hover { background: rgba(255, 255, 255, .1); }
+
+.navbar-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform .3s ease, opacity .3s ease;
+  transform-origin: center;
+}
+
+/* Ícone X quando aberto */
+.navbar-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.navbar-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .navbar-inner { padding: 0 16px; }
+
+  .navbar-toggle { display: flex; }
+
+  .navbar-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, #0d2255, #163080);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px 12px 16px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35);
+    z-index: 199;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+
+  .navbar-links.open { display: flex; }
+
+  .navbar-link {
+    padding: 12px 14px;
+    font-size: 15px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+  }
+
+  .navbar-link:hover { background: rgba(255, 255, 255, .08); }
+
+  .navbar-link--ghost,
+  .navbar-link--primary,
+  .navbar-link--danger {
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .navbar-link--primary { background: rgba(43, 115, 255, .2); color: #93c5fd; }
+  .navbar-link--danger  { background: rgba(239, 68, 68, .1);  color: #f87171; border: none; }
+
+  .navbar-user-pill {
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    width: 100%;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: rgba(255, 255, 255, .06);
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. BOTÕES
 ───────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -162,7 +422,6 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
 .btn-sm { padding: 6px 14px;  font-size: 13px; }
 .btn-lg { padding: 14px 28px; font-size: 16px; }
 
-/* btn-default  — usado nos forms de auth */
 .btn-default {
   display: inline-flex;
   align-items: center;
@@ -187,7 +446,7 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   6. FORMULÁRIOS — componentes reutilizáveis
+   7. FORMULÁRIOS — componentes reutilizáveis
 ───────────────────────────────────────────────────────────── */
 .form-label {
   display: block;
@@ -198,7 +457,6 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
   letter-spacing: .3px;
 }
 
-/* Wrapper input + ícone */
 .input-field {
   display: flex;
   align-items: center;
@@ -213,7 +471,7 @@ h1, h2, h3, h4, h5 { line-height: 1.3; }
 
 .input-field:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(43,115,255,.12);
+  box-shadow: 0 0 0 3px rgba(43, 115, 255, .12);
 }
 
 .input-field i {
@@ -256,7 +514,6 @@ select.form-control { cursor: pointer; }
 input[type="radio"],
 input[type="checkbox"] { accent-color: var(--primary); }
 
-/* input-box — agrupamento label + input-field */
 .input-box {
   display: flex;
   flex-direction: column;
@@ -264,7 +521,7 @@ input[type="checkbox"] { accent-color: var(--primary); }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   7. BADGES DE STATUS
+   8. BADGES DE STATUS
 ───────────────────────────────────────────────────────────── */
 .badge {
   display: inline-block;
@@ -278,14 +535,14 @@ input[type="checkbox"] { accent-color: var(--primary); }
 .badge-done     { background: var(--done-bg);     color: var(--done);     }
 .badge-cancel   { background: var(--cancel-bg);   color: var(--cancel);   }
 
-/* Compatibilidade com nomes antigos */
+/* Aliases legados */
 .pendente  { background: var(--pending-bg);  color: var(--pending);  }
 .andamento { background: var(--progress-bg); color: var(--progress); }
 .concluido { background: var(--done-bg);     color: var(--done);     }
 .cancelado { background: var(--cancel-bg);   color: var(--cancel);   }
 
 /* ─────────────────────────────────────────────────────────────
-   8. TAGS DE CATEGORIA
+   9. TAGS DE CATEGORIA
 ───────────────────────────────────────────────────────────── */
 .tag {
   display: inline-block;
@@ -300,7 +557,7 @@ input[type="checkbox"] { accent-color: var(--primary); }
 .tag.ciano   { background: var(--tag-cyan-bg);   color: var(--tag-cyan-txt);   }
 
 /* ─────────────────────────────────────────────────────────────
-   9. EYEBROW / RÓTULOS DE SEÇÃO
+   10. EYEBROW / RÓTULOS DE SEÇÃO
 ───────────────────────────────────────────────────────────── */
 .eyebrow {
   display: inline-block;
@@ -315,15 +572,26 @@ input[type="checkbox"] { accent-color: var(--primary); }
 .eyebrow-light { color: var(--on-dark-soft); }
 
 /* ─────────────────────────────────────────────────────────────
-   10. FOOTER  — componente reutilizável
-       Substitui os blocos inline repetidos em cada página.
-       Uso: <footer class="footer"> ... </footer>
+   11. FOOTER — componente global unificado
+   HTML:
+     <footer class="footer">
+       <div class="footer__inner">
+         <strong class="footer__brand">Agenda Fácil</strong>
+         <p class="footer__tagline">Conectamos clientes e prestadores de serviço</p>
+         <div class="footer__links">
+           <a href="#">Termos</a>
+           <a href="#">Privacidade</a>
+           <a href="#">Contato</a>
+         </div>
+         <p class="footer__copy">&copy; 2025 Agenda Fácil</p>
+       </div>
+     </footer>
 ───────────────────────────────────────────────────────────── */
 .footer {
   background: #0f172a;
   color: rgba(255, 255, 255, .55);
   text-align: center;
-  padding: 32px 20px 24px;
+  padding: 40px 20px 28px;
   font-size: 13px;
   margin-top: 48px;
 }
@@ -331,19 +599,24 @@ input[type="checkbox"] { accent-color: var(--primary); }
 .footer__inner {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .footer__brand {
   color: #fff;
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-size: 16px;
   font-weight: 700;
-  display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .footer__tagline {
-  margin: 0 0 14px;
-  color: rgba(255, 255, 255, .55);
+  color: rgba(255, 255, 255, .45);
+  font-size: 13px;
+  margin-bottom: 16px;
 }
 
 .footer__links {
@@ -352,19 +625,32 @@ input[type="checkbox"] { accent-color: var(--primary); }
   gap: 24px;
   flex-wrap: wrap;
   font-size: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .footer__links a {
-  color: rgba(255, 255, 255, .45);
+  color: rgba(255, 255, 255, .4);
   text-decoration: none;
   transition: color .2s;
+  padding: 4px 0;
 }
 .footer__links a:hover { color: rgba(255, 255, 255, .8); }
 
 .footer__copy {
+  width: 100%;
   border-top: 1px solid rgba(255, 255, 255, .1);
-  padding-top: 14px;
+  padding-top: 16px;
+  margin-top: 4px;
   font-size: 11px;
-  color: rgba(255, 255, 255, .3);
+  color: rgba(255, 255, 255, .25);
+}
+
+/* ── Alias legado (painel.css usava .site-footer) ── */
+.site-footer {
+  background: #0f172a;
+  color: rgba(255, 255, 255, .55);
+  text-align: center;
+  padding: 40px 20px 28px;
+  font-size: 13px;
+  margin-top: 48px;
 }

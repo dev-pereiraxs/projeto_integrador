@@ -5,517 +5,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ prestador.nome }} {{ prestador.sobrenome }} – Agenda Fácil</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap"
     rel="stylesheet" />
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
 
-    :root {
-      --blue: #2563eb;
-      --blue-d: #1d4ed8;
-      --blue-gl: linear-gradient(135deg, #2563eb, #1d4ed8);
-      --green: #10b981;
-      --gold: #f59e0b;
-      --text: #1a2340;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --surface: #f8fafc;
-      --white: #ffffff;
-      --radius: 14px;
-      --navy: #0f172a;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: #f1f5f9;
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: var(--navy);
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      text-decoration: none;
-    }
-
-    .brand-icon {
-      width: 30px;
-      height: 30px;
-      background: var(--blue-gl);
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-name {
-      font-family: 'Sora', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      color: #fff;
-    }
-
-    .topbar-nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .topbar-link {
-      color: rgba(255, 255, 255, .55);
-      font-size: 13px;
-      text-decoration: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      transition: all .2s;
-    }
-
-    .topbar-link:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, .08);
-    }
-
-    .user-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(255, 255, 255, .1);
-      border: 1px solid rgba(255, 255, 255, .15);
-      border-radius: 99px;
-      padding: 3px 12px 3px 3px;
-      text-decoration: none;
-      transition: all .2s;
-    }
-
-    .user-pill:hover {
-      background: rgba(255, 255, 255, .18);
-    }
-
-    .user-pill-av {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--blue-gl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .user-pill span {
-      font-size: 13px;
-      font-weight: 500;
-      color: #fff;
-    }
-
-    .btn-logout {
-      font-size: 12px;
-      color: #f87171;
-      text-decoration: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(248, 113, 113, .3);
-      transition: all .2s;
-    }
-
-    .btn-logout:hover {
-      background: rgba(239, 68, 68, .12);
-    }
-
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-      padding: 48px 24px 80px;
-    }
-
-    .hero-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .hero-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: var(--blue-gl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Sora', sans-serif;
-      font-size: 36px;
-      font-weight: 700;
-      color: #fff;
-      border: 4px solid rgba(255, 255, 255, .2);
-      flex-shrink: 0;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(16, 185, 129, .15);
-      border: 1px solid rgba(16, 185, 129, .4);
-      color: #6ee7b7;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 99px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .hero-name {
-      font-family: 'Sora', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .hero-areas {
-      font-size: 14px;
-      color: rgba(255, 255, 255, .6);
-      margin-bottom: 12px;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .hero-stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-stat-val {
-      font-family: 'Sora', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .hero-stat-label {
-      font-size: 11px;
-      color: rgba(255, 255, 255, .5);
-    }
-
-    .hero-stat-div {
-      width: 1px;
-      background: rgba(255, 255, 255, .15);
-      align-self: stretch;
-    }
-
-    .page {
-      max-width: 900px;
-      margin: -40px auto 0;
-      padding: 0 24px 48px;
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .card-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .tabs {
-      display: flex;
-      border-bottom: 2px solid var(--border);
-      padding: 0 20px;
-    }
-
-    .tab-btn {
-      padding: 14px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: all .2s;
-    }
-
-    .tab-btn.active {
-      color: var(--blue);
-      border-bottom-color: var(--blue);
-    }
-
-    .tab-btn:hover:not(.active) {
-      color: var(--text);
-    }
-
-    .tab-panel {
-      display: none;
-      padding: 20px;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    .service-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 10px;
-      transition: all .2s;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .service-item:hover {
-      border-color: var(--blue);
-      background: #eff6ff;
-    }
-
-    .service-emoji {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: #eff6ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .service-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .service-meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .service-price {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--blue);
-      margin-left: auto;
-      white-space: nowrap;
-    }
-
-    .review-item {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 10px;
-    }
-
-    .review-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .reviewer-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .reviewer-av {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--blue-gl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .reviewer-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .reviewer-date {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .review-stars {
-      color: var(--gold);
-      font-size: 14px;
-    }
-
-    .review-text {
-      font-size: 13px;
-      color: #475569;
-      line-height: 1.6;
-    }
-
-    .sidebar-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 12px 20px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    .info-item:last-child {
-      border-bottom: none;
-    }
-
-    .info-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .info-label {
-      color: var(--muted);
-      font-size: 11px;
-      margin-bottom: 1px;
-    }
-
-    .info-value {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .area-tag {
-      display: inline-flex;
-      align-items: center;
-      background: #eff6ff;
-      color: var(--blue);
-      border: 1px solid #bfdbfe;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      margin: 2px;
-    }
-
-    .btn-agendar {
-      display: block;
-      width: calc(100% - 40px);
-      margin: 0 20px 20px;
-      padding: 13px;
-      background: var(--blue-gl);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Sora', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      transition: opacity .2s, transform .15s;
-    }
-
-    .btn-agendar:hover {
-      opacity: .9;
-      transform: translateY(-1px);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 32px 20px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .empty-state span {
-      font-size: 32px;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    @media(max-width:680px) {
-      .page {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-inner {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .hero-stats {
-        justify-content: center;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="../static/global.css">
+  <link rel="stylesheet" href="../static/perfil.css">
 </head>
 
 <body>
 
+  <!-- TOPBAR -->
   <div class="topbar">
     <a class="brand" href="/">
       <div class="brand-icon">
@@ -528,98 +30,106 @@
     </a>
     <div class="topbar-nav">
       <a href="/servicos" class="topbar-link">Serviços</a>
+      {% if session.get('usuario_logado') %}
       <a href="/meu_perfil" class="user-pill">
-        <div class="user-pill-av"></div>
+        <div class="user-pill-av">{{ (session.get('usuario_nome','?'))[0]|upper }}</div>
+        <span>{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
       </a>
-      <a href="/logout" class="btn-logout"> Sair</a>
+      <a href="/logout" class="btn-logout">🚪 Sair</a>
+      {% else %}
       <a href="/login" class="topbar-link">Entrar</a>
-    </div>
-  </div>
-
-  <div class="hero">
-    <div class="hero-inner">
-      <!-- AVATAR COM UPLOAD (só aparece se for o próprio prestador logado) -->
-      <label for="inputFoto" style="cursor:pointer;position:relative;" title="Trocar foto">
-        <img src="{{ prestador.foto }}" id="fotoPreview"
-          style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
-        <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
-        <span
-          style="position:absolute;bottom:0;right:0;background:#2563eb;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</span>
-      </label>
-      <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
-      <img src="{{ prestador.foto }}"
-        style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);">
-      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
-
-      <div>
-        <div class="hero-badge">✔ Prestador Verificado</div>
-        <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
-        <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
-        <div class="hero-stats">
-          <div class="hero-stat"><span class="hero-stat-val">{{ servicos|length }}</span><span
-              class="hero-stat-label">Serviços</span></div>
-          <div class="hero-stat-div"></div>
-          <div class="hero-stat"><span class="hero-stat-val">{{ agendamentos_count }}</span><span
-              class="hero-stat-label">Jobs concluídos</span></div>
-          <div class="hero-stat-div"></div>
-          <div class="hero-stat"><span class="hero-stat-val" style="color:#fbbf24;">4,8 ★</span><span
-              class="hero-stat-label">Avaliação</span></div>
-        </div>
-      </div>
-
-      {% if session.get('usuario_logado') == prestador.email %}
-      <button onclick="abrirModalEditar()"
-        style="margin-left:auto;padding:8px 18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:13px;cursor:pointer;">
-        ✏️ Editar Perfil
-      </button>
       {% endif %}
     </div>
   </div>
 
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+
+      <!-- Avatar — upload só se for o próprio prestador logado -->
+      {% if session.get('usuario_logado') == prestador.email %}
+      <label for="inputFoto" class="avatar-wrapper" title="Trocar foto">
+        {% if prestador.foto %}
+        <img src="{{ prestador.foto }}" id="fotoPreview" class="hero-avatar-img" alt="Foto de perfil">
+        {% else %}
+        <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
+        {% endif %}
+        <span class="avatar-camera">📷</span>
+      </label>
+      <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+      {% else %}
+      {% if prestador.foto %}
+      <img src="{{ prestador.foto }}" class="hero-avatar-img" alt="Foto de perfil">
+      {% else %}
+      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
+      {% endif %}
+      {% endif %}
+
+      <div>
+        <div class="hero-badge hero-badge--prestador">✔ Prestador Verificado</div>
+        <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
+        <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-val">{{ servicos|length }}</span>
+            <span class="hero-stat-label">Serviços</span>
+          </div>
+          <div class="hero-stat-div"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-val">{{ agendamentos_count }}</span>
+            <span class="hero-stat-label">Jobs concluídos</span>
+          </div>
+          <div class="hero-stat-div"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-val" style="color:#fbbf24;">4,8 ★</span>
+            <span class="hero-stat-label">Avaliação</span>
+          </div>
+        </div>
+      </div>
+
+      {% if session.get('usuario_logado') == prestador.email %}
+      <button class="btn-edit-hero" onclick="abrirModalEditar()">✏️ Editar Perfil</button>
+      {% endif %}
+
+    </div>
+  </div>
+
   <!-- MODAL EDITAR PERFIL (prestador) -->
-  <div id="modalEditar"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
-    <div
-      style="background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;margin:16px;max-height:90vh;overflow-y:auto;">
-      <h3 style="margin-bottom:20px;font-size:18px;">Editar Perfil</h3>
-      <div style="display:grid;gap:12px;">
-        <input id="editNome" placeholder="Primeiro nome" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-        <input id="editSobrenome" placeholder="Último nome"
-          style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-        <input id="editTelefone" placeholder="Telefone" style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-        <input id="editCidade" placeholder="Cidade, Estado"
-          style="padding:10px;border:1px solid #ddd;border-radius:8px;">
-        <select id="editSexo"
-          style="padding:10px;border:1px solid #ddd;border-radius:8px;background:#fff;font-size:14px;">
+  <div id="modalEditar" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Editar Perfil</h3>
+      <div class="modal-fields">
+        <input id="editNome" class="modal-input" placeholder="Primeiro nome">
+        <input id="editSobrenome" class="modal-input" placeholder="Último nome">
+        <input id="editTelefone" class="modal-input" placeholder="Telefone">
+        <input id="editCidade" class="modal-input" placeholder="Cidade, Estado">
+        <select id="editSexo" class="modal-input">
           <option value="">Gênero</option>
           <option value="Feminino">Feminino</option>
           <option value="Masculino">Masculino</option>
           <option value="Outro">Outro</option>
         </select>
-        <textarea id="editBio" placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
-          style="padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical;"></textarea>
+        <textarea id="editBio" class="modal-input" placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
+          style="min-height:80px;resize:vertical;"></textarea>
 
-        <hr style="border:none;border-top:1px solid #eee;">
+        <hr class="modal-divider">
 
-        <label style="font-size:13px;font-weight:600;color:#374151;">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
-        <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg"
-          style="padding:8px;border:1px solid #ddd;border-radius:8px;font-size:13px;">
-        <button type="button" onclick="uploadCertificado()"
-          style="padding:9px;background:#f1f5f9;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">
-          ⬆️ Enviar Certificado
-        </button>
-        <div id="certStatus" style="font-size:12px;color:#10b981;"></div>
+        <label class="modal-cert-label">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
+        <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg" class="modal-input modal-input--file">
+        <button type="button" class="btn-modal-cert" onclick="uploadCertificado()">⬆️ Enviar Certificado</button>
+        <div id="certStatus" class="modal-cert-status"></div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:20px;">
-        <button onclick="salvarPerfil()"
-          style="flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Salvar</button>
-        <button onclick="fecharModal()"
-          style="flex:1;padding:11px;background:#f1f5f9;border:none;border-radius:8px;cursor:pointer;">Cancelar</button>
+      <div class="modal-actions">
+        <button class="btn-modal-save" onclick="salvarPerfil()">Salvar</button>
+        <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
       </div>
     </div>
   </div>
 
-  <div class="page">
+  <!-- CONTEÚDO -->
+  <div class="page page--cols">
+
+    <!-- COLUNA PRINCIPAL -->
     <div>
       <div class="card">
         <div class="tabs">
@@ -628,13 +138,21 @@
           <button class="tab-btn" onclick="switchTab('sobre',this)">Sobre</button>
         </div>
 
+        <!-- SERVIÇOS -->
         <div class="tab-panel active" id="tab-servicos">
           {% if servicos %}
           {% for s in servicos %}
           <a class="service-item" href="/servicos">
-            <div class="service-emoji">{% set a=s.area_atuacao|lower %}{% if 'eletr' in a %}💡{% elif 'hidra' in a
-              %}🔧{% elif 'mec' in a %}🔩{% elif 'reform' in a %}🏗️{% elif 'limpez' in a %}🧹{% elif 'ti' in a or
-              'tecnol' in a %}💻{% else %}⚙️{% endif %}</div>
+            <div class="service-emoji">
+              {% set a = s.area_atuacao|lower %}
+              {% if 'eletr' in a %}💡
+              {% elif 'hidra' in a %}🔧
+              {% elif 'mec' in a %}🔩
+              {% elif 'reform' in a %}🏗️
+              {% elif 'limpez' in a %}🧹
+              {% elif 'ti' in a or 'tecnol' in a %}💻
+              {% else %}⚙️{% endif %}
+            </div>
             <div>
               <div class="service-name">{{ s.titulo }}</div>
               <div class="service-meta">{{ s.duracao }}h · {{ s.area_atuacao }}</div>
@@ -643,10 +161,11 @@
           </a>
           {% endfor %}
           {% else %}
-          <div class="empty-state"><span>🔧</span>Nenhum serviço cadastrado ainda.</div>
+          <div class="empty"><span>🔧</span>Nenhum serviço cadastrado ainda.</div>
           {% endif %}
         </div>
 
+        <!-- AVALIAÇÕES -->
         <div class="tab-panel" id="tab-avaliacoes">
           {% if agendamentos_count > 0 %}
           <div class="review-item">
@@ -676,19 +195,18 @@
             <div class="review-text">Excelente atendimento. Trabalho bem feito e preço justo.</div>
           </div>
           {% else %}
-          <div class="empty-state"><span>⭐</span>Ainda sem avaliações.</div>
+          <div class="empty"><span>⭐</span>Ainda sem avaliações.</div>
           {% endif %}
         </div>
 
+        <!-- SOBRE -->
         <div class="tab-panel" id="tab-sobre">
-          <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:16px;">
+          <p class="sobre-text">
             Profissional especializado em <strong>{{ prestador.areas_atuacao or 'serviços gerais' }}</strong>,
             com foco em qualidade, pontualidade e total satisfação do cliente.
           </p>
-          <div style="padding:14px;background:#f8fafc;border-radius:10px;">
-            <div
-              style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
-              Áreas de atuação</div>
+          <div class="sobre-areas">
+            <div class="sobre-areas-label">Áreas de atuação</div>
             {% if prestador.areas_atuacao %}
             {% for area in prestador.areas_atuacao.split(',') %}
             <span class="area-tag">{{ area.strip() }}</span>
@@ -699,38 +217,60 @@
       </div>
     </div>
 
+    <!-- SIDEBAR -->
     <div>
       <div class="sidebar-card">
-        <div class="card-header"><span class="card-title">Informações</span></div>
-        <div class="info-item"><span class="info-icon">📧</span>
+        <div class="card-header">
+          <span class="card-title">Informações</span>
+        </div>
+        <div class="info-item">
+          <span class="info-icon">📧</span>
           <div>
             <div class="info-label">E-mail</div>
             <div class="info-value">{{ prestador.email }}</div>
           </div>
         </div>
-        <div class="info-item"><span class="info-icon">🛠️</span>
+        <div class="info-item">
+          <span class="info-icon">🛠️</span>
           <div>
             <div class="info-label">Especialidade</div>
             <div class="info-value">{{ (prestador.areas_atuacao or '—').split(',')[0].strip() }}</div>
           </div>
         </div>
-        <div class="info-item"><span class="info-icon">✅</span>
+        <div class="info-item">
+          <span class="info-icon">✅</span>
           <div>
             <div class="info-label">Jobs concluídos</div>
             <div class="info-value">{{ agendamentos_count }}</div>
           </div>
         </div>
-        <div class="info-item"><span class="info-icon">📋</span>
+        <div class="info-item">
+          <span class="info-icon">📋</span>
           <div>
             <div class="info-label">Serviços disponíveis</div>
             <div class="info-value">{{ servicos|length }}</div>
           </div>
         </div>
-        <a href="/servicos" class="btn-agendar">Agendar Serviço</a>
+        <a href="/servicos" class="btn-agendar-sidebar">Agendar Serviço</a>
       </div>
     </div>
 
-  </div>
+  </div><!-- /page -->
+
+  <!-- FOOTER PADRÃO -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <strong class="footer__brand">Agenda Fácil</strong>
+      <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
+      <nav class="footer__links">
+        <a href="/">Início</a>
+        <a href="/servicos">Serviços</a>
+        <a href="/prestador">Seja Prestador</a>
+        <a href="/orcamentos">Orçamentos</a>
+      </nav>
+      <div class="footer__copy">© 2025 Agenda Fácil. Todos os direitos reservados.</div>
+    </div>
+  </footer>
 
   <script>
     function switchTab(name, btn) {
@@ -739,41 +279,38 @@
       btn.classList.add('active');
       document.getElementById('tab-' + name).classList.add('active');
     }
-  </script>
 
-  <script>
     function abrirModalEditar() {
-      document.getElementById("editNome").value = "{{ prestador.nome or '' }}";
-      document.getElementById("editSobrenome").value = "{{ prestador.sobrenome or '' }}";
-      document.getElementById("editTelefone").value = "{{ prestador.telefone or '' }}";
-      document.getElementById("editCidade").value = "{{ prestador.cidade or '' }}";
-      document.getElementById("editSexo").value = "{{ prestador.sexo or '' }}";
-      document.getElementById("editBio").value = "{{ prestador.bio or '' }}";
-      document.getElementById("modalEditar").style.display = "flex";
+      document.getElementById('editNome').value = "{{ prestador.nome or '' }}";
+      document.getElementById('editSobrenome').value = "{{ prestador.sobrenome or '' }}";
+      document.getElementById('editTelefone').value = "{{ prestador.telefone or '' }}";
+      document.getElementById('editCidade').value = "{{ prestador.cidade or '' }}";
+      document.getElementById('editSexo').value = "{{ prestador.sexo or '' }}";
+      document.getElementById('editBio').value = "{{ prestador.bio or '' }}";
+      document.getElementById('modalEditar').classList.add('open');
     }
 
     function fecharModal() {
-      document.getElementById("modalEditar").style.display = "none";
+      document.getElementById('modalEditar').classList.remove('open');
     }
 
     async function salvarPerfil() {
       const dados = {
-        nome: document.getElementById("editNome").value.trim(),
-        sobrenome: document.getElementById("editSobrenome").value.trim(),
-        telefone: document.getElementById("editTelefone").value.trim(),
-        cidade: document.getElementById("editCidade").value.trim(),
-        sexo: document.getElementById("editSexo").value,
-        bio: document.getElementById("editBio").value.trim(),
+        nome: document.getElementById('editNome').value.trim(),
+        sobrenome: document.getElementById('editSobrenome').value.trim(),
+        telefone: document.getElementById('editTelefone').value.trim(),
+        cidade: document.getElementById('editCidade').value.trim(),
+        sexo: document.getElementById('editSexo').value,
+        bio: document.getElementById('editBio').value.trim(),
       };
-      if (!dados.nome) { alert("Nome é obrigatório"); return; }
-
-      const res = await fetch("/editar_perfil_prestador", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      if (!dados.nome) { alert('Nome é obrigatório'); return; }
+      const res = await fetch('/editar_perfil_prestador', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados)
       });
       const data = await res.json();
-      if (data.erro) { alert("Erro: " + data.erro); }
+      if (data.erro) { alert('Erro: ' + data.erro); }
       else { fecharModal(); location.reload(); }
     }
 
@@ -781,56 +318,40 @@
       const file = input.files[0];
       if (!file) return;
       const form = new FormData();
-      form.append("foto", file);
-      const res = await fetch("/salvar_foto", { method: "POST", body: form });
+      form.append('foto', file);
+      const res = await fetch('/salvar_foto', { method: 'POST', body: form });
       const data = await res.json();
-      if (data.erro) { alert("Erro: " + data.erro); return; }
-      const preview = document.getElementById("fotoPreview");
-      if (preview.tagName === "IMG") {
-        preview.src = data.url + "?t=" + Date.now();
+      if (data.erro) { alert('Erro: ' + data.erro); return; }
+      const preview = document.getElementById('fotoPreview');
+      if (preview.tagName === 'IMG') {
+        preview.src = data.url + '?t=' + Date.now();
       } else {
-        const img = document.createElement("img");
+        const img = document.createElement('img');
         img.src = data.url;
-        img.id = "fotoPreview";
-        img.style = "width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.3);";
+        img.id = 'fotoPreview';
+        img.className = 'hero-avatar-img';
+        img.alt = 'Foto de perfil';
         preview.replaceWith(img);
       }
     }
 
     async function uploadCertificado() {
-      const input = document.getElementById("inputCert");
+      const input = document.getElementById('inputCert');
       const file = input.files[0];
-      if (!file) { alert("Selecione um arquivo"); return; }
+      if (!file) { alert('Selecione um arquivo'); return; }
       const form = new FormData();
-      form.append("certificado", file);
-      const res = await fetch("/salvar_certificado", { method: "POST", body: form });
+      form.append('certificado', file);
+      const res = await fetch('/salvar_certificado', { method: 'POST', body: form });
       const data = await res.json();
-      document.getElementById("certStatus").textContent = data.erro ? "Erro: " + data.erro : "✅ " + data.mensagem;
+      document.getElementById('certStatus').textContent =
+        data.erro ? 'Erro: ' + data.erro : '✅ ' + data.mensagem;
     }
 
-    document.getElementById("modalEditar").addEventListener("click", function (e) {
+    document.getElementById('modalEditar').addEventListener('click', function (e) {
       if (e.target === this) fecharModal();
     });
   </script>
 
-
-  <footer
-    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-    <div style="max-width:900px;margin:0 auto;">
-      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
-        <a href="/" style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
-        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
-        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
-        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
-      </div>
-      <div
-        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
-      </div>
-    </div>
-  </footer>
 </body>
 
 </html>

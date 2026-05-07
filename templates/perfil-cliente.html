@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meu Perfil – Agenda Fácil</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="../static/global.css">
   <link rel="stylesheet" href="../static/perfil.css">
@@ -19,13 +22,14 @@
     <a class="brand" href="/">
       <div class="brand-icon">
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-          <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5"/>
-          <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
+          <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </div>
       <span class="brand-name">Agenda Fácil</span>
     </a>
     <div class="topbar-nav">
+      <a href="/" class="topbar-link">Início</a>
       <a href="/servicos" class="topbar-link">Serviços</a>
       <a href="/logout" class="btn-logout">🚪 Sair</a>
     </div>
@@ -62,10 +66,10 @@
     <div class="modal-box">
       <h3 class="modal-title">Editar Perfil</h3>
       <div class="modal-fields">
-        <input id="editNome"      class="modal-input" placeholder="Primeiro nome">
+        <input id="editNome" class="modal-input" placeholder="Primeiro nome">
         <input id="editSobrenome" class="modal-input" placeholder="Último nome">
-        <input id="editTelefone"  class="modal-input" placeholder="Telefone">
-        <input id="editCidade"    class="modal-input" placeholder="Cidade, Estado">
+        <input id="editTelefone" class="modal-input" placeholder="Telefone">
+        <input id="editCidade" class="modal-input" placeholder="Cidade, Estado">
         <select id="editSexo" class="modal-input">
           <option value="">Gênero</option>
           <option value="Feminino">Feminino</option>
@@ -74,7 +78,7 @@
         </select>
       </div>
       <div class="modal-actions">
-        <button class="btn-modal-save"   onclick="salvarPerfil()">Salvar</button>
+        <button class="btn-modal-save" onclick="salvarPerfil()">Salvar</button>
         <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
       </div>
     </div>
@@ -84,9 +88,9 @@
   <div class="page">
 
     <!-- STATS -->
-    {% set total     = agendamentos|length %}
+    {% set total = agendamentos|length %}
     {% set concluidos = agendamentos|selectattr('status','equalto','concluido')|list|length %}
-    {% set pendentes  = agendamentos|selectattr('status','in',['pendente','confirmado'])|list|length %}
+    {% set pendentes = agendamentos|selectattr('status','in',['pendente','confirmado'])|list|length %}
 
     <div class="stats-row">
       <div class="stat-card">
@@ -107,41 +111,41 @@
     <div class="card">
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('agendamentos',this)">Meus Agendamentos</button>
-        <button class="tab-btn"        onclick="switchTab('dados',this)">Meus Dados</button>
+        <button class="tab-btn" onclick="switchTab('dados',this)">Meus Dados</button>
       </div>
 
       <!-- AGENDAMENTOS -->
       <div class="tab-panel active" id="tab-agendamentos">
         {% if agendamentos %}
-          {% for a in agendamentos %}
-          <div class="ag-item" id="ag-{{ a.id }}">
-            <div class="ag-icon">
-              {% set s = a.servico|lower %}
-              {% if 'eletr' in s %}💡
-              {% elif 'hidra' in s %}🔧
-              {% elif 'mec' in s %}🔩
-              {% elif 'reform' in s %}🏗️
-              {% elif 'limpez' in s %}🧹
-              {% elif 'ti' in s or 'tecnol' in s %}💻
-              {% else %}⚙️{% endif %}
-            </div>
-            <div class="ag-info">
-              <div class="ag-servico">{{ a.servico }}</div>
-              <div class="ag-sub">
-                📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
-                · 🕐 {{ a.horario }}
-                {% if a.prestador_nome %}· 👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
-              </div>
-            </div>
-            <div class="ag-right">
-              <div class="ag-preco">R$ {{ "%.2f"|format(a.preco) if a.preco else '—' }}</div>
-              <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
-              {% if a.status in ['pendente', 'confirmado'] %}
-              <button class="btn-cancelar" onclick="cancelar({{ a.id }})">Cancelar</button>
-              {% endif %}
+        {% for a in agendamentos %}
+        <div class="ag-item" id="ag-{{ a.id }}">
+          <div class="ag-icon">
+            {% set s = a.servico|lower %}
+            {% if 'eletr' in s %}💡
+            {% elif 'hidra' in s %}🔧
+            {% elif 'mec' in s %}🔩
+            {% elif 'reform' in s %}🏗️
+            {% elif 'limpez' in s %}🧹
+            {% elif 'ti' in s or 'tecnol' in s %}💻
+            {% else %}⚙️{% endif %}
+          </div>
+          <div class="ag-info">
+            <div class="ag-servico">{{ a.servico }}</div>
+            <div class="ag-sub">
+              📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
+              · 🕐 {{ a.horario }}
+              {% if a.prestador_nome %}· 👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
             </div>
           </div>
-          {% endfor %}
+          <div class="ag-right">
+            <div class="ag-preco">R$ {{ "%.2f"|format(a.preco) if a.preco else '—' }}</div>
+            <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
+            {% if a.status in ['pendente', 'confirmado'] %}
+            <button class="btn-cancelar" onclick="cancelar({{ a.id }})">Cancelar</button>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
         {% else %}
         <div class="empty">
           <span>📅</span>
@@ -165,7 +169,8 @@
           </div>
           <div class="info-box">
             <div class="info-label">Data de nascimento</div>
-            <div class="info-value">{{ cliente.data_nascimento.strftime('%d/%m/%Y') if cliente.data_nascimento else '—' }}</div>
+            <div class="info-value">{{ cliente.data_nascimento.strftime('%d/%m/%Y') if cliente.data_nascimento else '—'
+              }}</div>
           </div>
           <div class="info-box">
             <div class="info-label">Gênero</div>
@@ -175,9 +180,9 @@
       </div>
     </div>
 
-  </div>
+  </div><!-- /page -->
 
-  <!-- FOOTER -->
+  <!-- FOOTER PADRÃO -->
   <footer class="footer">
     <div class="footer__inner">
       <strong class="footer__brand">Agenda Fácil</strong>
@@ -202,12 +207,12 @@
 
     async function cancelar(id) {
       if (!confirm('Cancelar este agendamento?')) return;
-      const res  = await fetch(`/api/cancelar_agendamento/${id}`, { method: 'PATCH' });
+      const res = await fetch(`/api/cancelar_agendamento/${id}`, { method: 'PATCH' });
       const data = await res.json();
       if (data.mensagem) {
-        const item  = document.getElementById('ag-' + id);
+        const item = document.getElementById('ag-' + id);
         const badge = item.querySelector('.status-badge');
-        badge.className   = 'status-badge status-cancelado';
+        badge.className = 'status-badge status-cancelado';
         badge.textContent = 'cancelado';
         const btnCancelar = item.querySelector('.btn-cancelar');
         if (btnCancelar) btnCancelar.remove();
@@ -217,11 +222,11 @@
     }
 
     function abrirModalEditar() {
-      document.getElementById('editNome').value      = "{{ cliente.nome or '' }}";
+      document.getElementById('editNome').value = "{{ cliente.nome or '' }}";
       document.getElementById('editSobrenome').value = "{{ cliente.sobrenome or '' }}";
-      document.getElementById('editTelefone').value  = "{{ cliente.telefone or '' }}";
-      document.getElementById('editCidade').value    = "{{ cliente.cidade or '' }}";
-      document.getElementById('editSexo').value      = "{{ cliente.sexo or '' }}";
+      document.getElementById('editTelefone').value = "{{ cliente.telefone or '' }}";
+      document.getElementById('editCidade').value = "{{ cliente.cidade or '' }}";
+      document.getElementById('editSexo').value = "{{ cliente.sexo or '' }}";
       document.getElementById('modalEditar').classList.add('open');
     }
 
@@ -231,14 +236,14 @@
 
     async function salvarPerfil() {
       const dados = {
-        nome:      document.getElementById('editNome').value.trim(),
+        nome: document.getElementById('editNome').value.trim(),
         sobrenome: document.getElementById('editSobrenome').value.trim(),
-        telefone:  document.getElementById('editTelefone').value.trim(),
-        cidade:    document.getElementById('editCidade').value.trim(),
-        sexo:      document.getElementById('editSexo').value,
+        telefone: document.getElementById('editTelefone').value.trim(),
+        cidade: document.getElementById('editCidade').value.trim(),
+        sexo: document.getElementById('editSexo').value,
       };
       if (!dados.nome) { alert('Nome é obrigatório'); return; }
-      const res  = await fetch('/editar_perfil_cliente', {
+      const res = await fetch('/editar_perfil_cliente', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados)
@@ -258,27 +263,27 @@
       if (!file) return;
       const form = new FormData();
       form.append('foto', file);
-      const res  = await fetch('/salvar_foto', { method: 'POST', body: form });
+      const res = await fetch('/salvar_foto', { method: 'POST', body: form });
       const data = await res.json();
       if (data.erro) { alert('Erro: ' + data.erro); return; }
       const preview = document.getElementById('fotoPreview');
       if (preview.tagName === 'IMG') {
         preview.src = data.url + '?t=' + Date.now();
       } else {
-        const img   = document.createElement('img');
-        img.src     = data.url;
-        img.id      = 'fotoPreview';
+        const img = document.createElement('img');
+        img.src = data.url;
+        img.id = 'fotoPreview';
         img.className = 'hero-avatar-img';
-        img.alt     = 'Foto de perfil';
+        img.alt = 'Foto de perfil';
         preview.replaceWith(img);
       }
     }
 
-    // Fecha modal clicando fora
-    document.getElementById('modalEditar').addEventListener('click', function(e) {
+    document.getElementById('modalEditar').addEventListener('click', function (e) {
       if (e.target === this) fecharModal();
     });
   </script>
 
 </body>
+
 </html>

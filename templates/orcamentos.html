@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/solicitar-orcamento.css">
     <script src="https://cdn.tailwindcss.com"></script>
+
     <title>Solicitar Orçamento</title>
 </head>
 
@@ -11,13 +14,15 @@
 
     <div class="bg-white p-8 rounded-xl shadow w-full max-w-xl">
 
-        <h1 class="text-2xl font-bold mb-6 text-center">Solicitar Orçamento</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center">
+            Solicitar Orçamento
+        </h1>
 
         <form id="formOrcamento" class="space-y-4">
 
             <input id="nome" placeholder="Nome" class="w-full p-3 border rounded" required>
 
-            <!-- EMAIL AGORA OPCIONAL -->
+            <!-- EMAIL OPCIONAL -->
             <input id="email" type="email" placeholder="Email (opcional)" class="w-full p-3 border rounded">
 
             <input id="telefone" placeholder="Telefone" class="w-full p-3 border rounded" required>
@@ -38,13 +43,14 @@
 
         </form>
 
-
     </div>
 
+    <!-- EMAIL JS -->
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <!-- EmailJS -->
+
     <script>
-        // 🔑 Inicializa EmailJS
+
+        // Inicializa EmailJS
         (function () {
             emailjs.init("uX9VTM1RJGpHB17ex");
         })();
@@ -53,11 +59,14 @@
         const telefone = document.getElementById("telefone");
         const btn = document.getElementById("btnEnviar");
 
-        // 📞 Máscara telefone
+        // Máscara telefone
         telefone.addEventListener("input", () => {
+
             let v = telefone.value.replace(/\D/g, "");
 
-            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 11) {
+                v = v.slice(0, 11);
+            }
 
             v = v.replace(/(\d{2})(\d)/, "($1) $2");
             v = v.replace(/(\d{5})(\d)/, "$1-$2");
@@ -65,13 +74,17 @@
             telefone.value = v;
         });
 
-<<<<<<< HEAD
+        // Submit formulário
         form.addEventListener("submit", async function (e) {
+
             e.preventDefault();
 
             const categoria = document.getElementById("categoria").value;
+
             if (!categoria) {
+
                 alert("Selecione uma categoria");
+
                 return;
             }
 
@@ -79,119 +92,77 @@
             btn.disabled = true;
 
             const emailCliente = document.getElementById("email").value;
+
             const dadosBase = {
-=======
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            btn.innerText = "Enviando...";
-            btn.disabled = true;
-
-            const categoria = document.getElementById("categoria").value;
-
-            if (!categoria) {
-                alert("Selecione uma categoria");
-                btn.innerText = "Enviar";
-                btn.disabled = false;
-                return;
-            }
-
-            let emailPrestador = "";
-
-            if (categoria === "Tecnologia") {
-                emailPrestador = "tecnologia@email.com";
-            } else if (categoria === "Hidráulica") {
-                emailPrestador = "hidraulica@email.com";
-            } else if (categoria === "Elétrica") {
-                emailPrestador = "eletrica@email.com";
-            } else if (categoria === "Reformas") {
-                emailPrestador = "reformas@email.com";
-            }
-
-            const emailCliente = document.getElementById("email").value;
-
-            const dados = {
->>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
                 nome: document.getElementById("nome").value,
                 email: emailCliente || "Não informado",
                 telefone: telefone.value,
                 categoria: categoria,
-                descricao: document.getElementById("descricao").value,
-<<<<<<< HEAD
+                descricao: document.getElementById("descricao").value
             };
 
             try {
-                // 1. Busca todos os prestadores da categoria no banco
-                const res = await fetch(`/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoria)}`);
+
+                // Busca prestadores no banco
+                const res = await fetch(
+                    `/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoria)}`
+                );
+
                 const prestadores = await res.json();
 
-                let promessas = [];
-
                 if (prestadores.length === 0) {
-                    alert("Nenhum prestador disponível para esta categoria no momento.");
+
+                    alert("Nenhum prestador disponível para esta categoria.");
+
                     btn.innerText = "Enviar";
                     btn.disabled = false;
+
                     return;
                 }
 
-                // 2. Envia email para CADA prestador da área
-                prestadores.forEach(p => {
-                    const envio = emailjs.send("service_b6ejlqp", "template_ju6fbyc", {
-                        ...dadosBase,
-                        email_prestador: p.email,
-                        nome_prestador: p.nome + " " + p.sobrenome
-                    });
+                let promessas = [];
+
+                // Envia email para cada prestador
+                prestadores.forEach((p) => {
+
+                    const envio = emailjs.send(
+                        "service_b6ejlqp",
+                        "template_ju6fbyc",
+                        {
+                            ...dadosBase,
+                            email_prestador: p.email,
+                            nome_prestador: p.nome + " " + p.sobrenome
+                        }
+                    );
+
                     promessas.push(envio);
                 });
 
-                // 3. Envia confirmação para o cliente (se informou email)
+                // Envia confirmação para cliente
                 if (emailCliente) {
-                    promessas.push(emailjs.send("service_b6ejlqp", "template_a9a80tv", dadosBase));
+
+                    const envioCliente = emailjs.send(
+                        "service_b6ejlqp",
+                        "template_a9a80tv",
+                        dadosBase
+                    );
+
+                    promessas.push(envioCliente);
                 }
 
                 await Promise.all(promessas);
+
                 window.location.href = "/sucesso";
 
             } catch (error) {
+
                 console.error(error);
+
                 alert("Erro ao enviar. Tente novamente.");
+
                 btn.innerText = "Enviar";
                 btn.disabled = false;
             }
-=======
-                email_prestador: emailPrestador
-            };
-
-            // 📩 SEMPRE envia para prestador
-            const envioPrestador = emailjs.send(
-                "service_b6ejlqp",
-                "template_ju6fbyc",
-                dados
-            );
-
-            // 📩 SÓ envia para cliente se ele colocou email
-            let promessas = [envioPrestador];
-
-            if (emailCliente) {
-                const envioCliente = emailjs.send(
-                    "service_b6ejlqp",
-                    "template_a9a80tv",
-                    dados
-                );
-                promessas.push(envioCliente);
-            }
-
-            Promise.all(promessas)
-                .then(() => {
-                    window.location.href = "sucesso.html";
-                })
-                .catch((error) => {
-                    console.log(error);
-                    alert("Erro ao enviar");
-                    btn.innerText = "Enviar";
-                    btn.disabled = false;
-                });
->>>>>>> 0f0123a6e926bdd9f2d9266b579134b3567f55e1
         });
 
     </script>

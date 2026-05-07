@@ -175,6 +175,14 @@ selectSubcategoria.addEventListener("change", () => {
     `Serviço profissional de ${servico.toLowerCase()}, realizado com qualidade, segurança e atenção aos detalhes.`;
 });
 
+// Menu mobile
+
+ const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  menuToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+  });
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();

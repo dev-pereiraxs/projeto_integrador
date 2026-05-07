@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ────────────────────────────────────────────
+       RESET & TOKENS
+    ──────────────────────────────────────────── */
     *,
     *::before,
     *::after {
@@ -18,20 +21,24 @@
 
     :root {
       --bg: #080d1f;
-      --bg2: #0d1530;
       --glass: rgba(255, 255, 255, 0.055);
       --glass-b: rgba(255, 255, 255, 0.09);
       --border: rgba(255, 255, 255, 0.10);
-      --border-h: rgba(255, 255, 255, 0.18);
+      --border-h: rgba(255, 255, 255, 0.20);
       --blue: #3b82f6;
-      --blue-d: #2563eb;
       --blue-g: linear-gradient(135deg, #2563eb, #1d4ed8);
       --text: #f0f4ff;
       --muted: rgba(200, 210, 255, 0.55);
       --gold: #f59e0b;
       --green: #4ade80;
+      --red: #f87171;
       --radius: 14px;
       --radius-sm: 9px;
+      --header-h: 64px;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -40,9 +47,11 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ── BG GLOW ─────────────────────────────────────── */
+    /* Atmospheric glow */
     body::before {
       content: '';
       position: fixed;
@@ -55,72 +64,98 @@
         radial-gradient(ellipse 40% 40% at 50% 50%, rgba(14, 20, 60, .9) 0%, transparent 100%);
     }
 
-    /* ── HEADER ──────────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       HEADER
+    ──────────────────────────────────────────── */
     .header {
-      position: relative;
-      z-index: 10;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: var(--header-h);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 36px;
-      border-bottom: 0.5px solid var(--border);
-      background: rgba(8, 13, 31, .85);
-      backdrop-filter: blur(16px);
+      padding: 0 32px;
+      background: rgba(8, 13, 31, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
     }
 
+    /* Logo */
     .logo {
       display: flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
     }
 
     .logo-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
       background: var(--blue-g);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .logo-text {
       font-size: 16px;
       font-weight: 700;
+      color: var(--text);
       letter-spacing: -.2px;
     }
 
-    .nav {
+    /* Desktop nav links */
+    .nav-desktop {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 6px;
     }
 
     .nav-link {
       font-size: 14px;
       color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-decoration: none;
       cursor: pointer;
-      transition: color .2s;
+      transition: color .2s, background .2s;
+      white-space: nowrap;
+      background: none;
+      border: none;
+      font-family: inherit;
     }
 
     .nav-link:hover {
       color: var(--text);
+      background: var(--glass-b);
     }
 
+    /* Avatar pill */
     .avatar-pill {
       display: flex;
       align-items: center;
       gap: 8px;
       background: var(--glass);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: 99px;
-      padding: 5px 12px 5px 5px;
+      padding: 5px 14px 5px 5px;
       cursor: pointer;
+      text-decoration: none;
+      transition: border-color .2s;
+    }
+
+    .avatar-pill:hover {
+      border-color: var(--border-h);
     }
 
     .avatar {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: var(--blue-g);
       display: flex;
@@ -128,52 +163,280 @@
       justify-content: center;
       font-size: 11px;
       font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
     }
 
-    .avatar-pill span {
+    .avatar-pill .user-name {
       font-size: 13px;
       font-weight: 500;
+      color: var(--text);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    /* ── BODY ────────────────────────────────────────── */
-    .body {
+    /* Logout button */
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 99px;
+      background: rgba(239, 68, 68, .10);
+      border: 1px solid rgba(239, 68, 68, .25);
+      transition: background .2s, border-color .2s;
+      white-space: nowrap;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .18);
+      border-color: rgba(239, 68, 68, .45);
+    }
+
+    /* Login link */
+    .btn-login {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 6px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      transition: color .2s, border-color .2s, background .2s;
+    }
+
+    .btn-login:hover {
+      color: var(--text);
+      background: var(--glass-b);
+      border-color: var(--border-h);
+    }
+
+    /* ── Hamburger (mobile only) ──────────────── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      border-radius: 9px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      transition: background .2s, border-color .2s;
+      flex-shrink: 0;
+    }
+
+    .hamburger:hover {
+      background: var(--glass-b);
+      border-color: var(--border-h);
+    }
+
+    .hamburger span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .28s ease, opacity .28s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* ────────────────────────────────────────────
+       MOBILE OVERLAY MENU
+    ──────────────────────────────────────────── */
+    .mobile-menu {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      z-index: 199;
+      background: rgba(8, 13, 31, 0.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      transform: translateY(-6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .26s ease, opacity .26s ease;
+    }
+
+    .mobile-menu.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .mobile-menu-inner {
+      padding: 16px 18px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* User row inside mobile menu */
+    .mobile-user-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .mobile-user-row .avatar {
+      width: 38px;
+      height: 38px;
+      font-size: 14px;
+    }
+
+    .mobile-user-info .m-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .mobile-user-info .m-role {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Nav item */
+    .mobile-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+
+    .mobile-nav-item:hover {
+      background: var(--glass-b);
+      color: var(--text);
+    }
+
+    .m-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--glass-b);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: background .18s, border-color .18s;
+    }
+
+    .mobile-nav-item:hover .m-icon {
+      background: rgba(59, 130, 246, .15);
+      border-color: rgba(59, 130, 246, .3);
+    }
+
+    .mobile-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+
+    .mobile-nav-item.logout {
+      color: var(--red);
+    }
+
+    .mobile-nav-item.logout .m-icon {
+      background: rgba(239, 68, 68, .10);
+      border-color: rgba(239, 68, 68, .2);
+    }
+
+    .mobile-nav-item.logout:hover {
+      background: rgba(239, 68, 68, .07);
+    }
+
+    .mobile-nav-item.logout:hover .m-icon {
+      background: rgba(239, 68, 68, .18);
+      border-color: rgba(239, 68, 68, .4);
+    }
+
+    /* ────────────────────────────────────────────
+       PAGE CONTENT
+    ──────────────────────────────────────────── */
+    .page-wrapper {
       position: relative;
       z-index: 1;
+      flex: 1;
+    }
+
+    .body {
       max-width: 960px;
       margin: 0 auto;
       padding: 36px 24px 60px;
     }
 
     .page-title {
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 700;
-      letter-spacing: -.5px;
+      letter-spacing: -.4px;
       margin-bottom: 24px;
     }
 
-    /* ── GLASS CARD ──────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       GLASS BASE
+    ──────────────────────────────────────────── */
     .glass {
       background: var(--glass);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
     }
 
-    /* ── PROF CARD ───────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       PROVIDER CARD
+    ──────────────────────────────────────────── */
     .prof-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 24px;
-      margin-bottom: 20px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
       gap: 16px;
+      flex-wrap: wrap;
     }
 
     .prof-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      min-width: 0;
+      flex: 1;
     }
 
     .prof-photo {
@@ -184,21 +447,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
       flex-shrink: 0;
       border: 2px solid rgba(59, 130, 246, .35);
+    }
+
+    .prof-info {
+      min-width: 0;
     }
 
     .prof-name {
       font-size: 17px;
       font-weight: 700;
       margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .prof-sub {
       font-size: 13px;
       color: var(--muted);
       margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .stars {
@@ -212,47 +487,56 @@
       font-size: 14px;
     }
 
+    .rating-score {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-left: 5px;
+    }
+
     .rating-text {
       font-size: 12px;
       color: var(--muted);
-      margin-left: 4px;
+      margin-left: 3px;
     }
 
     .badge-verified {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 5px;
       background: rgba(74, 222, 128, .08);
-      border: 0.5px solid rgba(74, 222, 128, .25);
+      border: 1px solid rgba(74, 222, 128, .22);
       border-radius: 99px;
       padding: 6px 14px;
       font-size: 12px;
       font-weight: 600;
       color: var(--green);
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    /* ── CATEGORY BADGE ──────────────────────────────── */
+    /* ────────────────────────────────────────────
+       SERVICE INFO
+    ──────────────────────────────────────────── */
+    .servico-info {
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .cat-badge {
       display: inline-flex;
       align-items: center;
-      background: rgba(59, 130, 246, .15);
-      border: 0.5px solid rgba(59, 130, 246, .3);
+      align-self: flex-start;
+      background: rgba(59, 130, 246, .14);
+      border: 1px solid rgba(59, 130, 246, .28);
       border-radius: 99px;
       padding: 4px 12px;
       font-size: 12px;
       font-weight: 600;
       color: #93c5fd;
-      margin-bottom: 8px;
-    }
-
-    /* ── SERVIÇO INFO ────────────────────────────────── */
-    .servico-info {
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
     }
 
     .servico-titulo {
@@ -263,13 +547,14 @@
     .servico-desc {
       font-size: 14px;
       color: var(--muted);
-      line-height: 1.55;
+      line-height: 1.6;
     }
 
     .servico-meta {
       display: flex;
       align-items: center;
       gap: 16px;
+      flex-wrap: wrap;
       margin-top: 4px;
     }
 
@@ -287,55 +572,22 @@
       color: #93c5fd;
       background: rgba(59, 130, 246, .12);
       border-radius: 8px;
-      padding: 3px 10px;
+      padding: 4px 12px;
     }
 
-    /* ── METRICS ─────────────────────────────────────── */
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .metric-card {
-      background: var(--glass);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: border-color .2s;
-    }
-
-    .metric-card:hover {
-      border-color: var(--border-h);
-    }
-
-    .metric-icon {
-      font-size: 18px;
-    }
-
-    .metric-label {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .metric-value {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    /* ── TWO-COL ─────────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       TWO-COLUMN LAYOUT
+    ──────────────────────────────────────────── */
     .two-col {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 310px;
       gap: 20px;
       align-items: start;
     }
 
-    /* ── CALENDAR ────────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       CALENDAR
+    ──────────────────────────────────────────── */
     .cal-panel {
       padding: 22px;
     }
@@ -360,9 +612,9 @@
     .cal-btn {
       width: 28px;
       height: 28px;
-      border-radius: 8px;
+      border-radius: 7px;
       background: var(--glass-b);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -376,6 +628,7 @@
     .cal-btn:hover {
       background: rgba(255, 255, 255, .12);
       color: var(--text);
+      border-color: var(--border-h);
     }
 
     .cal-grid {
@@ -400,7 +653,7 @@
       justify-content: center;
       font-size: 13px;
       cursor: default;
-      color: rgba(200, 210, 255, .3);
+      color: rgba(200, 210, 255, .25);
       transition: all .18s;
       position: relative;
     }
@@ -417,7 +670,7 @@
     .cal-day.available.has-dot::after {
       content: '';
       position: absolute;
-      bottom: 3px;
+      bottom: 4px;
       width: 4px;
       height: 4px;
       border-radius: 50%;
@@ -431,14 +684,16 @@
       cursor: pointer;
     }
 
-    /* ── TIME SLOTS ──────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       TIME SLOTS & OBSERVATIONS
+    ──────────────────────────────────────────── */
     .section-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: .6px;
-      margin: 20px 0 10px;
+      letter-spacing: .7px;
+      margin: 22px 0 10px;
     }
 
     .time-slots {
@@ -451,13 +706,13 @@
       padding: 8px 16px;
       border-radius: 9px;
       background: var(--glass-b);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: all .18s;
       color: var(--text);
       font-family: 'Outfit', sans-serif;
+      transition: all .18s;
     }
 
     .time-btn:hover {
@@ -471,22 +726,21 @@
       color: white;
     }
 
-    /* ── OBSERVATIONS ────────────────────────────────── */
     .obs-label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: .6px;
-      margin: 20px 0 8px;
+      letter-spacing: .7px;
+      margin: 22px 0 8px;
     }
 
     .obs-input {
       width: 100%;
       padding: 10px 14px;
       background: var(--glass-b);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: 9px;
       color: var(--text);
       font-family: 'Outfit', sans-serif;
@@ -503,10 +757,12 @@
       border-color: var(--blue);
     }
 
-    /* ── SUMMARY CARD ────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       SUMMARY CARD
+    ──────────────────────────────────────────── */
     .summary-card {
       background: var(--glass);
-      border: 0.5px solid var(--border);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 22px;
       position: relative;
@@ -521,17 +777,17 @@
       width: 130px;
       height: 130px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(59, 130, 246, .18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(59, 130, 246, .15) 0%, transparent 70%);
       pointer-events: none;
     }
 
     .sum-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
-      margin-bottom: 16px;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: .5px;
+      letter-spacing: .6px;
+      margin-bottom: 16px;
     }
 
     .sum-prof {
@@ -549,7 +805,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
       border: 2px solid rgba(59, 130, 246, .3);
       flex-shrink: 0;
     }
@@ -565,7 +823,7 @@
     }
 
     .divider {
-      height: 0.5px;
+      height: 1px;
       background: var(--border);
       margin: 14px 0;
     }
@@ -630,22 +888,158 @@
       transform: translateY(0);
     }
 
-    /* ── RESPONSIVE ──────────────────────────────────── */
+    /* ────────────────────────────────────────────
+       FOOTER
+    ──────────────────────────────────────────── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      background: rgba(5, 8, 20, 0.92);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px 24px;
+    }
+
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .footer-brand .logo-text {
+      font-size: 17px;
+    }
+
+    .footer-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+      max-width: 220px;
+      line-height: 1.6;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(200, 210, 255, .35);
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      margin-bottom: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .footer-link {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .footer-link:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(200, 210, 255, .28);
+    }
+
+    .footer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(200, 210, 255, .35);
+    }
+
+    .footer-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(74, 222, 128, .5);
+    }
+
+    /* ────────────────────────────────────────────
+       RESPONSIVE
+    ──────────────────────────────────────────── */
     @media (max-width: 720px) {
+      .header {
+        padding: 0 18px;
+      }
+
+      .nav-desktop {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .body {
+        padding: 24px 16px 48px;
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
       .two-col {
         grid-template-columns: 1fr;
       }
 
+      .prof-card {
+        padding: 14px 16px;
+      }
+
+      .servico-info {
+        padding: 14px 16px;
+      }
+
+      .footer-top {
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .badge-verified {
+        display: none;
+      }
+
       .metrics {
         grid-template-columns: repeat(2, 1fr);
-      }
-
-      .header {
-        padding: 14px 18px;
-      }
-
-      .body {
-        padding: 24px 14px 40px;
       }
     }
   </style>
@@ -653,9 +1047,12 @@
 
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo">
+  <!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+  <header class="header">
+
+    <a class="logo" href="/">
       <div class="logo-icon">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
@@ -663,325 +1060,421 @@
         </svg>
       </div>
       <span class="logo-text">Agenda Fácil</span>
-    </div>
-    <div class="nav">
-      <span class="nav-link" onclick="history.back()">← Início</span>
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="nav-desktop">
+      <a class="nav-link" href="/">Início</a>
+      <a class="nav-link" href="/servicos">Serviços</a>
+
       {% if session.get('usuario_logado') %}
-      <div class="avatar-pill">
+      <a class="avatar-pill" href="/perfil">
         <div class="avatar" id="user-initials">
           {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
         </div>
-        <span id="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
-      </div>
-      <a href="/logout"
-        style="color:#f87171;font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);">
-        🚪 Sair
+        <span class="user-name" id="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
+      </a>
+      <a href="/logout" class="btn-logout">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M5 2H2.5A1 1 0 001.5 3v7a1 1 0 001 1H5M9 9.5l3-3-3-3M12 6.5H5" stroke="currentColor"
+            stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Sair
       </a>
       {% else %}
-      <a href="/login" style="color:var(--muted);font-size:14px;text-decoration:none;">Entrar</a>
+      <a href="/login" class="btn-login">Entrar</a>
       {% endif %}
+    </nav>
+
+    <!-- Hamburger (mobile) -->
+    <div class="hamburger" id="hamburger" aria-label="Abrir menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+  </header>
+
+  <!-- ══════════════════════════════════════
+     MOBILE MENU
+══════════════════════════════════════ -->
+  <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Menu mobile">
+    <div class="mobile-menu-inner">
+
+      {% if session.get('usuario_logado') %}
+      <!-- User info -->
+      <div class="mobile-user-row">
+        <div class="avatar" style="width:38px;height:38px;font-size:14px;">
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
+        </div>
+        <div class="mobile-user-info">
+          <div class="m-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</div>
+          <div class="m-role">Cliente</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <a class="mobile-nav-item" href="/">
+        <span class="m-icon">🏠</span>
+        Início
+      </a>
+      <a class="mobile-nav-item" href="/servicos">
+        <span class="m-icon">🔧</span>
+        Serviços
+      </a>
+
+      {% if session.get('usuario_logado') %}
+      <a class="mobile-nav-item" href="/perfil">
+        <span class="m-icon">👤</span>
+        Meu Perfil
+      </a>
+
+      <div class="mobile-divider"></div>
+
+      <a class="mobile-nav-item logout" href="/logout">
+        <span class="m-icon">🚪</span>
+        Logout
+      </a>
+      {% else %}
+      <div class="mobile-divider"></div>
+      <a class="mobile-nav-item" href="/login">
+        <span class="m-icon">🔑</span>
+        Entrar
+      </a>
+      {% endif %}
+
     </div>
   </div>
 
-  <!-- BODY -->
-  <div class="body">
-    <div class="page-title">Agendar Serviço</div>
+  <!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+  <div class="page-wrapper">
+    <div class="body">
 
-    <!-- PROVIDER CARD -->
-    <div class="glass prof-card">
-      <div class="prof-left">
-        <div class="prof-photo" id="prof-emoji">👷</div>
-        <div>
-          <div class="prof-name" id="prof-nome">—</div>
-          <div class="prof-sub" id="prof-area">—</div>
-          <div class="stars">
-            <span class="star">★</span><span class="star">★</span>
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            <span style="font-size:13px;font-weight:700;color:var(--gold);margin-left:4px">4,8</span>
-            <span class="rating-text">(127 avaliações)</span>
+      <div class="page-title">Agendar Serviço</div>
+
+      <!-- PROVIDER CARD -->
+      <div class="glass prof-card">
+        <div class="prof-left">
+          <div class="prof-photo" id="prof-emoji">👷</div>
+          <div class="prof-info">
+            <div class="prof-name" id="prof-nome">—</div>
+            <div class="prof-sub" id="prof-area">—</div>
+            <div class="stars">
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="rating-score">4,8</span>
+              <span class="rating-text">(127 avaliações)</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="badge-verified">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-        Verificado
-      </div>
-    </div>
-
-    <!-- SERVICE INFO (filled dynamically) -->
-    <div class="glass servico-info" id="servico-info-card">
-      <div class="cat-badge" id="info-categoria">Geral</div>
-      <div class="servico-titulo" id="info-titulo">Carregando serviço...</div>
-      <div class="servico-desc" id="info-descricao"></div>
-      <div class="servico-meta">
-        <span class="servico-meta-item">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" />
-            <path d="M7 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+        <div class="badge-verified">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
-          Duração: <strong id="info-duracao">-</strong>h
-        </span>
-        <span class="servico-preco-badge" id="info-preco">R$ 0,00</span>
+          Verificado
+        </div>
       </div>
-    </div>
 
-    <!-- METRICS -->
-    <div class="metrics">
-      <div class="metric-card">
-        <div class="metric-icon">📅</div>
-        <div class="metric-label">Serviços Ativos</div>
-        <div class="metric-value">8</div>
+      <!-- SERVICE INFO -->
+      <div class="glass servico-info" id="servico-info-card">
+        <div class="cat-badge" id="info-categoria">Geral</div>
+        <div class="servico-titulo" id="info-titulo">Carregando serviço...</div>
+        <div class="servico-desc" id="info-descricao"></div>
+        <div class="servico-meta">
+          <span class="servico-meta-item">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" />
+              <path d="M7 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            Duração: <strong id="info-duracao">-</strong>h
+          </span>
+          <span class="servico-preco-badge" id="info-preco">R$ 0,00</span>
+        </div>
       </div>
-      <div class="metric-card">
-        <div class="metric-icon">📋</div>
-        <div class="metric-label">Atendimentos do Dia</div>
-        <div class="metric-value">5</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon">🕐</div>
-        <div class="metric-label">Solicitações</div>
-        <div class="metric-value">3</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon">💰</div>
-        <div class="metric-label">Ganhos do Mês</div>
-        <div class="metric-value" style="font-size:17px">R$ 3.200</div>
-      </div>
-    </div>
 
-    <!-- TWO COLUMN -->
-    <div class="two-col">
+      <!-- TWO COLUMN: CALENDAR + SUMMARY -->
+      <div class="two-col">
 
-      <!-- LEFT: CALENDAR + TIMES -->
-      <div class="glass cal-panel">
-        <div class="cal-header">
-          <span class="cal-month" id="cal-month-label">Maio 2025</span>
-          <div class="cal-nav">
-            <div class="cal-btn" id="cal-prev">‹</div>
-            <div class="cal-btn" id="cal-next">›</div>
+        <!-- LEFT: Calendar + Time + Observations -->
+        <div class="glass cal-panel">
+          <div class="cal-header">
+            <span class="cal-month" id="cal-month-label">Maio 2025</span>
+            <div class="cal-nav">
+              <div class="cal-btn" id="cal-prev">‹</div>
+              <div class="cal-btn" id="cal-next">›</div>
+            </div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+
+          <div class="section-title">Horários Disponíveis</div>
+          <div class="time-slots" id="time-slots">
+            <div class="time-btn" data-time="09:00">09:00</div>
+            <div class="time-btn" data-time="10:00">10:00</div>
+            <div class="time-btn" data-time="11:00">11:00</div>
+            <div class="time-btn" data-time="14:00">14:00</div>
+            <div class="time-btn" data-time="15:00">15:00</div>
+            <div class="time-btn" data-time="16:00">16:00</div>
+          </div>
+
+          <label class="obs-label" for="obs-input">Observações</label>
+          <input class="obs-input" type="text" id="obs-input" placeholder="Ex: Trazer chave de fenda..." />
+        </div>
+
+        <!-- RIGHT: Summary -->
+        <div class="summary-card">
+          <div class="sum-title">Resumo do Agendamento</div>
+
+          <div class="sum-prof">
+            <div class="sum-photo" id="sum-photo-emoji">👷</div>
+            <div>
+              <div class="sum-name" id="sum-prestador-nome">—</div>
+              <div class="sum-sub" id="sum-prestador-area">—</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="sum-row">
+            <span class="sum-row-label">Serviço</span>
+            <span class="sum-row-value" id="sum-titulo" style="max-width:160px">—</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Categoria</span>
+            <span class="sum-row-value" id="sum-categoria">—</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Data</span>
+            <span class="sum-row-value" id="sum-data">Selecione uma data</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Horário</span>
+            <span class="sum-row-value" id="sum-hora">—</span>
+          </div>
+          <div class="sum-row">
+            <span class="sum-row-label">Orçamento</span>
+            <span class="sum-row-value" id="sum-preco">R$ —</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="sum-row">
+            <span class="sum-row-label sum-total">Total</span>
+            <span class="sum-total-value" id="sum-total">R$ —</span>
+          </div>
+
+          <button class="confirm-btn" id="btn-confirmar">Confirmar Agendamento</button>
+        </div>
+
+      </div>
+    </div><!-- /.body -->
+  </div><!-- /.page-wrapper -->
+
+  <!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+          <a class="logo" href="/" style="margin-bottom:0">
+            <div class="logo-icon" style="width:28px;height:28px;border-radius:7px;">
+              <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+                <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
+                <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <span class="logo-text">Agenda Fácil</span>
+          </a>
+          <p class="footer-tagline">Conectando pessoas a profissionais de confiança.</p>
+        </div>
+
+        <!-- Links: Plataforma -->
+        <div>
+          <div class="footer-col-title">Plataforma</div>
+          <div class="footer-links">
+            <a class="footer-link" href="/">Início</a>
+            <a class="footer-link" href="/servicos">Serviços</a>
+            <a class="footer-link" href="/orcamentos">Orçamentos</a>
+            <a class="footer-link" href="/prestador">Seja Prestador</a>
           </div>
         </div>
-        <div class="cal-grid" id="cal-grid"></div>
 
-        <div class="section-title">Horários Disponíveis</div>
-        <div class="time-slots" id="time-slots">
-          <div class="time-btn" data-time="09:00">09:00</div>
-          <div class="time-btn" data-time="10:00">10:00</div>
-          <div class="time-btn" data-time="11:00">11:00</div>
-          <div class="time-btn" data-time="14:00">14:00</div>
-          <div class="time-btn" data-time="15:00">15:00</div>
-          <div class="time-btn" data-time="16:00">16:00</div>
-        </div>
-
-        <label class="obs-label">Observações</label>
-        <input class="obs-input" type="text" id="obs-input" placeholder="Ex: Trazer chave de fenda..." />
-      </div>
-
-      <!-- RIGHT: SUMMARY -->
-      <div class="summary-card">
-        <div class="sum-title">Sumário</div>
-        <div class="sum-prof">
-          <div class="sum-photo" id="sum-photo-emoji">👷</div>
-          <div>
-            <div class="sum-name" id="sum-prestador-nome">—</div>
-            <div class="sum-sub" id="sum-prestador-area">—</div>
+        <!-- Links: Conta -->
+        <div>
+          <div class="footer-col-title">Conta</div>
+          <div class="footer-links">
+            <a class="footer-link" href="/perfil">Meu Perfil</a>
+            <a class="footer-link" href="/agendamentos">Meus Agendamentos</a>
+            <a class="footer-link" href="/login">Entrar</a>
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="sum-row">
-          <span class="sum-row-label">Serviço</span>
-          <span class="sum-row-value" id="sum-titulo" style="max-width:160px">—</span>
+
+      </div><!-- /.footer-top -->
+
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 Agenda Fácil. Todos os direitos reservados.</span>
+        <div class="footer-badge">
+          <div class="footer-badge-dot"></div>
+          Todos os sistemas operacionais
         </div>
-        <div class="sum-row">
-          <span class="sum-row-label">Categoria</span>
-          <span class="sum-row-value" id="sum-categoria">—</span>
-        </div>
-        <div class="sum-row">
-          <span class="sum-row-label">Data</span>
-          <span class="sum-row-value" id="sum-data">Selecione uma data</span>
-        </div>
-        <div class="sum-row">
-          <span class="sum-row-label">Horário</span>
-          <span class="sum-row-value" id="sum-hora">—</span>
-        </div>
-        <div class="sum-row">
-          <span class="sum-row-label">Orçamento</span>
-          <span class="sum-row-value" id="sum-preco">R$ —</span>
-        </div>
-        <div class="divider"></div>
-        <div class="sum-row">
-          <span class="sum-row-label sum-total">Total</span>
-          <span class="sum-total-value" id="sum-total">R$ —</span>
-        </div>
-        <button class="confirm-btn" id="btn-confirmar">Confirmar Agendamento</button>
       </div>
 
-    </div>
-  </div>
+    </div><!-- /.footer-inner -->
+  </footer>
 
+  <!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
   <script>
-    /* =========================================================
-       1. CARREGAR SERVIÇO SELECIONADO
-       Ordem de prioridade:
-       1) window.servicoAtual
-       2) localStorage (CORRETO PRINCIPAL)
-       3) URL params
-       4) fallback demo
-    ========================================================= */
-    function getServicoData() {
+    /* ── Mobile menu ─────────────────────────── */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-      if (window.servicoAtual) return window.servicoAtual;
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+    });
 
-      const stored = localStorage.getItem("servicoSelecionado");
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch (e) {
-          console.error("Erro ao ler localStorage:", e);
-        }
+    // Close menu when a link is tapped
+    mobileMenu.querySelectorAll('.mobile-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+      });
+    });
+
+    // Close on outside click
+    document.addEventListener('click', e => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
       }
+    });
 
+    /* ── Load service data ───────────────────── */
+    function getServicoData() {
+      if (window.servicoAtual) return window.servicoAtual;
+      const stored = localStorage.getItem('servicoSelecionado');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) { }
+      }
       const p = new URLSearchParams(location.search);
-      if (p.get("titulo")) {
+      if (p.get('titulo')) {
         return {
-          titulo: p.get("titulo") || "",
-          preco: p.get("preco") || "0.00",
-          categoria: p.get("categoria") || "Geral",
-          descricao: p.get("descricao") || "",
-          duracao: p.get("duracao") || "-"
+          titulo: p.get('titulo') || '',
+          preco: p.get('preco') || '0.00',
+          categoria: p.get('categoria') || 'Geral',
+          descricao: p.get('descricao') || '',
+          duracao: p.get('duracao') || '-'
         };
       }
-
-      return {
-        titulo: "Serviço não encontrado",
-        preco: "0.00",
-        categoria: "Geral",
-        descricao: "",
-        duracao: "-"
-      };
+      return { titulo: 'Serviço não encontrado', preco: '0.00', categoria: 'Geral', descricao: '', duracao: '-' };
     }
 
     const servico = getServicoData();
 
-    /* =========================================================
-       2. FORMATAÇÃO DE PREÇO
-    ========================================================= */
     function formatPreco(valor) {
-      const n = parseFloat(String(valor).replace(",", ".")) || 0;
-      return "R$ " + n.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2
-      });
+      const n = parseFloat(String(valor).replace(',', '.')) || 0;
+      return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     }
 
-    /* =========================================================
-       3. PREENCHER TELA (SERVIÇO + SUMÁRIO)
-    ========================================================= */
     function preencherServico() {
+      document.getElementById('info-categoria').textContent = servico.categoria;
+      document.getElementById('info-titulo').textContent = servico.titulo;
+      document.getElementById('info-descricao').textContent = servico.descricao;
+      document.getElementById('info-duracao').textContent = servico.duracao;
+      document.getElementById('info-preco').textContent = formatPreco(servico.preco);
 
-      document.getElementById("info-categoria").textContent = servico.categoria;
-      document.getElementById("info-titulo").textContent = servico.titulo;
-      document.getElementById("info-descricao").textContent = servico.descricao;
-      document.getElementById("info-duracao").textContent = servico.duracao;
-      document.getElementById("info-preco").textContent = formatPreco(servico.preco);
+      document.getElementById('sum-titulo').textContent = servico.titulo;
+      document.getElementById('sum-categoria').textContent = servico.categoria;
+      document.getElementById('sum-preco').textContent = formatPreco(servico.preco);
+      document.getElementById('sum-total').textContent = formatPreco(servico.preco);
 
-      document.getElementById("sum-titulo").textContent = servico.titulo;
-      document.getElementById("sum-categoria").textContent = servico.categoria;
-      document.getElementById("sum-preco").textContent = formatPreco(servico.preco);
-      document.getElementById("sum-total").textContent = formatPreco(servico.preco);
-
-      // Nome do prestador que criou o serviço
       const nomePrestador = (servico.nome && servico.sobrenome)
-        ? servico.nome + " " + servico.sobrenome
-        : (servico.nome || "Prestador");
-      const areaPrestador = servico.areas_atuacao || servico.area_atuacao || servico.categoria || "Prestador";
+        ? servico.nome + ' ' + servico.sobrenome
+        : (servico.nome || 'Prestador');
+      const areaPrestador = servico.areas_atuacao || servico.area_atuacao || servico.categoria || 'Prestador';
 
-      document.getElementById("prof-nome").textContent = nomePrestador;
-      document.getElementById("prof-area").textContent = areaPrestador;
-      document.getElementById("sum-prestador-nome").textContent = nomePrestador;
-      document.getElementById("sum-prestador-area").textContent = areaPrestador;
+      document.getElementById('prof-nome').textContent = nomePrestador;
+      document.getElementById('prof-area').textContent = areaPrestador;
+      document.getElementById('sum-prestador-nome').textContent = nomePrestador;
+      document.getElementById('sum-prestador-area').textContent = areaPrestador;
 
-      // Iniciais no avatar do prestador
-      const iniciais = nomePrestador.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
-      document.getElementById("prof-emoji").textContent = iniciais || "👷";
-      document.getElementById("sum-photo-emoji").textContent = iniciais || "👷";
+      const iniciais = nomePrestador.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+      document.getElementById('prof-emoji').textContent = iniciais || '👷';
+      document.getElementById('sum-photo-emoji').textContent = iniciais || '👷';
     }
 
     preencherServico();
 
-    /* =========================================================
-       4. VARIÁVEIS DE ESTADO
-    ========================================================= */
+    /* ── Calendar ────────────────────────────── */
     let selectedDate = null;
     let selectedTime = null;
 
-    const MONTHS = [
-      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
+    const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-    /* =========================================================
-       5. CALENDÁRIO
-    ========================================================= */
     function buildCalendar() {
-
-      const grid = document.getElementById("cal-grid");
-      grid.innerHTML = "";
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '';
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const year = today.getFullYear();
       const month = today.getMonth();
+
+      document.getElementById('cal-month-label').textContent = MONTHS[month] + ' ' + year;
 
       const firstDay = new Date(year, month, 1).getDay();
       const offset = (firstDay + 6) % 7;
       const days = new Date(year, month + 1, 0).getDate();
 
-      // headers
-      ["S", "T", "Q", "Q", "S", "S", "D"].forEach(d => {
-        const el = document.createElement("div");
-        el.className = "cal-dow";
+      ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-dow';
         el.textContent = d;
         grid.appendChild(el);
       });
 
-      // empty
       for (let i = 0; i < offset; i++) {
-        const el = document.createElement("div");
-        el.className = "cal-day";
+        const el = document.createElement('div');
+        el.className = 'cal-day';
         grid.appendChild(el);
       }
 
-      // days
       for (let d = 1; d <= days; d++) {
-
-        const el = document.createElement("div");
+        const el = document.createElement('div');
         const date = new Date(year, month, d);
-
         const isPast = date < today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
         el.textContent = d;
 
-        if (isPast || isWeekend) {
-          el.className = "cal-day";
-        } else {
-          el.className = "cal-day available has-dot";
-
-          el.addEventListener("click", () => {
+        if (!isPast && !isWeekend) {
+          el.className = 'cal-day available has-dot';
+          el.addEventListener('click', () => {
             selectedDate = date;
             updateSummary();
             buildCalendar();
           });
+        } else {
+          el.className = 'cal-day';
         }
 
         if (selectedDate &&
           selectedDate.getDate() === d &&
           selectedDate.getMonth() === month) {
-          el.className = "cal-day selected";
+          el.className = 'cal-day selected';
         }
 
         grid.appendChild(el);
@@ -990,104 +1483,61 @@
 
     buildCalendar();
 
-    /* =========================================================
-       6. HORÁRIOS
-    ========================================================= */
-    document.querySelectorAll(".time-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-
-        document.querySelectorAll(".time-btn")
-          .forEach(b => b.classList.remove("selected"));
-
-        btn.classList.add("selected");
+    /* ── Time slots ──────────────────────────── */
+    document.querySelectorAll('.time-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
         selectedTime = btn.dataset.time;
-
         updateSummary();
       });
     });
 
-    /* =========================================================
-       7. ATUALIZAR SUMÁRIO
-    ========================================================= */
+    /* ── Update summary ──────────────────────── */
     function updateSummary() {
-
       if (selectedDate) {
-        const dd = String(selectedDate.getDate()).padStart(2, "0");
+        const dd = String(selectedDate.getDate()).padStart(2, '0');
         const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
-
-        document.getElementById("sum-data").textContent =
-          `${dd} ${mm}`;
+        document.getElementById('sum-data').textContent = `${dd} ${mm}`;
       }
-
       if (selectedTime) {
-        document.getElementById("sum-hora").textContent =
-          selectedTime;
+        document.getElementById('sum-hora').textContent = selectedTime;
       }
     }
 
-    /* =========================================================
-       8. CONFIRMAR AGENDAMENTO (ENVIA PRO FLASK)
-    ========================================================= */
-    document.getElementById("btn-confirmar").addEventListener("click", async () => {
-
+    /* ── Confirm booking ─────────────────────── */
+    document.getElementById('btn-confirmar').addEventListener('click', async () => {
       if (!selectedDate || !selectedTime) {
-        alert("Selecione data e horário");
+        alert('Selecione data e horário');
         return;
       }
 
       const payload = {
         servico: servico.titulo,
         preco: servico.preco,
-        prestador_email: servico.prestador_email || "",
-        data: selectedDate.toISOString().split("T")[0],
+        prestador_email: servico.prestador_email || '',
+        data: selectedDate.toISOString().split('T')[0],
         horario: selectedTime,
-        obs: document.getElementById("obs-input").value
+        obs: document.getElementById('obs-input').value
       };
 
       try {
-        const res = await fetch("/salvar_agendamento", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+        const res = await fetch('/salvar_agendamento', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
         const data = await res.json();
 
-        if (data.erro) {
-          alert(data.erro);
-          return;
-        }
-
-        window.location.href = "/sucessoservico?id=" + (data.id || "");
-
+        if (data.erro) { alert(data.erro); return; }
+        window.location.href = '/sucessoservico?id=' + (data.id || '');
       } catch (err) {
         console.error(err);
-        alert("Erro de conexão com servidor");
+        alert('Erro de conexão com servidor');
       }
     });
-
   </script>
 
-
-  <footer
-    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-    <div style="max-width:900px;margin:0 auto;">
-      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
-        <a href="/" style="color:rgba(255,255,255,.45);text-decoration:none;">Início</a>
-        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
-        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
-        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
-      </div>
-      <div
-        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
-      </div>
-    </div>
-  </footer>
 </body>
 
 </html>

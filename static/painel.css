@@ -1,251 +1,307 @@
 /* ============================================================
-   painel.css  —  Painel do Prestador + Formulário de Serviço
-   Depende de: global.css  +  Tailwind CDN (utilitários)
+   painel.css — Responsivo + Cabeçalho Mobile
    ============================================================ */
 
-/* ─────────────────────────────────────────────────────────────
-   PÁGINA
-───────────────────────────────────────────────────────────── */
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--bg-light);
   color: var(--text);
   font-family: var(--font);
-  margin: 0;
-  padding: 0;
+  overflow-x: hidden;
 }
 
-/* Container principal com padding lateral responsivo */
-.painel-wrapper {
-  max-width: 960px;
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.site-header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* MENU */
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: .2s;
+}
+
+.nav-menu a:hover {
+  color: var(--primary);
+}
+
+/* BOTÃO MENU MOBILE */
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.menu-toggle span {
+  width: 24px;
+  height: 3px;
+  background: #111827;
+  border-radius: 999px;
+}
+
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-bottom: 1px solid var(--border);
+
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 20px;
+
+    gap: 18px;
+
+    display: none;
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-menu a {
+    width: 100%;
+    font-size: 15px;
+  }
+}
+
+/* ============================================================
+   CONTAINER PRINCIPAL
+   ============================================================ */
+
+.painel-wrapper,
+.form-wrapper {
+  width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 24px 16px;
 }
 
-@media (min-width: 640px) {
-  .painel-wrapper {
-    padding: 32px 24px;
-  }
-}
+/* ============================================================
+   HEADER PÁGINA
+   ============================================================ */
 
-/* ─────────────────────────────────────────────────────────────
-   CABEÇALHO DA PÁGINA
-───────────────────────────────────────────────────────────── */
 .painel-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 .painel-header h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
 }
 
-@media (min-width: 640px) {
-  .painel-header h1 {
-    font-size: 22px;
-  }
-}
+/* ============================================================
+   MÉTRICAS
+   ============================================================ */
 
-/* ─────────────────────────────────────────────────────────────
-   CARDS DE MÉTRICAS
-───────────────────────────────────────────────────────────── */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-/* Em mobile muito pequeno, empilha em coluna */
-@media (max-width: 380px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .metric-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px 12px;
+  padding: 20px;
   text-align: center;
   box-shadow: var(--shadow-xs);
-  min-width: 0; /* evita overflow no grid */
-}
-
-@media (min-width: 640px) {
-  .metric-card {
-    padding: 20px 16px;
-  }
 }
 
 .metric-card__value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-@media (min-width: 640px) {
-  .metric-card__value {
-    font-size: 28px;
-  }
+  margin-bottom: 6px;
 }
 
 .metric-card__label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
-  font-weight: 500;
 }
 
-@media (min-width: 480px) {
-  .metric-card__label {
-    font-size: 12px;
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    padding: 18px;
   }
 }
 
-/* Cores das métricas */
-#pendentes  { color: var(--pending);  }
-#andamento  { color: var(--progress); }
-#concluidos { color: var(--done);     }
+/* ============================================================
+   AÇÕES
+   ============================================================ */
 
-/* ─────────────────────────────────────────────────────────────
-   BARRA DE AÇÕES
-───────────────────────────────────────────────────────────── */
 .actions-bar {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-bottom: 24px;
 }
 
-/* Em mobile, os botões ocupam linha inteira */
-@media (max-width: 480px) {
-  .actions-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .actions-bar .btn,
-  .actions-bar .btn-novo-servico {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
-}
-
-/* Botão pill padrão */
-.btn {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 10px 20px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
+.btn,
+.btn-novo-servico {
+  min-height: 46px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: none;
   cursor: pointer;
-  transition: background .2s, border-color .2s;
-  white-space: nowrap;
-  min-height: 44px; /* área de toque mínima para mobile */
-  display: inline-flex;
-  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.btn {
+  background: white;
+  border: 1px solid var(--border);
 }
 
 .btn:hover {
-  background: var(--card-alt);
   border-color: var(--primary);
 }
 
-/* Botão "+ Novo Serviço" */
 .btn-novo-servico {
-  padding: 10px 20px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--progress);
-  border: none;
-  cursor: pointer;
-  transition: opacity .2s;
-  white-space: nowrap;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
+  background: linear-gradient(
+    135deg,
+    var(--primary-dark),
+    var(--primary)
+  );
+  color: white;
 }
 
 .btn-novo-servico:hover {
-  opacity: .88;
+  opacity: .9;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   LISTA DE PEDIDOS
-───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+
+  .actions-bar {
+    flex-direction: column;
+  }
+
+  .btn,
+  .btn-novo-servico {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   LISTA PEDIDOS
+   ============================================================ */
+
 #lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   CARD DE PEDIDO
-───────────────────────────────────────────────────────────── */
 .pedido-card {
-  background: var(--card);
+  background: white;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 18px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow .2s;
-  flex-wrap: wrap;  /* permite quebrar linha em telas pequenas */
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.pedido-card:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-/* Info principal do pedido (título, cliente etc.) */
 .pedido-card__info {
   flex: 1;
-  min-width: 0; /* permite truncar texto */
+  min-width: 220px;
 }
 
-.pedido-card__info h3,
+.pedido-card__info h3 {
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+
 .pedido-card__info p {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
-/* Ações/badge ficam em linha separada no mobile */
 .pedido-card__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 10px;
 }
 
-@media (max-width: 480px) {
+/* MOBILE */
+
+@media (max-width: 600px) {
+
   .pedido-card {
     flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .pedido-card__info h3,
-  .pedido-card__info p {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
   }
 
   .pedido-card__actions {
@@ -254,146 +310,136 @@ body {
   }
 }
 
-/* Badge de status */
+/* ============================================================
+   BADGE
+   ============================================================ */
+
 .badge {
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FORMULÁRIO DE NOVO SERVIÇO  (forms.html)
-───────────────────────────────────────────────────────────── */
-
-/* Container do formulário */
-.form-wrapper {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 24px 16px;
-}
-
-@media (min-width: 640px) {
-  .form-wrapper {
-    padding: 32px 24px;
-  }
-}
+/* ============================================================
+   FORMULÁRIO
+   ============================================================ */
 
 .form-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
-@media (min-width: 640px) {
+.form-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .form-card {
+    padding: 18px;
+  }
+
   .form-title {
     font-size: 20px;
   }
 }
 
-/* Card branco do formulário */
-.form-card {
-  background: var(--card, #fff);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+/* INPUTS */
 
-@media (min-width: 480px) {
-  .form-card {
-    padding: 24px;
-  }
-}
-
-/* Grupo de campo (label + input) */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+  gap: 6px;
 }
 
 .form-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-muted, #6b7280);
+  color: var(--text-muted);
 }
 
-/* Linha com dois campos lado a lado */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
-/* Em telas muito pequenas, empilha os dois campos */
-@media (max-width: 400px) {
+@media (max-width: 600px) {
+
   .form-row {
     grid-template-columns: 1fr;
   }
 }
 
-/* Input base */
 .input {
-  display: block;
   width: 100%;
-  padding: 10px 12px;
+  min-height: 46px;
+
   border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
+  border-radius: 12px;
+
+  padding: 12px 14px;
+
   font-size: 14px;
-  color: var(--text-body);
-  background: var(--card, #fff);
-  transition: border-color .2s, box-shadow .2s;
+  font-family: var(--font);
+
   outline: none;
-  box-sizing: border-box;
-  min-height: 44px;
-  appearance: none;
-  -webkit-appearance: none;
+
+  transition: .2s;
 }
 
 .input:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(43, 115, 255, .12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.12);
 }
 
-/* Textarea com altura maior */
 .textarea {
-  min-height: 96px;
+  min-height: 120px;
   resize: vertical;
 }
 
-/* Select com ícone de seta */
+/* SELECT */
+
 select.input {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+  background-position: right 14px center;
+  padding-right: 40px;
 }
 
-/* Botão primário do formulário */
+/* BOTÃO */
+
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  padding: 13px;
+  min-height: 50px;
+
   border: none;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  color: #fff;
-  font-family: var(--font);
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    var(--primary-dark),
+    var(--primary)
+  );
+
+  color: white;
+
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: opacity .2s, transform .2s;
-  min-height: 48px;
-  margin-top: 4px;
+  transition: .2s;
 }
 
 .btn-primary:hover {
@@ -401,73 +447,71 @@ select.input {
   transform: translateY(-1px);
 }
 
-/* ─────────────────────────────────────────────────────────────
+/* ============================================================
    FOOTER
-───────────────────────────────────────────────────────────── */
+   ============================================================ */
+
 .site-footer {
-  background: #0f172a;
-  color: rgba(255, 255, 255, .55);
-  text-align: center;
-  padding: 32px 20px 24px;
-  font-size: 13px;
-  margin-top: 48px;
+  margin-top: 60px;
+  background: #081028;
+  color: rgba(255,255,255,.65);
+  padding: 42px 20px 24px;
 }
 
 .footer-inner {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .footer-brand {
-  color: #fff;
-  font-size: 15px;
-  display: block;
-  margin-bottom: 4px;
+  font-size: 22px;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .footer-tagline {
-  margin: 0 0 16px;
-  font-size: 13px;
+  margin-bottom: 20px;
 }
 
 .footer-links {
   display: flex;
   justify-content: center;
-  gap: 20px;
   flex-wrap: wrap;
-  font-size: 12px;
-  margin-bottom: 16px;
+  gap: 18px;
+  margin-bottom: 20px;
 }
 
 .footer-links a {
-  color: rgba(255, 255, 255, .45);
   text-decoration: none;
-  padding: 4px 0; /* área de toque maior em mobile */
-  transition: color .2s;
+  color: rgba(255,255,255,.6);
+  transition: .2s;
 }
 
 .footer-links a:hover {
-  color: rgba(255, 255, 255, .75);
+  color: white;
 }
 
 .footer-copy {
-  border-top: 1px solid rgba(255, 255, 255, .1);
-  padding-top: 14px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, .3);
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 16px;
+  font-size: 12px;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   MOBILE — ajustes gerais de touch
-───────────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  /* Garante que elementos clicáveis tenham área de toque mínima */
-  button,
-  a {
-    -webkit-tap-highlight-color: transparent;
-  }
+/* ============================================================
+   RESPONSIVIDADE EXTRA
+   ============================================================ */
 
-  .footer-links {
-    gap: 14px;
-  }
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
 }

@@ -1,0 +1,519 @@
+/* ============================================================
+   painel-prestador.css
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+
+    --bg: #f4f7fb;
+
+    --card: #ffffff;
+
+    --text: #111827;
+    --text-soft: #6b7280;
+
+    --border: #e5e7eb;
+
+    --pending: #f59e0b;
+    --progress: #2563eb;
+    --done: #10b981;
+
+    --radius: 20px;
+    --radius-sm: 14px;
+    --radius-full: 999px;
+
+    --shadow:
+        0 10px 30px rgba(15, 23, 42, .08);
+
+    --font: "Poppins", sans-serif;
+}
+
+/* BODY */
+
+body {
+
+    font-family: var(--font);
+
+    background:
+        radial-gradient(circle at top left,
+            rgba(37, 99, 235, .08),
+            transparent 20%),
+        var(--bg);
+
+    color: var(--text);
+
+    min-height: 100vh;
+}
+
+/* WRAPPER */
+
+.painel-wrapper {
+
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 40px 22px;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.painel-header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 32px;
+}
+
+.painel-header h1 {
+
+    font-size: 34px;
+    font-weight: 700;
+
+    color: var(--text);
+}
+
+/* ============================================================
+   MÉTRICAS
+   ============================================================ */
+
+.metrics-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 28px;
+}
+
+/* CARD */
+
+.metric-card {
+
+    background: var(--card);
+
+    border-radius: var(--radius);
+
+    padding: 28px 22px;
+
+    box-shadow: var(--shadow);
+
+    border: 1px solid rgba(255, 255, 255, .8);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.metric-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, .10);
+}
+
+/* VALUE */
+
+.metric-card__value {
+
+    font-size: 42px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    margin-bottom: 10px;
+}
+
+/* LABEL */
+
+.metric-card__label {
+
+    font-size: 14px;
+
+    color: var(--text-soft);
+
+    font-weight: 500;
+}
+
+/* COLORS */
+
+#pendentes {
+    color: var(--pending);
+}
+
+#andamento {
+    color: var(--progress);
+}
+
+#concluidos {
+    color: var(--done);
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
+.actions-bar {
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 28px;
+
+    flex-wrap: wrap;
+}
+
+/* BUTTON */
+
+.btn,
+.btn-novo-servico {
+
+    min-height: 48px;
+
+    padding: 0 22px;
+
+    border-radius: var(--radius-full);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease,
+        box-shadow .2s ease;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+/* DEFAULT */
+
+.btn {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    color: var(--text);
+}
+
+.btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 24px rgba(15, 23, 42, .08);
+}
+
+/* PRIMARY */
+
+.btn-novo-servico {
+
+    border: none;
+
+    background:
+        linear-gradient(135deg,
+            var(--primary),
+            var(--primary-dark));
+
+    color: white;
+
+    box-shadow:
+        0 12px 24px rgba(37, 99, 235, .22);
+}
+
+.btn-novo-servico:hover {
+
+    transform: translateY(-2px);
+
+    opacity: .94;
+}
+
+/* ============================================================
+   LISTA
+   ============================================================ */
+
+#lista {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+/* ============================================================
+   CARD PEDIDO
+   ============================================================ */
+
+.pedido-card {
+
+    background: white;
+
+    border-radius: var(--radius);
+
+    padding: 24px;
+
+    box-shadow: var(--shadow);
+
+    border: 1px solid rgba(255, 255, 255, .8);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.pedido-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, .10);
+}
+
+/* INFO */
+
+.pedido-card__info {
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+.pedido-card__info h3 {
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: var(--text);
+
+    margin-bottom: 6px;
+}
+
+.pedido-card__info p {
+
+    font-size: 14px;
+
+    color: var(--text-soft);
+
+    line-height: 1.6;
+}
+
+/* ACTIONS */
+
+.pedido-card__actions {
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+/* BADGE */
+
+.badge {
+
+    padding: 8px 14px;
+
+    border-radius: var(--radius-full);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.site-footer {
+
+    margin-top: 70px;
+
+    background: #081028;
+
+    color: rgba(255, 255, 255, .65);
+
+    padding: 46px 22px 30px;
+}
+
+/* INNER */
+
+.footer-inner {
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+/* BRAND */
+
+.footer-brand {
+
+    display: block;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    color: white;
+
+    margin-bottom: 10px;
+}
+
+/* TAG */
+
+.footer-tagline {
+
+    font-size: 14px;
+
+    margin-bottom: 22px;
+}
+
+/* LINKS */
+
+.footer-links {
+
+    display: flex;
+    justify-content: center;
+
+    gap: 24px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 22px;
+}
+
+.footer-links a {
+
+    color: rgba(255, 255, 255, .7);
+
+    text-decoration: none;
+
+    transition: opacity .2s ease;
+}
+
+.footer-links a:hover {
+
+    opacity: .7;
+}
+
+/* COPY */
+
+.footer-copy {
+
+    border-top:
+        1px solid rgba(255, 255, 255, .08);
+
+    padding-top: 18px;
+
+    font-size: 12px;
+
+    color: rgba(255, 255, 255, .4);
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .painel-wrapper {
+
+        padding: 28px 16px;
+    }
+
+    .painel-header h1 {
+
+        font-size: 28px;
+    }
+
+    .pedido-card {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .pedido-card__actions {
+
+        width: 100%;
+
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .actions-bar {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .btn,
+    .btn-novo-servico {
+
+        width: 100%;
+    }
+
+    .metric-card {
+
+        padding: 24px 18px;
+    }
+
+    .metric-card__value {
+
+        font-size: 36px;
+    }
+
+    .pedido-card {
+
+        padding: 20px;
+    }
+
+    .footer-links {
+
+        gap: 14px;
+    }
+}
