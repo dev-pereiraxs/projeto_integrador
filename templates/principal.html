@@ -19,24 +19,49 @@
   <div class="page-shell">
 
     <!-- HEADER -->
+    <!-- HEADER -->
     <header class="topbar container">
+
       <a class="brand" href="#inicio">
         <span class="brand-mark"></span>
         <span>Agenda Fácil</span>
       </a>
 
-      <nav class="nav-links">
+      <!-- BOTÃO MOBILE -->
+      <button class="menu-toggle" id="menuToggle">
+        ☰
+      </button>
+
+      <!-- MENU -->
+      <nav class="nav-links" id="mobileMenu">
+
         {% if session.get('usuario_logado') %}
-        <a href="{{ url_for('meu_perfil') }}"
-          style="display:flex;align-items:center;gap:6px;background:rgba(99,102,241,.15);padding:6px 16px;border-radius:99px;font-weight:600;font-size:14px;text-decoration:none;color:inherit;">
+
+        <a href="{{ url_for('meu_perfil') }}" class="nav-profile">
           👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
         </a>
-        <a href="{{ url_for('logout') }}" class="btn btn-secondary" style="padding:8px 18px;font-size:14px;">Sair</a>
+
+        <a href="{{ url_for('servicos') }}">Serviços</a>
+
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary nav-logout">
+          Sair
+        </a>
+
         {% else %}
+
         <a href="{{ url_for('login') }}">Entrar</a>
+
         <a href="{{ url_for('cadastro') }}">Cadastrar-se</a>
+
+        <a href="{{ url_for('google_login') }}" class="google-btn">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+          Entrar com Google
+        </a>
+
         {% endif %}
+
       </nav>
+
     </header>
 
     <!-- HERO -->
@@ -213,6 +238,56 @@
       </div>
     </div>
   </section>
+
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+    <div style="max-width:900px;margin:0 auto;">
+      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
+        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
+        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
+        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
+      </div>
+      <div
+        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+  </script>
+
+  <!-- BOTÃO VOLTAR AO TOPO -->
+  <button id="backToTop" aria-label="Voltar ao topo">
+    ↑
+  </button>
+
+  <script>
+    const backToTop = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTop.classList.add("show");
+      } else {
+        backToTop.classList.remove("show");
+      }
+    });
+
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  </script>
 
 </body>
 
