@@ -33,9 +33,6 @@
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/orcamentos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/servicos.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/agenda-facil/servicos/sucesso.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/agendamento.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/agendamento.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/orcamentos.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/orcamentos.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,8 +105,18 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="8cd19155-ffbf-4334-8e3e-6f96c34155b8" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
+        <entry key="8cd19155-ffbf-4334-8e3e-6f96c34155b8">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State />
