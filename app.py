@@ -133,7 +133,7 @@ def perfil():
 def prestador():
     return render_template("prestador.html")
 
-@app.route("/orcamento")
+@app.route("/orcamentos")
 def orcamento():
     return render_template("orcamentos.html")
 
@@ -458,7 +458,7 @@ def agendamento_confirmado():
     if not ag:
         return redirect(url_for("servicos"))
 
-    return render_template("sucessoservico.html", ag=ag)
+    return redirect(url_for("sucesso-agendamento", id=ag_id))
 
 # =========================
 # PERFIL DO PRESTADOR
@@ -869,6 +869,11 @@ def editar_perfil_prestador():
     return jsonify({"mensagem": "Perfil atualizado!"})
 
 load_dotenv(dotenv_path=pathlib.Path(__file__).parent / ".env", override=True)
+
+@app.route("/sucesso-agendamento")
+def sucesso_servico():
+    return render_template("sucesso.html")
+
 
 # =========================
 if __name__ == "__main__":

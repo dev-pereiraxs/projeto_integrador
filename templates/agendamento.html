@@ -1530,7 +1530,7 @@
         const data = await res.json();
 
         if (data.erro) { alert(data.erro); return; }
-        window.location.href = '/sucessoservico?id=' + (data.id || '');
+        window.location.href = '/sucesso-agendamento?id=' + (data.id || '');
       } catch (err) {
         console.error(err);
         alert('Erro de conexão com servidor');
