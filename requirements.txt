@@ -3,19 +3,3 @@ mysql-connector-python==9.0.0
 Authlib==1.3.1
 python-dotenv==1.0.1
 requests==2.32.3
-
-/* Para rodar o projeto corretamente, instale todas as dependências utilizando o arquivo requirements.txt.
-
-No terminal, execute:
-
-pip install -r requirements.txt
-
-Caso esteja utilizando ambiente virtual (venv), ative ele antes da instalação:
-
-venv\Scripts\activate
-
-Depois, execute o projeto com:
-
-python app.py 
-
-Certifique-se de ter o MySQL instalado e configurado corretamente, e que as credenciais no arquivo .env estejam corretas. */

@@ -7,62 +7,125 @@
     <title>Solicitação Enviada – Agenda Fácil</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap"
         rel="stylesheet" />
 
     <link rel="stylesheet" href="../static/global.css">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a144a;
+            --bg-secondary: #1e3a8a;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --text-light: rgba(255, 255, 255, 0.75);
+            --text-muted: rgba(255, 255, 255, 0.55);
+            --green-primary: #10b981;
+            --green-secondary: #059669;
+            --blue-primary: #2b73ff;
+            --blue-secondary: #1d44d9;
+        }
+
         body {
             font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(160deg, #0a144a 0%, #1e3a8a 60%, #0e2756 100%);
+            background:
+                linear-gradient(160deg,
+                    var(--bg-primary) 0%,
+                    var(--bg-secondary) 60%,
+                    #0e2756 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 24px;
+            overflow: hidden;
+            position: relative;
             color: #fff;
         }
 
-        /* Partículas de fundo */
+        /* Background Glow */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             pointer-events: none;
             background:
-                radial-gradient(ellipse 55% 45% at 20% 20%, rgba(43, 115, 255, .22) 0%, transparent 65%),
-                radial-gradient(ellipse 50% 40% at 80% 75%, rgba(16, 185, 129, .18) 0%, transparent 60%);
+                radial-gradient(circle at 20% 20%,
+                    rgba(43, 115, 255, .22),
+                    transparent 35%),
+                radial-gradient(circle at 80% 75%,
+                    rgba(16, 185, 129, .18),
+                    transparent 30%);
         }
 
         .card {
             position: relative;
             z-index: 1;
-            background: rgba(255, 255, 255, .07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, .15);
-            border-radius: 24px;
-            padding: 52px 48px 48px;
-            max-width: 460px;
+
             width: 100%;
+            max-width: 460px;
+
+            background: var(--card-bg);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border: 1px solid var(--border);
+
+            border-radius: 28px;
+
+            padding: 52px 42px;
+
             text-align: center;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, .35);
+
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+            animation: cardEntrance .7s ease;
         }
 
-        /* Ícone animado */
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Ícone */
         .check-wrap {
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 30px;
+
             border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #059669);
+
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 28px;
-            box-shadow: 0 0 0 12px rgba(16, 185, 129, .15), 0 8px 24px rgba(16, 185, 129, .4);
-            animation: popIn .5s cubic-bezier(.175, .885, .32, 1.275) both;
+
+            background:
+                linear-gradient(135deg,
+                    var(--green-primary),
+                    var(--green-secondary));
+
+            box-shadow:
+                0 0 0 12px rgba(16, 185, 129, .15),
+                0 12px 28px rgba(16, 185, 129, .35);
+
+            animation: popIn .6s cubic-bezier(.175, .885, .32, 1.275);
         }
 
         @keyframes popIn {
@@ -78,9 +141,9 @@
         }
 
         .check-wrap svg {
-            animation: drawCheck .4s .35s ease both;
-            stroke-dasharray: 30;
-            stroke-dashoffset: 30;
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+            animation: drawCheck .45s .35s ease forwards;
         }
 
         @keyframes drawCheck {
@@ -91,87 +154,121 @@
 
         .title {
             font-family: 'Sora', sans-serif;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 12px;
-            animation: fadeUp .45s .2s ease both;
+            margin-bottom: 14px;
+            line-height: 1.2;
         }
 
         .subtitle {
             font-size: 15px;
-            color: rgba(255, 255, 255, .65);
-            line-height: 1.65;
-            margin-bottom: 32px;
-            animation: fadeUp .45s .3s ease both;
+            line-height: 1.7;
+            color: var(--text-light);
+            margin-bottom: 28px;
         }
 
         .subtitle strong {
-            color: rgba(255, 255, 255, .9);
+            color: #fff;
         }
 
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Info pill */
         .info-pill {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, .1);
-            border: 1px solid rgba(255, 255, 255, .18);
-            border-radius: 99px;
-            padding: 8px 18px;
+
+            padding: 10px 18px;
+            margin-bottom: 30px;
+
+            border-radius: 999px;
+
+            background: rgba(255, 255, 255, .08);
+
+            border: 1px solid rgba(255, 255, 255, .14);
+
+            color: var(--text-light);
+
             font-size: 13px;
-            color: rgba(255, 255, 255, .75);
-            margin-bottom: 28px;
-            animation: fadeUp .45s .4s ease both;
+            font-weight: 500;
         }
 
         .info-pill span {
             font-size: 16px;
         }
 
-        /* Botão */
         .btn-home {
+            width: 100%;
+
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, #2b73ff, #1d44d9);
-            color: #fff;
+
+            padding: 15px 24px;
+
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
+
+            background:
+                linear-gradient(135deg,
+                    var(--blue-primary),
+                    var(--blue-secondary));
+
+            color: #fff;
+
+            text-decoration: none;
+
             font-family: 'Sora', sans-serif;
             font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: opacity .2s, transform .2s;
-            animation: fadeUp .45s .5s ease both;
+
+            transition:
+                transform .25s ease,
+                opacity .25s ease,
+                box-shadow .25s ease;
+
+            box-shadow:
+                0 10px 24px rgba(43, 115, 255, .28);
         }
 
         .btn-home:hover {
-            opacity: .9;
             transform: translateY(-2px);
+            opacity: .95;
+            box-shadow:
+                0 14px 30px rgba(43, 115, 255, .38);
         }
 
-        /* Rodapé mínimo */
+        .btn-home:active {
+            transform: scale(.98);
+        }
+
         .footer-note {
-            margin-top: 20px;
+            margin-top: 22px;
+
             font-size: 12px;
-            color: rgba(255, 255, 255, .35);
-            animation: fadeUp .45s .6s ease both;
+            color: var(--text-muted);
+
+            letter-spacing: .3px;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 520px) {
+            .card {
+                padding: 40px 24px;
+                border-radius: 22px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .check-wrap {
+                width: 76px;
+                height: 76px;
+            }
         }
     </style>
 </head>
@@ -187,22 +284,26 @@
             </svg>
         </div>
 
-        <h1 class="title">Solicitação enviada!</h1>
+        <h1 class="title">Agendamento realizado!</h1>
 
         <p class="subtitle">
             Seu serviço foi agendado com sucesso.<br>
-            Aguarde até <strong>2 horas</strong> para receber uma confirmação.
+            Em breve, o prestador de serviços entrará em contato com você via
+            <strong>WhatsApp</strong> ou <strong>SMS</strong>.
         </p>
 
         <div class="info-pill">
-            <span>📩</span> Você receberá um contato em breve
+            <span>📩</span>
+            Aguarde o contato do profissional
         </div>
 
-        <a href="{{ url_for('index') }}" class="btn-home">
-            ← Voltar ao início
+        <a href="{{ url_for('servicos') }}" class="btn-home">
+            ← Voltar a serviços
         </a>
 
-        <p class="footer-note">Agenda Fácil · Conectando pessoas a profissionais</p>
+        <p class="footer-note">
+            Agenda Fácil · Conectando pessoas a profissionais
+        </p>
 
     </div>
 

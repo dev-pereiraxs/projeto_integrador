@@ -361,6 +361,277 @@ body {
 }
 
 /* ============================================================
+   BADGE — STATUS
+   ============================================================ */
+
+.badge--pendente {
+    background: rgba(245, 158, 11, .12);
+    color: #d97706;
+}
+
+.badge--confirmado {
+    background: rgba(37, 99, 235, .10);
+    color: var(--primary);
+}
+
+.badge--andamento {
+    background: rgba(37, 99, 235, .14);
+    color: var(--primary-dark);
+}
+
+.badge--concluido {
+    background: rgba(16, 185, 129, .12);
+    color: #059669;
+}
+
+.badge--cancelado {
+    background: rgba(239, 68, 68, .10);
+    color: #dc2626;
+}
+
+/* ============================================================
+   BOTÃO CONCLUIR SERVIÇO
+   ============================================================ */
+
+.btn-concluir {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 8px 18px;
+
+    border-radius: var(--radius-full);
+    border: 1.5px solid #10b981;
+
+    background: rgba(16, 185, 129, .08);
+    color: #059669;
+
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.btn-concluir:hover {
+    background: #10b981;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, .30);
+}
+
+.btn-concluir:active {
+    transform: translateY(0);
+}
+
+/* ============================================================
+   PEDIDO CARD — observações
+   ============================================================ */
+
+.pedido-card .obs {
+    font-style: italic;
+    color: var(--text-soft);
+}
+
+/* ============================================================
+   MODAL OVERLAY
+   ============================================================ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(8, 16, 40, .55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity .25s ease;
+}
+
+.modal-overlay--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ============================================================
+   MODAL BOX
+   ============================================================ */
+
+.modal-box {
+    background: rgba(255, 255, 255, .92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(255, 255, 255, .8);
+    border-radius: var(--radius);
+
+    box-shadow:
+        0 24px 60px rgba(8, 16, 40, .18),
+        0 2px 8px rgba(8, 16, 40, .08);
+
+    padding: 40px 36px 32px;
+    max-width: 420px;
+    width: calc(100% - 32px);
+
+    text-align: center;
+
+    transform: translateY(16px) scale(.97);
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.modal-overlay--visible .modal-box {
+    transform: translateY(0) scale(1);
+}
+
+/* ICON */
+
+.modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+
+    background: rgba(16, 185, 129, .12);
+    color: #10b981;
+
+    margin: 0 auto 20px;
+}
+
+/* TITLE */
+
+.modal-titulo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+/* MESSAGE */
+
+.modal-msg {
+    font-size: 15px;
+    color: var(--text-soft);
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+/* ACTIONS */
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* MODAL BUTTONS */
+
+.btn-modal {
+    min-height: 46px;
+    padding: 0 24px;
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        opacity .2s ease;
+    border: none;
+}
+
+.btn-modal--cancel {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+}
+
+.btn-modal--cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
+}
+
+.btn-modal--confirm {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 10px 24px rgba(16, 185, 129, .28);
+}
+
+.btn-modal--confirm:hover {
+    transform: translateY(-2px);
+    opacity: .92;
+    box-shadow: 0 14px 30px rgba(16, 185, 129, .35);
+}
+
+.btn-modal--confirm:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================================
+   TOAST NOTIFICATION
+   ============================================================ */
+
+.toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+
+    padding: 14px 26px;
+    border-radius: var(--radius-full);
+
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+
+    box-shadow: 0 16px 40px rgba(8, 16, 40, .18);
+
+    z-index: 10000;
+    pointer-events: none;
+    white-space: nowrap;
+
+    opacity: 0;
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
+}
+
+.toast--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast--sucesso {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.toast--erro {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 

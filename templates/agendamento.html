@@ -51,7 +51,6 @@
       flex-direction: column;
     }
 
-    /* Atmospheric glow */
     body::before {
       content: '';
       position: fixed;
@@ -82,7 +81,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* Logo */
     .logo {
       display: flex;
       align-items: center;
@@ -109,7 +107,6 @@
       letter-spacing: -.2px;
     }
 
-    /* Desktop nav links */
     .nav-desktop {
       display: flex;
       align-items: center;
@@ -135,7 +132,6 @@
       background: var(--glass-b);
     }
 
-    /* Avatar pill */
     .avatar-pill {
       display: flex;
       align-items: center;
@@ -177,7 +173,6 @@
       white-space: nowrap;
     }
 
-    /* Logout button */
     .btn-logout {
       display: flex;
       align-items: center;
@@ -199,7 +194,6 @@
       border-color: rgba(239, 68, 68, .45);
     }
 
-    /* Login link */
     .btn-login {
       color: var(--muted);
       font-size: 14px;
@@ -217,7 +211,6 @@
       border-color: var(--border-h);
     }
 
-    /* ── Hamburger (mobile only) ──────────────── */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -262,7 +255,7 @@
     }
 
     /* ────────────────────────────────────────────
-       MOBILE OVERLAY MENU
+       MOBILE MENU
     ──────────────────────────────────────────── */
     .mobile-menu {
       position: fixed;
@@ -293,7 +286,6 @@
       gap: 4px;
     }
 
-    /* User row inside mobile menu */
     .mobile-user-row {
       display: flex;
       align-items: center;
@@ -303,12 +295,6 @@
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: 12px;
-    }
-
-    .mobile-user-row .avatar {
-      width: 38px;
-      height: 38px;
-      font-size: 14px;
     }
 
     .mobile-user-info .m-name {
@@ -322,7 +308,6 @@
       color: var(--muted);
     }
 
-    /* Nav item */
     .mobile-nav-item {
       display: flex;
       align-items: center;
@@ -407,9 +392,6 @@
       margin-bottom: 24px;
     }
 
-    /* ────────────────────────────────────────────
-       GLASS BASE
-    ──────────────────────────────────────────── */
     .glass {
       background: var(--glass);
       border: 1px solid var(--border);
@@ -888,6 +870,232 @@
       transform: translateY(0);
     }
 
+    /* ════════════════════════════════════════════
+       MODAL DE CONFIRMAÇÃO DE PAGAMENTO
+    ════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+
+      /* Backdrop escuro com blur */
+      background: rgba(5, 8, 20, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+
+      /* Estado inicial: invisível */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 440px;
+      background: #0e1730;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 18px;
+      padding: 32px 28px 28px;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(59, 130, 246, .12),
+        0 24px 60px rgba(0, 0, 0, .55),
+        0 0 80px rgba(37, 99, 235, .08);
+
+      /* Animação de entrada */
+      transform: translateY(12px) scale(.97);
+      transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Ícone de aviso no topo */
+    .modal-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(245, 158, 11, .12);
+      border: 1px solid rgba(245, 158, 11, .28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -.2px;
+    }
+
+    /* Bloco de aviso de pagamento */
+    .modal-payment-notice {
+      background: rgba(245, 158, 11, .07);
+      border: 1px solid rgba(245, 158, 11, .20);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .modal-payment-notice .notice-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .modal-payment-notice p {
+      font-size: 13px;
+      color: rgba(253, 230, 138, .90);
+      line-height: 1.6;
+    }
+
+    .modal-question {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* Resumo rápido dentro do modal */
+    .modal-summary {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .modal-summary-row span:first-child {
+      color: var(--muted);
+    }
+
+    .modal-summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    .modal-summary-row.total span:first-child {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal-summary-row.total span:last-child {
+      color: #93c5fd;
+      font-size: 15px;
+    }
+
+    /* Botões do modal */
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-agendar {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 11px;
+      background: var(--blue-g);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .2px;
+      transition: opacity .2s, transform .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-agendar:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    .btn-agendar:active {
+      transform: translateY(0);
+    }
+
+    /* Loading state no botão */
+    .btn-agendar.loading {
+      opacity: .7;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-cancelar-modal {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .btn-cancelar-modal:hover {
+      background: var(--glass-b);
+      color: var(--text);
+      border-color: var(--border-h);
+    }
+
+    /* Spinner animado */
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, .3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    .btn-agendar.loading .spinner {
+      display: block;
+    }
+
+    .btn-agendar.loading .btn-text {
+      display: none;
+    }
+
     /* ────────────────────────────────────────────
        FOOTER
     ──────────────────────────────────────────── */
@@ -911,10 +1119,6 @@
       gap: 40px;
       flex-wrap: wrap;
       margin-bottom: 28px;
-    }
-
-    .footer-brand .logo-text {
-      font-size: 17px;
     }
 
     .footer-tagline {
@@ -998,10 +1202,6 @@
         display: flex;
       }
 
-      .mobile-menu {
-        display: block;
-      }
-
       .body {
         padding: 24px 16px 48px;
       }
@@ -1031,15 +1231,19 @@
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .modal-box {
+        padding: 24px 18px 20px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
     }
 
     @media (max-width: 480px) {
       .badge-verified {
         display: none;
-      }
-
-      .metrics {
-        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -1049,9 +1253,8 @@
 
   <!-- ══════════════════════════════════════
      HEADER
-══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <header class="header">
-
     <a class="logo" href="/">
       <div class="logo-icon">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -1062,7 +1265,6 @@
       <span class="logo-text">Agenda Fácil</span>
     </a>
 
-    <!-- Desktop navigation -->
     <nav class="nav-desktop">
       <a class="nav-link" href="/">Início</a>
       <a class="nav-link" href="/servicos">Serviços</a>
@@ -1072,7 +1274,7 @@
         <div class="avatar" id="user-initials">
           {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
         </div>
-        <span class="user-name" id="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
+        <span class="user-name">{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
       </a>
       <a href="/logout" class="btn-logout">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -1086,23 +1288,17 @@
       {% endif %}
     </nav>
 
-    <!-- Hamburger (mobile) -->
     <div class="hamburger" id="hamburger" aria-label="Abrir menu" role="button" tabindex="0">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </div>
-
   </header>
 
   <!-- ══════════════════════════════════════
      MOBILE MENU
-══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Menu mobile">
     <div class="mobile-menu-inner">
-
       {% if session.get('usuario_logado') %}
-      <!-- User info -->
       <div class="mobile-user-row">
         <div class="avatar" style="width:38px;height:38px;font-size:14px;">
           {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
@@ -1114,41 +1310,23 @@
       </div>
       {% endif %}
 
-      <a class="mobile-nav-item" href="/">
-        <span class="m-icon">🏠</span>
-        Início
-      </a>
-      <a class="mobile-nav-item" href="/servicos">
-        <span class="m-icon">🔧</span>
-        Serviços
-      </a>
+      <a class="mobile-nav-item" href="/"><span class="m-icon">🏠</span>Início</a>
+      <a class="mobile-nav-item" href="/servicos"><span class="m-icon">🔧</span>Serviços</a>
 
       {% if session.get('usuario_logado') %}
-      <a class="mobile-nav-item" href="/perfil">
-        <span class="m-icon">👤</span>
-        Meu Perfil
-      </a>
-
+      <a class="mobile-nav-item" href="/perfil"><span class="m-icon">👤</span>Meu Perfil</a>
       <div class="mobile-divider"></div>
-
-      <a class="mobile-nav-item logout" href="/logout">
-        <span class="m-icon">🚪</span>
-        Logout
-      </a>
+      <a class="mobile-nav-item logout" href="/logout"><span class="m-icon">🚪</span>Logout</a>
       {% else %}
       <div class="mobile-divider"></div>
-      <a class="mobile-nav-item" href="/login">
-        <span class="m-icon">🔑</span>
-        Entrar
-      </a>
+      <a class="mobile-nav-item" href="/login"><span class="m-icon">🔑</span>Entrar</a>
       {% endif %}
-
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
      MAIN CONTENT
-══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <div class="page-wrapper">
     <div class="body">
 
@@ -1162,10 +1340,8 @@
             <div class="prof-name" id="prof-nome">—</div>
             <div class="prof-sub" id="prof-area">—</div>
             <div class="stars">
-              <span class="star">★</span>
-              <span class="star">★</span>
-              <span class="star">★</span>
-              <span class="star">★</span>
+              <span class="star">★</span><span class="star">★</span>
+              <span class="star">★</span><span class="star">★</span>
               <span class="star">★</span>
               <span class="rating-score">4,8</span>
               <span class="rating-text">(127 avaliações)</span>
@@ -1268,72 +1444,93 @@
             <span class="sum-total-value" id="sum-total">R$ —</span>
           </div>
 
+          <!-- Botão abre o modal (NÃO envia diretamente) -->
           <button class="confirm-btn" id="btn-confirmar">Confirmar Agendamento</button>
         </div>
 
       </div>
-    </div><!-- /.body -->
-  </div><!-- /.page-wrapper -->
+    </div>
+  </div>
 
   <!-- ══════════════════════════════════════
-     FOOTER
-══════════════════════════════════════ -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-top">
+     MODAL DE CONFIRMAÇÃO DE PAGAMENTO
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-pagamento" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
 
-        <!-- Brand -->
-        <div class="footer-brand">
-          <a class="logo" href="/" style="margin-bottom:0">
-            <div class="logo-icon" style="width:28px;height:28px;border-radius:7px;">
-              <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
-                <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
-                <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <span class="logo-text">Agenda Fácil</span>
-          </a>
-          <p class="footer-tagline">Conectando pessoas a profissionais de confiança.</p>
+      <!-- Ícone de aviso -->
+      <div class="modal-icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M13 3L2 22h22L13 3z" stroke="#f59e0b" stroke-width="1.8" stroke-linejoin="round" />
+          <path d="M13 10v5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" />
+          <circle cx="13" cy="18.5" r="1" fill="#f59e0b" />
+        </svg>
+      </div>
+
+      <h2 class="modal-title" id="modal-title">Atenção antes de prosseguir</h2>
+
+      <!-- Aviso de pagamento -->
+      <div class="modal-payment-notice">
+        <span class="notice-icon">💳</span>
+        <p>O pagamento será efetuado <strong>diretamente com o prestador de serviços</strong>, não pela plataforma.</p>
+      </div>
+
+      <p class="modal-question">Tem certeza que deseja prosseguir com o agendamento?</p>
+
+      <!-- Mini-resumo para o usuário confirmar -->
+      <div class="modal-summary" id="modal-summary">
+        <div class="modal-summary-row">
+          <span>Serviço</span>
+          <span id="modal-sum-titulo">—</span>
         </div>
-
-        <!-- Links: Plataforma -->
-        <div>
-          <div class="footer-col-title">Plataforma</div>
-          <div class="footer-links">
-            <a class="footer-link" href="/">Início</a>
-            <a class="footer-link" href="/servicos">Serviços</a>
-            <a class="footer-link" href="/orcamentos">Orçamentos</a>
-            <a class="footer-link" href="/prestador">Seja Prestador</a>
-          </div>
+        <div class="modal-summary-row">
+          <span>Data &amp; Horário</span>
+          <span id="modal-sum-datahora">—</span>
         </div>
-
-        <!-- Links: Conta -->
-        <div>
-          <div class="footer-col-title">Conta</div>
-          <div class="footer-links">
-            <a class="footer-link" href="/perfil">Meu Perfil</a>
-            <a class="footer-link" href="/agendamentos">Meus Agendamentos</a>
-            <a class="footer-link" href="/login">Entrar</a>
-          </div>
-        </div>
-
-      </div><!-- /.footer-top -->
-
-      <div class="footer-bottom">
-        <span class="footer-copy">© 2025 Agenda Fácil. Todos os direitos reservados.</span>
-        <div class="footer-badge">
-          <div class="footer-badge-dot"></div>
-          Todos os sistemas operacionais
+        <div class="modal-summary-row total">
+          <span>Valor estimado</span>
+          <span id="modal-sum-preco">R$ —</span>
         </div>
       </div>
 
-    </div><!-- /.footer-inner -->
+      <!-- Ações -->
+      <div class="modal-actions">
+        <button class="btn-agendar" id="btn-agendar-agora">
+          <span class="btn-text">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:4px;vertical-align:-2px">
+              <path d="M3 8l4 4 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Sim, agendar agora
+          </span>
+          <div class="spinner"></div>
+        </button>
+
+        <button class="btn-cancelar-modal" id="btn-cancelar-modal">
+          Cancelar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════ -->
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+    <div style="max-width:900px;margin:0 auto;">
+      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+      <div
+        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
+    </div>
   </footer>
 
   <!-- ══════════════════════════════════════
      SCRIPTS
-══════════════════════════════════════ -->
+  ══════════════════════════════════════ -->
   <script>
     /* ── Mobile menu ─────────────────────────── */
     const hamburger = document.getElementById('hamburger');
@@ -1345,7 +1542,6 @@
       hamburger.setAttribute('aria-expanded', isOpen);
     });
 
-    // Close menu when a link is tapped
     mobileMenu.querySelectorAll('.mobile-nav-item').forEach(item => {
       item.addEventListener('click', () => {
         mobileMenu.classList.remove('open');
@@ -1353,7 +1549,6 @@
       });
     });
 
-    // Close on outside click
     document.addEventListener('click', e => {
       if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
         mobileMenu.classList.remove('open');
@@ -1365,9 +1560,7 @@
     function getServicoData() {
       if (window.servicoAtual) return window.servicoAtual;
       const stored = localStorage.getItem('servicoSelecionado');
-      if (stored) {
-        try { return JSON.parse(stored); } catch (e) { }
-      }
+      if (stored) { try { return JSON.parse(stored); } catch (e) { } }
       const p = new URLSearchParams(location.search);
       if (p.get('titulo')) {
         return {
@@ -1424,28 +1617,29 @@
     const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    let calYear  = today.getFullYear();
+    let calMonth = today.getMonth();
+
     function buildCalendar() {
       const grid = document.getElementById('cal-grid');
       grid.innerHTML = '';
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const year = today.getFullYear();
-      const month = today.getMonth();
+      document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
 
-      document.getElementById('cal-month-label').textContent = MONTHS[month] + ' ' + year;
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const offset   = (firstDay + 6) % 7; // semana começa na segunda
+      const days     = new Date(calYear, calMonth + 1, 0).getDate();
 
-      const firstDay = new Date(year, month, 1).getDay();
-      const offset = (firstDay + 6) % 7;
-      const days = new Date(year, month + 1, 0).getDate();
-
-      ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].forEach(d => {
+      // Cabeçalho: Seg → Dom
+      ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].forEach(d => {
         const el = document.createElement('div');
         el.className = 'cal-dow';
         el.textContent = d;
         grid.appendChild(el);
       });
 
+      // Células vazias antes do dia 1
       for (let i = 0; i < offset; i++) {
         const el = document.createElement('div');
         el.className = 'cal-day';
@@ -1453,14 +1647,21 @@
       }
 
       for (let d = 1; d <= days; d++) {
-        const el = document.createElement('div');
-        const date = new Date(year, month, d);
-        const isPast = date < today;
+        const el   = document.createElement('div');
+        const date = new Date(calYear, calMonth, d);
+        const isPast    = date < today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
         el.textContent = d;
 
-        if (!isPast && !isWeekend) {
+        const isSelected = selectedDate &&
+          selectedDate.getFullYear() === calYear &&
+          selectedDate.getMonth()    === calMonth &&
+          selectedDate.getDate()     === d;
+
+        if (isSelected) {
+          el.className = 'cal-day selected';
+        } else if (!isPast && !isWeekend) {
           el.className = 'cal-day available has-dot';
           el.addEventListener('click', () => {
             selectedDate = date;
@@ -1471,15 +1672,25 @@
           el.className = 'cal-day';
         }
 
-        if (selectedDate &&
-          selectedDate.getDate() === d &&
-          selectedDate.getMonth() === month) {
-          el.className = 'cal-day selected';
-        }
-
         grid.appendChild(el);
       }
     }
+
+    // Navegação entre meses
+    document.getElementById('cal-prev').addEventListener('click', () => {
+      // Não permite voltar para meses anteriores ao atual
+      if (calYear > today.getFullYear() || calMonth > today.getMonth()) {
+        calMonth--;
+        if (calMonth < 0) { calMonth = 11; calYear--; }
+        buildCalendar();
+      }
+    });
+
+    document.getElementById('cal-next').addEventListener('click', () => {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      buildCalendar();
+    });
 
     buildCalendar();
 
@@ -1505,12 +1716,54 @@
       }
     }
 
-    /* ── Confirm booking ─────────────────────── */
-    document.getElementById('btn-confirmar').addEventListener('click', async () => {
+    /* ══════════════════════════════════════════
+       MODAL DE CONFIRMAÇÃO DE PAGAMENTO
+    ══════════════════════════════════════════ */
+    const modalOverlay = document.getElementById('modal-pagamento');
+    const btnConfirmar = document.getElementById('btn-confirmar');
+    const btnCancelar = document.getElementById('btn-cancelar-modal');
+    const btnAgendar = document.getElementById('btn-agendar-agora');
+
+    /* Abre o modal ao clicar em "Confirmar Agendamento" */
+    btnConfirmar.addEventListener('click', () => {
       if (!selectedDate || !selectedTime) {
-        alert('Selecione data e horário');
+        alert('Selecione data e horário antes de prosseguir.');
         return;
       }
+
+      /* Preenche o mini-resumo dentro do modal */
+      const dd = String(selectedDate.getDate()).padStart(2, '0');
+      const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
+      document.getElementById('modal-sum-titulo').textContent = servico.titulo || '—';
+      document.getElementById('modal-sum-datahora').textContent = `${dd} ${mm} às ${selectedTime}`;
+      document.getElementById('modal-sum-preco').textContent = formatPreco(servico.preco);
+
+      /* Exibe o modal */
+      modalOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden'; // trava scroll de fundo
+    });
+
+    /* Fecha o modal ao clicar em "Cancelar" */
+    btnCancelar.addEventListener('click', fecharModal);
+
+    /* Fecha ao clicar fora da caixa */
+    modalOverlay.addEventListener('click', e => {
+      if (e.target === modalOverlay) fecharModal();
+    });
+
+    /* Fecha com ESC */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') fecharModal();
+    });
+
+    function fecharModal() {
+      modalOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* "Sim, agendar agora" → envia para o servidor */
+    btnAgendar.addEventListener('click', async () => {
+      btnAgendar.classList.add('loading');
 
       const payload = {
         servico: servico.titulo,
@@ -1529,11 +1782,20 @@
         });
         const data = await res.json();
 
-        if (data.erro) { alert(data.erro); return; }
+        if (data.erro) {
+          btnAgendar.classList.remove('loading');
+          fecharModal();
+          alert(data.erro);
+          return;
+        }
+
+        /* Redireciona para a página de sucesso */
         window.location.href = '/sucesso-agendamento?id=' + (data.id || '');
       } catch (err) {
         console.error(err);
-        alert('Erro de conexão com servidor');
+        btnAgendar.classList.remove('loading');
+        fecharModal();
+        alert('Erro de conexão com o servidor. Tente novamente.');
       }
     });
   </script>

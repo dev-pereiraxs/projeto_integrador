@@ -669,20 +669,24 @@ def atualizar_status(id):
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
 
-    dados = request.get_json()
+    dados = request.get_json() or {}
     novo_status = dados.get("status")
 
     status_validos = ["pendente", "confirmado", "em_andamento", "concluido", "cancelado"]
     if novo_status not in status_validos:
         return jsonify({"erro": "Status inválido"}), 400
 
+    # Atualiza SEM validação de data (o prestador pode concluir mesmo antes do dia).
     conn = connectar()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         UPDATE agendamentos SET status = %s
         WHERE id = %s AND prestador_email = %s
-    """, (novo_status, id, session["usuario_logado"]))
+        """,
+        (novo_status, id, session["usuario_logado"])
+    )
 
     conn.commit()
     cursor.close()
@@ -873,6 +877,12 @@ load_dotenv(dotenv_path=pathlib.Path(__file__).parent / ".env", override=True)
 @app.route("/sucesso-agendamento")
 def sucesso_servico():
     return render_template("sucesso.html")
+
+@app.route("/sucesso-conclusao")
+def sucesso_conclusao():
+    if "usuario_logado" not in session:
+        return redirect(url_for("login"))
+    return render_template("sucesso_conclusao.html")
 
 
 # =========================
