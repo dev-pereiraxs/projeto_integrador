@@ -4,6 +4,9 @@ from authlib.integrations.flask_client import OAuth
 import os
 from dotenv import load_dotenv
 import pathlib
+import requests as http_requests          # ← para chamar a API do Google Calendar
+from datetime import datetime, timedelta
+from urllib.parse import urlencode        # ← para gerar URL universal do Google Agenda
 
 load_dotenv()
 
@@ -22,7 +25,12 @@ google = oauth.register(
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile"},
+    client_kwargs={
+        # ← ALTERADO: adicionado calendar.events ao scope
+        "scope": "openid email profile https://www.googleapis.com/auth/calendar.events",
+        "access_type": "offline",   # ← garante refresh_token (opcional mas recomendado)
+        "prompt": "consent",        # ← força re-autorização para obter o token de calendar
+    },
 )
 
 # =========================
@@ -35,6 +43,97 @@ def connectar():
         password="",
         database="servicos"
     )
+
+# =========================
+# ← NOVO: HELPER — CRIA EVENTO NO GOOGLE CALENDAR
+# =========================
+def gerar_url_google_agenda(titulo, data_str, horario, duracao_horas, prestador_nome, obs=""):
+    """
+    Gera a URL universal 'Adicionar ao Google Agenda' — funciona sem OAuth,
+    qualquer usuário pode clicar e adicionar o evento à própria conta.
+    """
+    try:
+        start_dt = datetime.strptime(f"{data_str} {horario}", "%Y-%m-%d %H:%M")
+        end_dt   = start_dt + timedelta(hours=float(duracao_horas or 1))
+
+        params = {
+            "action" : "TEMPLATE",
+            "text"   : f"Agendamento: {titulo}",
+            "dates"  : f"{start_dt.strftime('%Y%m%dT%H%M%S')}/{end_dt.strftime('%Y%m%dT%H%M%S')}",
+            "details": f"Prestador: {prestador_nome}\nObservações: {obs or '—'}\n\nAgendado via Agenda Fácil",
+            "ctz"    : "America/Sao_Paulo",
+        }
+        return "https://calendar.google.com/calendar/render?" + urlencode(params)
+    except Exception as e:
+        print(f"[Calendar URL] Erro ao gerar URL: {e}")
+        return None
+
+
+def criar_evento_google_calendar(access_token, titulo, data_str, horario,
+                                  duracao_horas, prestador_nome,
+                                  cliente_email, prestador_email, obs=""):
+    """
+    Cria um evento no Google Calendar do usuário via API OAuth e envia
+    convite automático para o e-mail do prestador.
+    """
+    try:
+        start_dt = datetime.strptime(f"{data_str} {horario}", "%Y-%m-%d %H:%M")
+        end_dt   = start_dt + timedelta(hours=float(duracao_horas or 1))
+
+        evento = {
+            "summary": f"Agendamento: {titulo}",
+            "description": (
+                f"Prestador: {prestador_nome}\n"
+                f"Observações: {obs or '—'}\n\n"
+                "Agendado via Agenda Fácil"
+            ),
+            "start": {
+                "dateTime": start_dt.strftime("%Y-%m-%dT%H:%M:%S"),
+                "timeZone": "America/Sao_Paulo",
+            },
+            "end": {
+                "dateTime": end_dt.strftime("%Y-%m-%dT%H:%M:%S"),
+                "timeZone": "America/Sao_Paulo",
+            },
+            # ← Envia convite para o prestador automaticamente
+            "attendees": [
+                {"email": cliente_email,   "displayName": "Cliente"},
+                {"email": prestador_email, "displayName": prestador_nome},
+            ],
+            "guestsCanModify"     : False,
+            "guestsCanSeeOtherGuests": True,
+            "reminders": {
+                "useDefault": False,
+                "overrides": [
+                    {"method": "email",  "minutes": 1440},  # 24h antes
+                    {"method": "popup",  "minutes": 60},    # 1h antes
+                ],
+            },
+        }
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        }
+
+        res = http_requests.post(
+            # sendUpdates=all → Google envia e-mail de convite para os attendees
+            "https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all",
+            headers=headers,
+            json=evento,
+            timeout=8,
+        )
+
+        if res.status_code in (200, 201):
+            print(f"[Calendar] Evento criado: {res.json().get('id')}")
+            return True, res.json().get("htmlLink")
+        else:
+            print(f"[Calendar] Erro {res.status_code}: {res.text}")
+            return False, None
+
+    except Exception as e:
+        print(f"[Calendar] Exceção ao criar evento: {e}")
+        return False, None
 
 # =========================
 # GOOGLE LOGIN
@@ -53,9 +152,12 @@ def callback():
     if not user_info:
         return render_template("login.html", erro="Erro ao obter dados do Google.")
 
-    nome     = user_info.get("given_name", "")
+    nome      = user_info.get("given_name", "")
     sobrenome = user_info.get("family_name", "")
-    email    = user_info.get("email")
+    email     = user_info.get("email")
+
+    # ← NOVO: guarda o access_token na sessão para usar no Calendar
+    session["google_token"] = token.get("access_token")
 
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
@@ -77,7 +179,6 @@ def callback():
     cliente = cursor.fetchone()
 
     if not cliente:
-        # Novo usuário: cria conta de cliente
         try:
             cursor.execute(
                 "INSERT INTO cadastro_clientes (nome, sobrenome, email) VALUES (%s, %s, %s)",
@@ -160,7 +261,6 @@ def autenticar():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # prestador
     cursor.execute(
         "SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s",
         (email, senha)
@@ -175,7 +275,6 @@ def autenticar():
         conn.close()
         return redirect(url_for("servicos"))
 
-    # cliente
     cursor.execute(
         "SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s",
         (email, senha)
@@ -261,7 +360,7 @@ def salvar_prestador():
         conn.close()
 
 # =========================
-# AGENDAMENTO (CORRIGIDO)
+# AGENDAMENTO
 # =========================
 @app.route("/salvar_agendamento", methods=["POST"])
 def salvar_agendamento():
@@ -270,18 +369,25 @@ def salvar_agendamento():
 
     dados = request.get_json()
 
-    cliente_email = session["usuario_logado"]
+    cliente_email   = session["usuario_logado"]
     prestador_email = dados.get("prestador_email")
 
-    # Busca nome do cliente e do prestador para o email
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("SELECT nome, sobrenome FROM cadastro_clientes WHERE email = %s", (cliente_email,))
     cliente = cursor.fetchone()
 
-    cursor.execute("SELECT nome, sobrenome FROM cadastro_prestadores WHERE email = %s", (prestador_email,))
-    prestador = cursor.fetchone()
+    cursor.execute("SELECT nome, sobrenome, areas_atuacao FROM cadastro_prestadores WHERE email = %s", (prestador_email,))
+    prestador_row = cursor.fetchone()
+
+    # ← NOVO: busca duração do serviço para calcular fim do evento
+    cursor.execute(
+        "SELECT duracao FROM servicos_anunciados WHERE titulo = %s AND prestador_email = %s LIMIT 1",
+        (dados.get("servico"), prestador_email)
+    )
+    servico_row = cursor.fetchone()
+    duracao_horas = servico_row["duracao"] if servico_row else 1
 
     valores = (
         cliente_email,
@@ -305,14 +411,44 @@ def salvar_agendamento():
         agendamento_id = cursor.lastrowid
 
         nome_cliente   = f"{cliente['nome']} {cliente['sobrenome']}" if cliente else cliente_email
-        nome_prestador = f"{prestador['nome']} {prestador['sobrenome']}" if prestador else prestador_email
+        nome_prestador = f"{prestador_row['nome']} {prestador_row['sobrenome']}" if prestador_row else prestador_email
+
+        # ── Gera URL universal (funciona para todos os usuários) ──
+        calendar_url = gerar_url_google_agenda(
+            titulo         = dados.get("servico", "Serviço"),
+            data_str       = dados.get("data"),
+            horario        = dados.get("horario"),
+            duracao_horas  = duracao_horas,
+            prestador_nome = nome_prestador,
+            obs            = dados.get("obs", ""),
+        )
+
+        # ── Cria evento via API e envia convite ao prestador (login Google) ──
+        google_token = session.get("google_token")
+        if google_token:
+            ok, api_link = criar_evento_google_calendar(
+                access_token   = google_token,
+                titulo         = dados.get("servico", "Serviço"),
+                data_str       = dados.get("data"),
+                horario        = dados.get("horario"),
+                duracao_horas  = duracao_horas,
+                prestador_nome = nome_prestador,
+                cliente_email  = cliente_email,
+                prestador_email= prestador_email,
+                obs            = dados.get("obs", ""),
+            )
+            if not ok:
+                print("[Calendar] Evento API não criado, mas URL universal gerada.")
+        else:
+            print("[Calendar] Login por senha — usando URL universal.")
 
         return jsonify({
-            "mensagem": "Agendamento salvo!",
-            "id": agendamento_id,
-            "nome_cliente": nome_cliente,
+            "mensagem"      : "Agendamento salvo!",
+            "id"            : agendamento_id,
+            "nome_cliente"  : nome_cliente,
             "nome_prestador": nome_prestador,
-            "email_cliente": cliente_email,
+            "email_cliente" : cliente_email,
+            "calendar_url"  : calendar_url,   # ← URL universal do Google Agenda
         }), 200
 
     except Exception as e:
@@ -376,10 +512,8 @@ def listar_servicos():
     """)
 
     dados = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return jsonify(dados)
 
 # =========================
@@ -399,10 +533,8 @@ def meus_servicos():
     )
 
     dados = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return jsonify(dados)
 
 # =========================
@@ -424,7 +556,6 @@ def excluir_servico(id):
     conn.commit()
     cursor.close()
     conn.close()
-
     return jsonify({"mensagem": "ok"})
 
 # =========================
@@ -458,7 +589,7 @@ def agendamento_confirmado():
     if not ag:
         return redirect(url_for("servicos"))
 
-    return redirect(url_for("sucesso-agendamento", id=ag_id))
+    return redirect(url_for("sucesso_servico", id=ag_id))
 
 # =========================
 # PERFIL DO PRESTADOR
@@ -554,7 +685,7 @@ def meu_perfil():
         return redirect(url_for("perfil_cliente"))
 
 # =========================
-# API: HORÁRIOS BLOQUEADOS POR DATA E PRESTADOR
+# API: HORÁRIOS BLOQUEADOS
 # =========================
 @app.route("/api/horarios_bloqueados")
 def horarios_bloqueados():
@@ -600,7 +731,6 @@ def cancelar_agendamento(id):
     conn.commit()
     cursor.close()
     conn.close()
-
     return jsonify({"mensagem": "Agendamento cancelado"})
 
 # =========================
@@ -633,7 +763,6 @@ def meus_agendamentos():
     dados = cursor.fetchall()
     cursor.close()
     conn.close()
-
     return jsonify(dados)
 
 # =========================
@@ -658,7 +787,6 @@ def agendamentos_prestador():
     dados = cursor.fetchall()
     cursor.close()
     conn.close()
-
     return jsonify(dados)
 
 # =========================
@@ -676,27 +804,8 @@ def atualizar_status(id):
     if novo_status not in status_validos:
         return jsonify({"erro": "Status inválido"}), 400
 
-    # Atualiza SEM validação de data (o prestador pode concluir mesmo antes do dia).
-    conn = connectar()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        UPDATE agendamentos SET status = %s
-        WHERE id = %s AND prestador_email = %s
-        """,
-        (novo_status, id, session["usuario_logado"])
-    )
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-    return jsonify({"mensagem": "Status atualizado!"})
-
-
 # =========================
-# API: PRESTADORES POR CATEGORIA (para orçamentos)
+# API: PRESTADORES POR CATEGORIA
 # =========================
 @app.route("/api/prestadores_por_categoria")
 def prestadores_por_categoria():
@@ -716,7 +825,6 @@ def prestadores_por_categoria():
     dados = cursor.fetchall()
     cursor.close()
     conn.close()
-
     return jsonify(dados)
 
 # =========================
@@ -760,7 +868,6 @@ def salvar_foto():
     conn.commit()
     cursor.close()
     conn.close()
-
     return jsonify({"mensagem": "Foto salva!", "url": url})
 
 # =========================
@@ -804,7 +911,6 @@ def salvar_certificado():
     conn.commit()
     cursor.close()
     conn.close()
-
     return jsonify({"mensagem": "Certificado salvo!", "url": url})
 
 # =========================
@@ -816,11 +922,11 @@ def editar_perfil_cliente():
         return jsonify({"erro": "Acesso negado"}), 401
 
     dados = request.get_json()
-    nome     = dados.get("nome", "").strip()
+    nome      = dados.get("nome", "").strip()
     sobrenome = dados.get("sobrenome", "").strip()
-    telefone = dados.get("telefone", "").strip()
-    cidade   = dados.get("cidade", "").strip()
-    sexo     = dados.get("sexo", "").strip()
+    telefone  = dados.get("telefone", "").strip()
+    cidade    = dados.get("cidade", "").strip()
+    sexo      = dados.get("sexo", "").strip()
 
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400

@@ -307,6 +307,33 @@
 
     </div>
 
+    <script>
+        const params = new URLSearchParams(location.search);
+        const gcal = params.get('gcal');
+
+        if (gcal === 'auto') {
+            // Evento já foi adicionado automaticamente
+            document.getElementById('gcal-area').innerHTML = `
+      <p style="color:#4ade80;font-weight:600">
+        ✅ Evento adicionado automaticamente ao seu Google Agenda!
+      </p>`;
+        } else if (gcal) {
+            // Mostra botão para o usuário adicionar manualmente
+            document.getElementById('gcal-area').innerHTML = `
+      <a href="${decodeURIComponent(gcal)}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;
+                background:#fff;color:#222;border-radius:10px;font-weight:700;
+                text-decoration:none;margin-top:12px;font-size:14px;">
+        <img src="https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_31_2x.png"
+             width="20" style="border-radius:4px">
+        Adicionar ao Google Agenda
+      </a>`;
+        }
+    </script>
+
+    <!-- No HTML da página, onde quiser exibir: -->
+    <div id="gcal-area"></div>
+
 </body>
 
 </html>
