@@ -1,122 +1,203 @@
 <!doctype html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/servicos.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Agenda Fácil</title>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<body>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../static/global.css" />
 
-  <!-- NAVBAR -->
-  <header class="topo">
-    <div class="topo-container">
-      <div class="logo">Agenda Fácil</div>
+    <link rel="stylesheet" href="../static/servicos.css" />
 
-      <!-- Botão hamburger (só aparece no mobile) -->
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-      <nav id="navMenu">
-        <a href="/">Home</a>
-        <a href="/servicos">Serviços</a>
+    <title>Agenda Fácil</title>
+  </head>
 
-        {% if session.get('tipo_usuario') != 'prestador' %}
-        <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
-        {% endif %}
+  <body>
+    <!-- =========================================================
+       HEADER / NAVBAR
+  ========================================================== -->
+    <header class="navbar">
+      <div class="navbar-inner">
+        <!-- LOGO -->
+        <a href="/" class="navbar-brand">
+          <span class="navbar-brand-mark"> AF </span>
 
-        {% if session.get('tipo_usuario') == 'prestador' %}
-        <a href="/painel" class="btn-painel">Meu Painel</a>
-        {% endif %}
-
-        {% if session.get('usuario_logado') %}
-        <a href="/meu_perfil" class="btn-perfil">
-          👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+          Agenda Fácil
         </a>
-        <a href="/logout" class="btn-sair">🚪 Sair</a>
-        {% else %}
-        <a href="/login" class="btn-entrar">Entrar</a>
-        {% endif %}
-      </nav>
-    </div>
-  </header>
 
-  <!-- CONTEÚDO -->
-  <div class="page-wrapper">
+        <!-- BOTÃO MOBILE -->
+        <button
+          type="button"
+          class="navbar-toggle"
+          id="navbarToggle"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-    <h1 class="page-title">Serviços Disponíveis</h1>
+        <!-- MENU -->
+        <nav class="navbar-links" id="navbarLinks">
+          <a href="/" class="navbar-link"> Home </a>
 
-    <!-- BUSCA + FILTRO -->
-    <div class="filtro-bar">
-      <input id="busca" type="text" placeholder="Buscar serviço..." />
-      <select id="filtroCategoria">
-        <option value="todas">Todas as categorias</option>
-        <option value="tecnologia">Tecnologia</option>
-        <option value="mecanica">Mecânica</option>
-        <option value="eletrica">Elétrica</option>
-        <option value="hidraulica">Hidráulica</option>
-        <option value="reformas">Reformas</option>
-        <option value="limpeza">Limpeza</option>
-      </select>
-    </div>
+          <a href="/servicos" class="navbar-link active"> Serviços </a>
 
-    <!-- GRID DE SERVIÇOS -->
-    <div id="lista-servicos" class="servicos-grid">
-      {% for s in servicos %}
-      <div class="card">
-        <h3>{{ s.titulo }}</h3>
-        <p>{{ s.descricao }}</p>
-        <span class="preco">R$ {{ s.preco }}</span>
-        <button class="btn-agendar" data-servico='{{ s | tojson }}'>Agendar</button>
+          {% if session.get("tipo_usuario") != "prestador" %}
+
+          <a href="/prestador" class="navbar-link navbar-link--ghost">
+            Quero ser prestador
+          </a>
+
+          {% endif %} {% if session.get("tipo_usuario") == "prestador" %}
+
+          <a href="/painel" class="navbar-link navbar-link--primary">
+            Meu Painel
+          </a>
+
+          {% endif %} {% if session.get("usuario_logado") %}
+
+          <!-- PERFIL -->
+          <a href="/meu_perfil" class="navbar-user-pill">
+            <div class="navbar-avatar">👤</div>
+
+            <span class="navbar-user-name">
+              {{ session.get("usuario_nome") or session.get("usuario_logado") }}
+            </span>
+          </a>
+
+          <!-- SAIR -->
+          <a href="/logout" class="navbar-link navbar-link--danger"> Sair </a>
+
+          {% else %}
+
+          <!-- ENTRAR -->
+          <a href="/login" class="navbar-link navbar-link--primary"> Entrar </a>
+
+          {% endif %}
+        </nav>
       </div>
-      {% endfor %}
-    </div>
+    </header>
 
-    <!-- CTA -->
-    <div class="orcamentos-card">
-      <div class="cta-box">
-        <h2>Não achou seu serviço?</h2>
-        <p>Solicite um orçamento personalizado.</p>
-        <a href="/orcamentos" class="btn-orcamento">Solicitar orçamento</a>
+    <!-- =========================================================
+       CONTEÚDO
+  ========================================================== -->
+    <main class="page-wrapper">
+      <!-- TÍTULO -->
+      <h1 class="page-title">Serviços Disponíveis</h1>
+
+      <!-- FILTROS -->
+      <div class="filtro-bar">
+        <!-- BUSCA -->
+        <input id="busca" type="text" placeholder="Buscar serviço..." />
+
+        <!-- CATEGORIA -->
+        <select id="filtroCategoria">
+          <option value="todas">Todas as categorias</option>
+
+          <option value="tecnologia">Tecnologia</option>
+
+          <option value="mecanica">Mecânica</option>
+
+          <option value="eletrica">Elétrica</option>
+
+          <option value="hidraulica">Hidráulica</option>
+
+          <option value="reformas">Reformas</option>
+
+          <option value="limpeza">Limpeza</option>
+        </select>
       </div>
-    </div>
 
-  </div>
+      <!-- GRID -->
+      <div id="lista-servicos" class="servicos-grid">
+        {% for s in servicos %}
 
-  <script>
-    const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+        <div class="card">
+          <h3>{{ s.titulo }}</h3>
 
-    // Hamburger toggle
-    const toggle = document.getElementById('navToggle');
-    const menu = document.getElementById('navMenu');
-    toggle.addEventListener('click', () => {
-      menu.classList.toggle('nav-open');
-      toggle.classList.toggle('nav-toggle--active');
-    });
-  </script>
+          <p>{{ s.descricao }}</p>
 
-  <script src="../static/js/filtrar.js"></script>
-  <script src="../static/js/agenda_facil.js"></script>
+          <span class="preco"> R$ {{ s.preco }} </span>
 
-  <footer
-    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-    <div style="max-width:900px;margin:0 auto;">
-      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div
-        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
+          <button class="btn-agendar" data-servico="{{ s | tojson }}">
+            Agendar
+          </button>
+        </div>
+
+        {% endfor %}
       </div>
-    </div>
-  </footer>
 
-</body>
+      <!-- PAGINAÇÃO -->
+      <div class="pagination" id="pagination"></div>
 
+      <!-- CTA -->
+      <section class="orcamentos-card">
+        <div class="cta-box">
+          <h2>Não achou seu serviço?</h2>
+
+          <p>Solicite um orçamento personalizado.</p>
+
+          <a href="/orcamentos" class="btn-orcamento"> Solicitar orçamento </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <strong class="footer__brand"> Agenda Fácil </strong>
+
+        <p class="footer__tagline">
+          Conectando pessoas a profissionais de confiança.
+        </p>
+
+        <div class="footer__links">
+          <a href="#"> Termos </a>
+
+          <a href="#"> Privacidade </a>
+
+          <a href="#"> Contato </a>
+        </div>
+
+        <p class="footer__copy">
+          © 2025 Agenda Fácil. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================================================
+       SCRIPT NAVBAR MOBILE
+  ========================================================== -->
+    <script>
+      const navbarToggle = document.getElementById("navbarToggle");
+
+      const navbarLinks = document.getElementById("navbarLinks");
+
+      if (navbarToggle && navbarLinks) {
+        navbarToggle.addEventListener("click", () => {
+          navbarToggle.classList.toggle("open");
+
+          navbarLinks.classList.toggle("open");
+
+          const expanded =
+            navbarToggle.getAttribute("aria-expanded") === "true";
+
+          navbarToggle.setAttribute("aria-expanded", !expanded);
+        });
+      }
+    </script>
+
+    <!-- JS -->
+    <script src="../static/js/filtrar.js"></script>
+
+    <script src="../static/js/agenda_facil.js"></script>
+  </body>
 </html>
