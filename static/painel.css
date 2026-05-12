@@ -259,10 +259,40 @@ body {
    ============================================================ */
 
 #lista {
+  /* Carrossel horizontal */
   display: flex;
-  flex-direction: column;
   gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
+
+#lista::-webkit-scrollbar {
+  height: 8px;
+}
+
+#lista::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.18);
+  border-radius: 999px;
+}
+
+#lista::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Cada card vira “item” do carrossel */
+.pedido-card {
+  scroll-snap-align: start;
+  min-width: 320px;
+}
+
+@media (max-width: 600px) {
+  .pedido-card {
+    min-width: 260px;
+  }
+}
+
 
 .pedido-card {
   background: white;
@@ -274,6 +304,7 @@ body {
   gap: 16px;
   flex-wrap: wrap;
 }
+
 
 .pedido-card__info {
   flex: 1;

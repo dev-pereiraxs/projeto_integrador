@@ -76,6 +76,7 @@ function statusClass(s) {
 function render() {
   lista.innerHTML = "";
 
+
   if (pedidos.length === 0) {
     lista.innerHTML = `
       <div class="estado-vazio">
