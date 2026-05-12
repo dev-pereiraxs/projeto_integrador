@@ -242,6 +242,180 @@ def orcamento():
 def painel():
     return render_template("painel.html")
 
+
+# =========================
+# ADMIN (Painel Administrativo)
+# =========================
+import bcrypt
+
+
+def is_admin_logged_in():
+    return (
+        session.get("tipo_usuario") == "admin" and
+        bool(session.get("usuario_logado"))
+    )
+
+
+def admin_required(fn):
+    from functools import wraps
+
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not is_admin_logged_in():
+            return redirect(url_for("admin_login_page"))
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+
+@app.route("/admin", methods=["GET"])
+@admin_required
+def admin_dashboard():
+    return render_template("admin/dashboard.html")
+
+
+@app.route("/admin/login", methods=["GET"])
+def admin_login_page():
+    return render_template("login.html", erro=None)
+
+
+@app.route("/admin/autenticar", methods=["POST"])
+def admin_autenticar():
+    email = request.form.get("email", "").strip().lower()
+    senha = request.form.get("senha", "")
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT email, senha_hash, ativo FROM admins WHERE email=%s", (email,))
+    admin = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not admin or not admin.get("ativo"):
+        return render_template("login.html", erro="Credenciais de admin inválidas")
+
+    senha_hash = admin.get("senha_hash")
+    if not senha_hash:
+        return render_template("login.html", erro="Credenciais de admin inválidas")
+
+    try:
+        # MySQL pode retornar o hash como string; normalizamos para bytes
+        hash_bytes = senha_hash.encode("utf-8")
+        if not bcrypt.checkpw(senha.encode("utf-8"), hash_bytes):
+            return render_template("login.html", erro="Credenciais de admin inválidas")
+
+    except Exception:
+        return render_template("login.html", erro="Credenciais de admin inválidas")
+
+    session["usuario_logado"] = admin["email"]
+    session["tipo_usuario"] = "admin"
+    session["usuario_nome"] = admin["email"]
+
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    try:
+        conn = connectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO admin_logs (admin_email, acao, entidade, entidade_id, detalhes, ip_address) VALUES (%s,%s,%s,%s,%s,%s)",
+            (admin["email"], 'login_sucesso', 'admin', None, 'Admin autenticado', ip),
+        )
+        conn.commit()
+    except Exception:
+        pass
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except Exception:
+            pass
+
+    return redirect(url_for("admin_dashboard"))
+
+
+
+@app.route("/admin/api/metrics", methods=["GET"])
+@admin_required
+def admin_metrics():
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    # Usuários e prestadores
+    cursor.execute("SELECT COUNT(*) AS total FROM cadastro_clientes")
+    total_clients = cursor.fetchone().get("total", 0)
+
+    cursor.execute("SELECT COUNT(*) AS total FROM cadastro_prestadores")
+    total_providers = cursor.fetchone().get("total", 0)
+
+    # Serviços solicitados hoje (agenda/serviços)
+    hoje = datetime.now().date()
+    cursor.execute(
+        """
+        SELECT COUNT(*) AS total
+        FROM agendamentos
+        WHERE data_servico = %s
+        """,
+        (hoje,)
+    )
+    services_requested_today = cursor.fetchone().get("total", 0)
+
+    # Status counts (última visão geral)
+    cursor.execute(
+        """
+        SELECT status, COUNT(*) AS total
+        FROM agendamentos
+        GROUP BY status
+        """
+    )
+    rows = cursor.fetchall()
+
+    status_counts = {"pendente": 0, "em_andamento": 0, "concluido": 0, "cancelado": 0}
+    for r in rows:
+        st = (r.get("status") or "").lower()
+        if st in status_counts:
+            status_counts[st] = int(r.get("total") or 0)
+
+    # Solicitations últimos 7 dias
+    cursor.execute(
+        """
+        SELECT DATE(data_servico) AS dia, COUNT(*) AS total
+        FROM agendamentos
+        WHERE data_servico >= (CURDATE() - INTERVAL 6 DAY)
+        GROUP BY dia
+        ORDER BY dia ASC
+        """
+    )
+    day_rows = cursor.fetchall()
+
+    labels = []
+    values = []
+    for dr in day_rows:
+        dia = dr.get("dia")
+        labels.append(dia.strftime("%d/%m") if hasattr(dia, "strftime") else str(dia))
+        values.append(int(dr.get("total") or 0))
+
+    # preenche buracos se não vierem 7 datas
+    # (simples: se vier menos, completa com zeros no final)
+    if len(labels) < 7:
+        while len(labels) < 7:
+            labels.append("")
+            values.append(0)
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "total_clients": total_clients,
+        "total_providers": total_providers,
+        "services_requested_today": services_requested_today,
+        "status_counts": status_counts,
+        "solicitations_last_7": {
+            "labels": labels,
+            "values": values
+        }
+    })
+
+
 @app.route("/formulario")
 def formulario():
     return render_template("formulario.html")

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Agenda Fácil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/global.css" />
+  <link rel="stylesheet" href="/static/admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" aria-label="Menu Admin">
+      <div class="admin-brand">
+        <div class="admin-brand__logo">Agenda Fácil</div>
+        <div class="admin-brand__sub">Painel Administrativo</div>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="/admin" class="admin-nav__item is-active">📊 Dashboard</a>
+        <a href="/admin/solicitacoes" class="admin-nav__item">🧾 Solicitações</a>
+        <a href="/admin/clientes" class="admin-nav__item">👥 Clientes</a>
+        <a href="/admin/prestadores" class="admin-nav__item">🛠️ Prestadores</a>
+        <a href="/admin/suporte" class="admin-nav__item">🎫 Suporte</a>
+        <a href="/admin/categorias" class="admin-nav__item">🏷️ Categorias</a>
+        <a href="/admin/notificacoes" class="admin-nav__item">🔔 Notificações</a>
+        <a href="/admin/logs" class="admin-nav__item">🛡️ Logs</a>
+        <a href="/logout" class="admin-nav__item admin-nav__logout">🚪 Sair</a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-topbar__left">
+          <h1 class="admin-title">Dashboard</h1>
+          <p class="admin-subtitle">Métricas gerais e indicadores em quase tempo real</p>
+        </div>
+        <div class="admin-topbar__right">
+          <div class="admin-pill">👤 {{ session.get('usuario_nome', session.get('usuario_logado','admin')) }}</div>
+        </div>
+      </header>
+
+      <section class="admin-metrics-grid" aria-label="Métricas">
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_user_clients">0</div>
+          <div class="admin-metric-card__label">Usuários (clientes)</div>
+        </div>
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_user_providers">0</div>
+          <div class="admin-metric-card__label">Prestadores</div>
+        </div>
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_services_total_today">0</div>
+          <div class="admin-metric-card__label">Serviços solicitados (hoje)</div>
+        </div>
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_services_pending">0</div>
+          <div class="admin-metric-card__label">Pendentes</div>
+        </div>
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_services_in_progress">0</div>
+          <div class="admin-metric-card__label">Em andamento</div>
+        </div>
+        <div class="admin-metric-card">
+          <div class="admin-metric-card__value" id="m_services_done">0</div>
+          <div class="admin-metric-card__label">Concluídos</div>
+        </div>
+      </section>
+
+      <section class="admin-charts" aria-label="Gráficos">
+        <div class="admin-chart-card">
+          <div class="admin-chart-card__title">Status dos serviços (atual)</div>
+          <div class="admin-chart-card__body">
+            <canvas id="chart_status" height="120"></canvas>
+          </div>
+        </div>
+
+        <div class="admin-chart-card">
+          <div class="admin-chart-card__title">Solicitações por dia (últimos 7 dias)</div>
+          <div class="admin-chart-card__body">
+            <canvas id="chart_solicitations" height="120"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-muted-note">
+        <p>
+          Gráficos atualizados automaticamente a cada 10 segundos via <code>/admin/api/metrics</code>.
+          Se o backend ainda não estiver preenchido com dados, os valores aparecem como 0.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/js/admin/dashboard.js"></script>
+</body>
+</html>
+
