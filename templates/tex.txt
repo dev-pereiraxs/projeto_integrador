@@ -1,0 +1,80 @@
+
+Tudo que eu fiz até agora (no projeto Agenda Fácil)
+
+Entendi o estado atual do app
+Li app.py e vi que existe painel do prestador (/painel → templates/painel.html) e rotas/APIs para agendamentos e serviços.
+Não existe ainda painel administrativo completo (admin) com módulos como: solicitações com filtros/status/histórico, moderação de prestadores/usuários, denúncias/tickets, categorias CRUD com ícones/cores, logs/segurança, etc.
+Preparei o banco de dados para suportar o Admin
+Editei db_servicos.sql adicionando novas tabelas para o painel administrativo, incluindo:
+admins (usuários com permissão de admin)
+admin_logs (histórico de ações do admin)
+categorias_servicos (categorias com icone e cor)
+denuncias, tickets, ticket_respostas (denúncias e suporte)
+notificacoes (avisos globais / prestador / admin)
+avaliacoes_prestadores (base para ranking)
+Criei um arquivo auxiliar para inserir admins no MySQL
+Criei static/admin_demo_setup.sql
+Ele é um “script guia” para você inserir:
+felipe@admin.com.br
+lucas@admin.com.br
+Mas ele não preenche o senha_hash com hash real automaticamente, porque você precisa gerar bcrypt correto antes de inserir (por segurança e porque eu não tenho como gerar o hash diretamente sem você/sem comando).
+O que falta fazer (para realmente entregar o “painel administrativo completo”)
+
+Inserir os admins no MySQL (senha bcrypt correta)
+Executar db_servicos.sql no MySQL (criar/atualizar tabelas).
+Depois inserir em admins com senha_hash bcrypt válido.
+Sem isso, não dá para criar login admin nem proteger rotas.
+Implementar autenticação/autorizações de Admin no backend (app.py)
+Criar decorator/validação admin_required
+Criar rotas:
+login admin (ex.: /admin/login)
+logout admin
+verificação de sessão do admin
+Criar rotas e APIs do painel Admin (backend)
+Endpoints para cada módulo:
+Dashboard: /admin/api/metrics, /admin/api/graphs
+Solicitações: listar + filtros + detalhes + alterar status + excluir + histórico
+Usuários: listar clientes + bloquear/desbloquear + editar + excluir + histórico
+Prestadores: aprovar/reprovar + ver documentos + bloquear + avaliações + ranking
+Denúncias/Tickets: listar + responder + marcar resolvido
+Categorias: CRUD (nome/icone/cor)
+Notificações: broadcast e logs
+Logs e Segurança: trilhas de auditoria + níveis/permissões
+Financeiro e Configurações: só se/ quando o banco tiver estrutura e lógica correspondente
+Criar templates/pages do Admin (frontend)
+Layout SaaS com:
+sidebar + topbar
+cards
+tabelas modernas com filtros e modais
+dark mode opcional
+Páginas:
+admin/dashboard.html
+admin/solicitacoes.html + admin/solicitacoes_detalhes.html
+admin/clientes.html
+admin/prestadores.html
+admin/denuncias.html
+admin/tickets.html
+admin/categorias.html
+admin/notificacoes.html
+admin/logs.html
+admin/config.html
+(financeiro se aplicável)
+Criar CSS/JS e gráficos
+Estilo em static/admin.css e scripts em static/admin.js
+Implementar gráficos (ex.: Chart.js) consumindo os endpoints de dashboard
+Integração “histórico de alterações”
+Toda vez que status mudar/excluir/bloquear/etc:
+gravar admin_logs (e/ou tabelas de histórico específicas, se você quiser mais detalhamento)
+Arquivos que foram afetados por mim
+✅ db_servicos.sql (criação/adição de tabelas admin e correlatas)
+✅ static/admin_demo_setup.sql (script-guia para inserir admins)
+Arquivos que ainda NÃO foram criados/alterados (mas são necessários)
+app.py (criar rotas admin + proteção + APIs)
+templates do admin (templates/admin/...)
+CSS/JS do admin (static/admin.css, static/admin.js)
+
+Task Completed
+Resumo completo enviado: o banco foi estendido para suportar o painel admin (admins/logs/categorias/denúncias/tickets/notificações/ranking-base) e foi criado um script auxiliar para inserir os admins. O que falta agora é: inserir admins com senha bcrypt válida, implementar login/permiteções no app.py, criar rotas e APIs admin (dashboard + solicitações + usuários + prestadores + denúncias/tickets + categorias + notificações + logs/segurança + opcional financeiro/config), e construir as páginas/template/frontend estilo SaaS com dark mode e gráficos.
+
+
+S
