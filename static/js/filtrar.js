@@ -105,13 +105,16 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.dataset.servico = JSON.stringify(servico);
 
         // garante o redirecionamento com os dados do card
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
           try {
             localStorage.setItem('servicoSelecionado', JSON.stringify(servico));
           } catch (e) {}
           // rota correta no backend (app.py)
           window.location.href = '/agendamentos';
         });
+
 
 
         cardEl.appendChild(btn);
