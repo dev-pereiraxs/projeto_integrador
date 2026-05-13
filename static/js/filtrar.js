@@ -90,9 +90,37 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Renderiza cards com botões (Agendar) para manter compatibilidade com o fluxo atual.
     itensPagina.forEach((servico, index) => {
-      container.innerHTML += criarCard(servico, index);
+      // criarCard() atual não inclui o botão; adicionamos aqui.
+      const card = document.createElement('div');
+      card.innerHTML = criarCard(servico, index);
+
+      const cardEl = card.firstElementChild;
+      if (cardEl) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-agendar';
+        btn.textContent = 'Agendar';
+        // usa o dataset.servico porque a agenda_facil.js lê btn.dataset.servico
+        btn.dataset.servico = JSON.stringify(servico);
+
+        // garante o redirecionamento com os dados do card
+        btn.addEventListener('click', () => {
+          try {
+            localStorage.setItem('servicoSelecionado', JSON.stringify(servico));
+          } catch (e) {}
+          // rota correta no backend (app.py)
+          window.location.href = '/agendamentos';
+        });
+
+
+        cardEl.appendChild(btn);
+      }
+
+
+      container.appendChild(cardEl);
     });
+
 
     renderPagination();
   }
