@@ -487,17 +487,41 @@ def salvar_servico_prestador():
 # =========================
 @app.route("/api/listar_servicos")
 def listar_servicos():
-    conn   = connectar()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT s.*, p.nome, p.sobrenome, p.areas_atuacao
-        FROM servicos_anunciados s
-        JOIN cadastro_prestadores p ON s.prestador_email = p.email
-        ORDER BY s.id DESC
-    """)
-    dados = cursor.fetchall()
-    cursor.close(); conn.close()
-    return jsonify(dados)
+    try:
+        conn   = connectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT s.*, p.nome, p.sobrenome, p.areas_atuacao
+            FROM servicos_anunciados s
+            JOIN cadastro_prestadores p ON s.prestador_email = p.email
+            ORDER BY s.id DESC
+        """)
+        dados = cursor.fetchall()
+        cursor.close(); conn.close()
+        return jsonify(dados)
+    except Exception as e:
+        # Retorna JSON sempre (evita o front tentar parsear HTML como JSON)
+        try:
+            import traceback
+            tb = traceback.format_exc()
+        except:
+            tb = None
+        print(f"[api/listar_servicos] erro: {e}\n{tb or ''}")
+        try:
+            return jsonify({"erro": "Falha ao listar serviços", "detalhes": str(e)}), 500
+        except:
+            # fallback caso o jsonify falhe
+            return ("Falha ao listar serviços", 500)
+    finally:
+        try:
+            cursor.close()
+        except:
+            pass
+        try:
+            conn.close()
+        except:
+            pass
+
 
 
 @app.route("/api/meus_servicos")

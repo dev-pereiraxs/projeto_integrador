@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    renderPagination();
+    // paginação não implementada neste arquivo (evita erro no console)
   }
 
   // 🔥 TROCAR PÁGINA
