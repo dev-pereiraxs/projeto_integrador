@@ -1,10 +1,9 @@
-# Agenda Fácil — TODO
+# TODO — Perfil do Prestador (todos_agendamentos)
 
-- [ ] Revisar e reestruturar `app.py` (limpeza + organização)
-- [ ] Atualizar `app.py`: contador de serviços concluídos por prestador
-- [ ] Atualizar `app.py`: sistema de notificações (criar, listar, marcar como lidas)
-- [ ] Ajustar `templates/perfil-prestador.html` e `templates/admin/dashboard.html` para exibir notificações
-- [ ] Manter rotas/telas de suporte/categorias/logs como compatíveis (sem funcionalidade)
-- [ ] Atualizar `db_servicos.sql`: remover suporte/categorias/logs/tickets (ou desabilitar/ajustar) e adicionar índices para performance
-- [ ] Rodar validação estática: checar consistência/compilação do `app.py`
-- [ ] Rodar busca por rotas afetadas e garantir que não há chamadas quebradas
+- [ ] Substituir integralmente a função `perfil_prestador` em `app.py` pelo código fornecido (inclui `todos_agendamentos` e serialização de `data_servico`).
+- [x] Verificar se `templates/perfil-prestador.html` está usando `todos_agendamentos` (se não, ajustar o template). 
+- [x] Rodar o app e conferir visualmente a aba/Pedidos no perfil do prestador.
+
+
+
+

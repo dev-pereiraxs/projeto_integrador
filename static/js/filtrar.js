@@ -128,26 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   }
 
-  // 🔥 PAGINAÇÃO
-  function renderPagination() {
-
-    pagination.innerHTML = "";
-
-    const totalPaginas = Math.ceil(servicosFiltrados.length / itensPorPagina);
-
-    for (let i = 1; i <= totalPaginas; i++) {
-
-      pagination.innerHTML += `
-        <button
-          class="px-4 py-2 rounded bg-blue-500 text-white mx-1"
-          onclick="trocarPagina(${i})"
-        >
-          ${i}
-        </button>
-      `;
-    }
-  }
-
   // 🔥 TROCAR PÁGINA
   window.trocarPagina = function(pagina) {
 
@@ -169,6 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoriaSelecionada =
       filtroCategoria.value.toLowerCase();
 
+    // Normaliza o valor do dropdown "todas" (mostra todos) para ser compatível
+    // com a lógica do filtro.
+    const categoriaTodas = categoriaSelecionada === "todas";
+
+
     servicosFiltrados = servicos.filter(servico => {
 
       const titulo =
@@ -188,9 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
         titulo.includes(textoBusca) ||
         descricao.includes(textoBusca);
 
+      // Dropdown usa value="todas" quando o usuário quer ver todas.
+      // O filtro deve tratar isso como sem restrição.
       const correspondeCategoria =
+        categoriaTodas ||
         categoriaSelecionada === "" ||
         categoria === categoriaSelecionada;
+
 
       return correspondeBusca && correspondeCategoria;
     });

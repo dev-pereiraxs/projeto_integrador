@@ -108,7 +108,17 @@ body {
 
 .nav-logout {
   justify-content: center;
+  color: #f87171 !important;
+  background: rgba(239, 68, 68, .1) !important;
+  border: 1px solid rgba(248, 113, 113, .3) !important;
 }
+
+/* garante que não fique branco por causa de .btn-secondary */
+.nav-logout.btn {
+  background: rgba(239, 68, 68, .1) !important;
+  color: #f87171 !important;
+}
+
 
 /* ============================================================
    HERO

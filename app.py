@@ -741,39 +741,64 @@ def perfil_prestador(email):
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM cadastro_prestadores WHERE email = %s", (email,))
+    cursor.execute("""
+        SELECT nome, sobrenome, data_nascimento, sexo, email,
+               areas_atuacao, bio, telefone, cidade, foto, certificados
+        FROM cadastro_prestadores
+        WHERE email = %s
+    """, (email,))
     prestador = cursor.fetchone()
     if not prestador:
         cursor.close(); conn.close()
         return "Prestador não encontrado", 404
 
-    cursor.execute("SELECT * FROM servicos_anunciados WHERE prestador_email = %s ORDER BY id DESC", (email,))
+    cursor.execute(
+        "SELECT * FROM servicos_anunciados WHERE prestador_email = %s ORDER BY id DESC",
+        (email,)
+    )
     servicos = cursor.fetchall()
 
+    # ── NOVO: todos os agendamentos do prestador (para a aba Pedidos) ──
     cursor.execute("""
         SELECT a.*, c.nome AS cliente_nome, c.sobrenome AS cliente_sobrenome
         FROM agendamentos a
         LEFT JOIN cadastro_clientes c ON a.cliente_email = c.email
-        WHERE a.prestador_email = %s AND a.status NOT IN ('cancelado','concluido')
-        ORDER BY a.data_servico ASC, a.horario ASC
+        WHERE a.prestador_email = %s
+        ORDER BY
+            CASE a.status
+                WHEN 'em_andamento' THEN 1
+                WHEN 'confirmado'   THEN 2
+                WHEN 'pendente'     THEN 3
+                WHEN 'concluido'    THEN 4
+                WHEN 'cancelado'    THEN 5
+                ELSE 6
+            END,
+            a.data_servico ASC, a.horario ASC
     """, (email,))
-    agendamentos_pendentes = cursor.fetchall()
+    todos_agendamentos = cursor.fetchall()
+
+    # Serializar datas (DATE → string "YYYY-MM-DD")
+    for ag in todos_agendamentos:
+        if ag.get("data_servico") and hasattr(ag["data_servico"], "strftime"):
+            ag["data_servico"] = ag["data_servico"].strftime("%Y-%m-%d")
 
     cursor.execute(
-        "SELECT COUNT(*) AS total FROM agendamentos WHERE prestador_email = %s AND status = 'concluido'",
+        "SELECT COUNT(*) AS total FROM agendamentos WHERE prestador_email=%s AND status='concluido'",
         (email,)
     )
     row = cursor.fetchone()
     agendamentos_count = row["total"] if row else 0
 
     cursor.close(); conn.close()
+
     return render_template(
         "perfil-prestador.html",
         prestador=prestador,
         servicos=servicos,
-        agendamentos_pendentes=agendamentos_pendentes,
+        todos_agendamentos=todos_agendamentos,   # ← variável nova
         agendamentos_count=agendamentos_count,
     )
+
 
 # =========================
 # PERFIL DO CLIENTE
@@ -821,27 +846,34 @@ def allowed_file(filename):
 
 @app.route("/salvar_foto", methods=["POST"])
 def salvar_foto():
-    if "usuario_logado" not in session:
-        return jsonify({"erro": "não logado"}), 401
-    file = request.files.get("foto")
-    if not file or not allowed_file(file.filename):
-        return jsonify({"erro": "Arquivo inválido. Use PNG, JPG ou WEBP."}), 400
+    try:
+        if "usuario_logado" not in session:
+            return jsonify({"erro": "não logado"}), 401
 
-    ext        = file.filename.rsplit(".", 1)[1].lower()
-    email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
-    filename   = f"{email_safe}.{ext}"
-    filepath   = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(filepath)
-    url  = "/" + filepath.replace("\\", "/")
-    tipo = session.get("tipo_usuario", "cliente")
+        file = request.files.get("foto")
+        if not file or not allowed_file(file.filename):
+            return jsonify({"erro": "Arquivo inválido. Use PNG, JPG ou WEBP."}), 400
 
-    conn   = connectar()
-    cursor = conn.cursor()
-    table  = "cadastro_prestadores" if tipo == "prestador" else "cadastro_clientes"
-    cursor.execute(f"UPDATE {table} SET foto=%s WHERE email=%s", (url, session["usuario_logado"]))
-    conn.commit()
-    cursor.close(); conn.close()
-    return jsonify({"mensagem": "Foto salva!", "url": url})
+        ext        = file.filename.rsplit(".", 1)[1].lower()
+        email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
+        filename   = f"{email_safe}.{ext}"
+        filepath   = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        url  = "/" + filepath.replace("\\", "/")
+
+        tipo = session.get("tipo_usuario", "cliente")
+        conn   = connectar()
+        cursor = conn.cursor()
+        table  = "cadastro_prestadores" if tipo == "prestador" else "cadastro_clientes"
+        cursor.execute(f"UPDATE {table} SET foto=%s WHERE email=%s", (url, session["usuario_logado"]))
+        conn.commit()
+        cursor.close(); conn.close()
+
+        return jsonify({"mensagem": "Foto salva!", "url": url})
+
+    except Exception as e:
+        # Garante que o front sempre receba JSON (evita parse de HTML)
+        return jsonify({"erro": str(e)}), 500
 
 # =========================
 # UPLOAD DE CERTIFICADO
@@ -885,21 +917,48 @@ def salvar_certificado():
 def editar_perfil_cliente():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
         return jsonify({"erro": "Acesso negado"}), 401
-    dados     = request.get_json()
-    nome      = dados.get("nome", "").strip()
-    sobrenome = dados.get("sobrenome", "").strip()
+
+    dados     = request.get_json() or {}
+    nome      = (dados.get("nome", "") or "").strip()
+    sobrenome = (dados.get("sobrenome", "") or "").strip()
+
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
+
     conn   = connectar()
     cursor = conn.cursor()
-    cursor.execute(
-        "UPDATE cadastro_clientes SET nome=%s,sobrenome=%s,telefone=%s,cidade=%s,sexo=%s WHERE email=%s",
-        (nome, sobrenome, dados.get("telefone","").strip(),
-         dados.get("cidade","").strip(), dados.get("sexo","").strip(), session["usuario_logado"])
-    )
-    conn.commit()
-    cursor.close(); conn.close()
-    session["usuario_nome"] = f"{nome} {sobrenome}"
+    try:
+        cursor.execute(
+            "UPDATE cadastro_clientes SET nome=%s,sobrenome=%s,telefone=%s,cidade=%s,sexo=%s WHERE email=%s",
+            (
+                nome,
+                sobrenome,
+                (dados.get("telefone", "") or "").strip(),
+                (dados.get("cidade", "") or "").strip(),
+                (dados.get("sexo", "") or "").strip(),
+                session["usuario_logado"],
+            )
+        )
+        conn.commit()
+    except Exception as e:
+        # retorna a causa real para o front-end (evita erro 500 genérico)
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        try:
+            cursor.close()
+        except:
+            pass
+        try:
+            conn.close()
+        except:
+            pass
+
+    session["usuario_nome"] = f"{nome} {sobrenome}".strip()
+    # Debug/telemetria: garante que o front receba confirmação real
+    try:
+        print(f"[EDITAR PERFIL CLIENTE] email={session.get('usuario_logado')} nome={nome} sobrenome={sobrenome} telefone={(dados.get('telefone','') or '').strip()} cidade={(dados.get('cidade','') or '').strip()} sexo={(dados.get('sexo','') or '').strip()}")
+    except:
+        pass
     return jsonify({"mensagem": "Perfil atualizado!"})
 
 
@@ -907,17 +966,16 @@ def editar_perfil_cliente():
 def editar_perfil_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
-    dados     = request.get_json()
-    nome      = dados.get("nome", "").strip()
-    sobrenome = dados.get("sobrenome", "").strip()
+    dados = request.get_json(silent=True) or {}
+    nome      = (dados.get("nome", "") or "").strip()
+    sobrenome = (dados.get("sobrenome", "") or "").strip()
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
     conn   = connectar()
     cursor = conn.cursor()
     cursor.execute(
-        "UPDATE cadastro_prestadores SET nome=%s,sobrenome=%s,telefone=%s,cidade=%s,bio=%s,sexo=%s WHERE email=%s",
-        (nome, sobrenome, dados.get("telefone","").strip(), dados.get("cidade","").strip(),
-         dados.get("bio","").strip(), dados.get("sexo","").strip(), session["usuario_logado"])
+        "UPDATE cadastro_prestadores SET nome=%s, sobrenome=%s, telefone=%s, sexo=%s WHERE email=%s",
+        (nome, sobrenome, dados.get("telefone", "").strip(), dados.get("sexo", "").strip(), session["usuario_logado"])
     )
     conn.commit()
     cursor.close(); conn.close()
@@ -1111,6 +1169,194 @@ def agendamento_confirmado():
     if not ag_id:
         return redirect(url_for("servicos"))
     return redirect(url_for("sucesso_servico", id=ag_id))
+
+# =========================
+# ROTAS DE AVALIAÇÃO — Agenda Fácil
+# ============================================================
+
+# ── 1. Verificar avaliações pendentes do cliente ─────────────
+@app.route("/api/avaliacoes_pendentes")
+def avaliacoes_pendentes():
+    """
+    Retorna o primeiro agendamento concluído ainda não avaliado
+    pelo cliente logado. Chamado automaticamente no carregamento
+    da página do cliente.
+    """
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
+        return jsonify({"pendente": None})
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT
+                a.id,
+                a.servico,
+                a.prestador_email,
+                a.data_servico,
+                a.horario,
+                p.nome        AS prestador_nome,
+                p.sobrenome   AS prestador_sobrenome
+            FROM agendamentos a
+            LEFT JOIN cadastro_prestadores p
+                   ON a.prestador_email = p.email
+            LEFT JOIN avaliacoes_prestadores av
+                   ON av.agendamento_id = a.id
+            WHERE a.cliente_email = %s
+              AND a.status        = 'concluido'
+              AND av.id           IS NULL
+            ORDER BY a.data_servico DESC
+            LIMIT 1
+        """, (session["usuario_logado"],))
+        pendente = cursor.fetchone()
+
+        # Serializar DATE → string para JSON
+        if pendente and pendente.get("data_servico"):
+            pendente["data_servico"] = str(pendente["data_servico"])
+
+        return jsonify({"pendente": pendente})
+    except Exception as e:
+        print(f"[Avaliação Pendente] Erro: {e}")
+        return jsonify({"pendente": None})
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ── 2. Salvar avaliação ────────────────────────────────────────
+@app.route("/api/salvar_avaliacao", methods=["POST"])
+def salvar_avaliacao():
+    """
+    Persiste a avaliação do cliente.
+    Regras:
+      - Só o cliente do agendamento pode avaliar
+      - O agendamento deve ter status 'concluido'
+      - Cada agendamento aceita apenas UMA avaliação (idempotente)
+    """
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
+        return jsonify({"erro": "Acesso negado"}), 401
+
+    dados = request.get_json() or {}
+    agendamento_id = dados.get("agendamento_id")
+    nota = dados.get("nota")
+    comentario = (dados.get("comentario") or "").strip()
+
+    if not agendamento_id or nota is None:
+        return jsonify({"erro": "Dados incompletos"}), 400
+
+    try:
+        nota = int(nota)
+    except (ValueError, TypeError):
+        return jsonify({"erro": "Nota inválida"}), 400
+
+    if not (1 <= nota <= 5):
+        return jsonify({"erro": "Nota deve ser entre 1 e 5"}), 400
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Verifica que o agendamento pertence ao cliente e está concluído
+        cursor.execute("""
+            SELECT * FROM agendamentos
+            WHERE id = %s AND cliente_email = %s AND status = 'concluido'
+        """, (agendamento_id, session["usuario_logado"]))
+        ag = cursor.fetchone()
+
+        if not ag:
+            return jsonify({"erro": "Agendamento não encontrado ou não autorizado"}), 403
+
+        # Bloqueia avaliação duplicada
+        cursor.execute(
+            "SELECT id FROM avaliacoes_prestadores WHERE agendamento_id = %s",
+            (agendamento_id,)
+        )
+        if cursor.fetchone():
+            return jsonify({"erro": "Este serviço já foi avaliado"}), 409
+
+        # Insere a avaliação
+        cursor.execute("""
+            INSERT INTO avaliacoes_prestadores
+                (prestador_email, cliente_email, agendamento_id, nota, comentario)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (ag["prestador_email"], session["usuario_logado"],
+              agendamento_id, nota, comentario))
+        conn.commit()
+
+        return jsonify({"mensagem": "Avaliação salva com sucesso!"})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ── 3. Estatísticas e avaliações de um prestador ──────────────
+@app.route("/api/stats_prestador/<email>")
+def stats_prestador(email):
+    """
+    Retorna: média, total, distribuição por nota e lista de avaliações.
+    Usado no perfil do prestador (aba Avaliações + hero stats).
+    """
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Resumo estatístico
+        cursor.execute("""
+            SELECT
+                COUNT(*)                                          AS total,
+                COALESCE(AVG(nota), 0)                           AS media,
+                SUM(CASE WHEN nota = 5 THEN 1 ELSE 0 END)       AS cinco,
+                SUM(CASE WHEN nota = 4 THEN 1 ELSE 0 END)       AS quatro,
+                SUM(CASE WHEN nota = 3 THEN 1 ELSE 0 END)       AS tres,
+                SUM(CASE WHEN nota = 2 THEN 1 ELSE 0 END)       AS dois,
+                SUM(CASE WHEN nota = 1 THEN 1 ELSE 0 END)       AS um
+            FROM avaliacoes_prestadores
+            WHERE prestador_email = %s
+        """, (email,))
+        stats = cursor.fetchone()
+
+        # Lista de avaliações com nome do cliente
+        cursor.execute("""
+            SELECT
+                av.nota,
+                av.comentario,
+                av.criado_em,
+                c.nome      AS cliente_nome,
+                c.sobrenome AS cliente_sobrenome
+            FROM avaliacoes_prestadores av
+            LEFT JOIN cadastro_clientes c ON av.cliente_email = c.email
+            WHERE av.prestador_email = %s
+            ORDER BY av.criado_em DESC
+            LIMIT 50
+        """, (email,))
+        avaliacoes = cursor.fetchall()
+
+        # Serializar datetime
+        for av in avaliacoes:
+            if hasattr(av.get("criado_em"), "isoformat"):
+                av["criado_em"] = av["criado_em"].isoformat()
+
+        return jsonify({
+            "total": int(stats["total"]) if stats else 0,
+            "media": round(float(stats["media"]), 1) if stats and stats["media"] else 0,
+            "distribuicao": {
+                "5": int(stats["cinco"] or 0),
+                "4": int(stats["quatro"] or 0),
+                "3": int(stats["tres"] or 0),
+                "2": int(stats["dois"] or 0),
+                "1": int(stats["um"] or 0),
+            },
+            "avaliacoes": avaliacoes,
+        })
+    except Exception as e:
+        return jsonify({
+            "total": 0, "media": 0, "distribuicao": {}, "avaliacoes": [],
+            "erro": str(e)
+        })
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # =========================
 if __name__ == "__main__":
