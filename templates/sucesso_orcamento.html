@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orçamento realizado – Agenda Fácil</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="../static/global.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a144a;
+      --bg-secondary: #1e3a8a;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.15);
+      --text-light: rgba(255, 255, 255, 0.75);
+      --text-muted: rgba(255, 255, 255, 0.55);
+      --green-primary: #10b981;
+      --green-secondary: #059669;
+      --blue-primary: #2b73ff;
+      --blue-secondary: #1d44d9;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:
+        linear-gradient(160deg,
+          var(--bg-primary) 0%,
+          var(--bg-secondary) 60%,
+          #0e2756 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+      color: #fff;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(43, 115, 255, .22), transparent 35%),
+        radial-gradient(circle at 80% 75%, rgba(16, 185, 129, .18), transparent 30%);
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      background: var(--card-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 52px 42px;
+      text-align: center;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      animation: cardEntrance .7s ease;
+    }
+
+    @keyframes cardEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .check-wrap {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-secondary));
+      box-shadow:
+        0 0 0 12px rgba(16, 185, 129, .15),
+        0 12px 28px rgba(16, 185, 129, .35);
+      animation: popIn .6s cubic-bezier(.175, .885, .32, 1.275);
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .check-wrap svg {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      animation: drawCheck .45s .35s ease forwards;
+    }
+
+    @keyframes drawCheck {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .title {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-light);
+      margin-bottom: 26px;
+    }
+
+    .subtitle strong {
+      color: #fff;
+    }
+
+    .btn-home {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 15px 24px;
+      border: none;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      transition: transform .25s ease, opacity .25s ease, box-shadow .25s ease;
+      box-shadow: 0 10px 24px rgba(43, 115, 255, .28);
+    }
+
+    .btn-home:hover {
+      transform: translateY(-2px);
+      opacity: .95;
+      box-shadow: 0 14px 30px rgba(43, 115, 255, .38);
+    }
+
+    .btn-home:active {
+      transform: scale(.98);
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: .3px;
+    }
+
+    @media (max-width: 520px) {
+      .card {
+        padding: 40px 24px;
+        border-radius: 22px;
+      }
+
+      .title { font-size: 24px; }
+      .subtitle { font-size: 14px; }
+
+      .check-wrap {
+        width: 76px;
+        height: 76px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="check-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#fff" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 18l7 7 13-13" />
+      </svg>
+    </div>
+
+    <h1 class="title">Orçamento enviado!</h1>
+
+    <p class="subtitle">
+      Recebemos sua solicitação e enviaremos aos prestadores da categoria.
+      Em breve, eles entrarão em contato com você.
+    </p>
+
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <a href="/servicos" class="btn-home" style="width:auto;flex:1;">
+        ← Voltar para serviços
+      </a>
+      <a href="/meu_perfil" class="btn-home" style="width:auto;flex:1;">
+        Ir para meu perfil
+      </a>
+    </div>
+
+    <p class="footer-note">
+      Agenda Fácil · Conectando pessoas a profissionais
+    </p>
+  </div>
+</body>
+
+</html>
+

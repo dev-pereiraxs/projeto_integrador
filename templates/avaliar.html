@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avaliar Serviço — Agenda Fácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ====== Base ====== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blue-gl: linear-gradient(135deg, #2563eb, #1d4ed8);
+      --text: #1a2340;
+      --muted: #64748b;
+      --radius: 14px;
+      --navy: #0f172a;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f1f5f9;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ====== Layout simples ====== */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 24px;
+    }
+
+    .topbar {
+      background: var(--navy);
+      height: 58px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      justify-content: space-between;
+      color: #fff;
+      border-radius: 0 0 14px 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* ====== Loading/placeholder ====== */
+    .center {
+      display: grid;
+      place-items: center;
+      padding: 60px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ====== Modal (copia/ajustada da tela perfil-cliente) ====== */
+    #overlayAvaliacao {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(4, 7, 18, .72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+
+    #overlayAvaliacao.aberto {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .av-box {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, .6);
+      border-radius: 20px;
+      padding: 36px 28px 28px;
+      box-shadow:
+        0 32px 72px rgba(0, 0, 0, .22),
+        0 0 0 1px rgba(245, 158, 11, .08),
+        inset 0 1px 0 rgba(255, 255, 255, .8);
+      transform: translateY(20px) scale(.96);
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+      position: relative;
+    }
+
+    #overlayAvaliacao.aberto .av-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .av-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1.5px solid rgba(245, 158, 11, .3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, .2);
+      animation: pulseIcon 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseIcon {
+      0%,
+      100% { box-shadow: 0 8px 24px rgba(245, 158, 11, .2); }
+      50% { box-shadow: 0 8px 32px rgba(245, 158, 11, .38); }
+    }
+
+    .av-title {
+      font-family: 'Sora', 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -.2px;
+    }
+
+    .av-subtitle {
+      font-size: 13.5px;
+      color: #6b7280;
+      text-align: center;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .av-service-card {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .av-service-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    .av-service-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0c4a6e;
+      margin-bottom: 2px;
+    }
+
+    .av-service-meta {
+      font-size: 12px;
+      color: #0369a1;
+    }
+
+    .av-stars-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 10px;
+    }
+
+    .av-stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .av-star {
+      font-size: 36px;
+      cursor: pointer;
+      color: #d1d5db;
+      transition: color .15s, transform .15s, filter .15s;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .av-star:hover,
+    .av-star.ativo {
+      color: #f59e0b;
+      transform: scale(1.18);
+      filter: drop-shadow(0 2px 8px rgba(245, 158, 11, .45));
+    }
+
+    .av-star.selecionado {
+      color: #f59e0b;
+      animation: starPop .25s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes starPop {
+      0% { transform: scale(.7); }
+      60% { transform: scale(1.3); }
+      100% { transform: scale(1.18); }
+    }
+
+    .av-nota-texto {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f59e0b;
+      min-height: 20px;
+      margin-bottom: 16px;
+      transition: opacity .2s;
+    }
+
+    .av-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .av-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      color: #374151;
+      background: #fafafa;
+      resize: none;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      margin-bottom: 20px;
+    }
+
+    .av-textarea:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, .12);
+      background: #fff;
+    }
+
+    .av-textarea::placeholder { color: #9ca3af; }
+
+    .av-btn-enviar {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      font-family: 'Sora', 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .1px;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, .35);
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .av-btn-enviar:hover:not(:disabled) {
+      opacity: .92;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(245, 158, 11, .42);
+    }
+
+    .av-btn-enviar:active { transform: translateY(0); }
+
+    .av-btn-enviar:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .av-btn-pular {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      background: transparent;
+      color: #9ca3af;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .av-btn-pular:hover {
+      background: #f9fafb;
+      color: #6b7280;
+      border-color: #d1d5db;
+    }
+
+    .av-btn-enviar.loading .av-spinner { display: block; }
+    .av-btn-enviar.loading .av-btn-label { display: none; }
+
+    .av-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .av-sucesso {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      padding: 8px 0 4px;
+      animation: fadeUp .4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .av-sucesso-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 14px rgba(16,185,129,.12), 0 12px 28px rgba(16,185,129,.3);
+      font-size: 32px;
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .av-sucesso-title {
+      font-family: 'Sora', 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #064e3b;
+    }
+
+    .av-sucesso-sub {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .av-close-btn {
+      position: absolute;
+      top: 14px; right: 16px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      color: #9ca3af;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s;
+    }
+
+    .av-close-btn:hover { background: #f3f4f6; color: #374151; }
+
+    @media (max-width: 480px) {
+      .av-box { padding: 28px 18px 22px; }
+      .av-star { font-size: 30px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span>Agenda Fácil</span>
+    </a>
+    <div style="font-size:12px;opacity:.75;">Avaliação</div>
+  </div>
+
+  <div class="wrap">
+    <div id="fallbackLoading" class="center">Carregando avaliação…</div>
+  </div>
+
+  <!-- Modal de avaliação -->
+  <div id="overlayAvaliacao" role="dialog" aria-modal="true" aria-labelledby="av-titulo">
+    <div class="av-box">
+      <button class="av-close-btn" id="avBtnPular2" aria-label="Fechar">×</button>
+
+      <!-- Formulário -->
+      <div id="avFormulario">
+        <div class="av-icon-wrap">⭐</div>
+
+        <h2 class="av-title" id="av-titulo">Como foi seu atendimento?</h2>
+        <p class="av-subtitle">
+          Seu serviço foi concluído!<br>
+          Avalie sua experiência com o prestador.
+        </p>
+
+        <div class="av-service-card">
+          <div class="av-service-icon">⚙️</div>
+          <div>
+            <div class="av-service-name" id="avNomeServico">Carregando…</div>
+            <div class="av-service-meta" id="avMetaServico"></div>
+          </div>
+        </div>
+
+        <div class="av-stars-label">Selecione sua nota</div>
+        <div class="av-stars-row" id="avStarsRow" role="group" aria-label="Nota de 1 a 5 estrelas">
+          <span class="av-star" data-v="1" role="radio" aria-label="1 estrela" tabindex="0">★</span>
+          <span class="av-star" data-v="2" role="radio" aria-label="2 estrelas" tabindex="0">★</span>
+          <span class="av-star" data-v="3" role="radio" aria-label="3 estrelas" tabindex="0">★</span>
+          <span class="av-star" data-v="4" role="radio" aria-label="4 estrelas" tabindex="0">★</span>
+          <span class="av-star" data-v="5" role="radio" aria-label="5 estrelas" tabindex="0">★</span>
+        </div>
+
+        <div class="av-nota-texto" id="avNotaTexto"></div>
+
+        <label class="av-label" for="avComentario">Comentário (opcional)</label>
+        <textarea
+          id="avComentario"
+          class="av-textarea"
+          rows="3"
+          maxlength="500"
+          placeholder="Conte como foi a experiência com o prestador…"
+        ></textarea>
+
+        <button class="av-btn-enviar" id="avBtnEnviar" disabled>
+          <span class="av-btn-label">✨ Enviar avaliação</span>
+          <span class="av-spinner"></span>
+        </button>
+
+        <button class="av-btn-pular" id="avBtnPular">Avaliar depois</button>
+      </div>
+
+      <!-- Sucesso -->
+      <div class="av-sucesso" id="avSucesso">
+        <div class="av-sucesso-icon">✓</div>
+        <div class="av-sucesso-title">Obrigado pela sua avaliação!</div>
+        <p class="av-sucesso-sub">
+          Sua opinião ajuda outros usuários<br>
+          a escolherem os melhores prestadores.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      let _notaSelecionada = 0;
+      let _agendamentoId = null;
+
+      const TEXTOS_NOTA = ['', 'Péssimo 😞', 'Ruim 😕', 'Regular 😐', 'Bom 😊', 'Excelente! 🤩'];
+
+      const overlay = document.getElementById('overlayAvaliacao');
+      const fallbackLoading = document.getElementById('fallbackLoading');
+
+      const form = document.getElementById('avFormulario');
+      const sucesso = document.getElementById('avSucesso');
+
+      const stars = document.querySelectorAll('.av-star');
+      const notaTexto = document.getElementById('avNotaTexto');
+      const btnEnviar = document.getElementById('avBtnEnviar');
+      const btnPular = document.getElementById('avBtnPular');
+      const btnPular2 = document.getElementById('avBtnPular2');
+      const comentario = document.getElementById('avComentario');
+
+      const nomeServicoEl = document.getElementById('avNomeServico');
+      const metaServicoEl = document.getElementById('avMetaServico');
+
+      function fecharModalEVoltar() {
+        overlay.classList.remove('aberto');
+        window.location.href = '/servicos';
+      }
+
+      function resetForm() {
+        _notaSelecionada = 0;
+        comentario.value = '';
+        notaTexto.textContent = '';
+        btnEnviar.disabled = true;
+        btnEnviar.classList.remove('loading');
+        stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
+        form.style.display = '';
+        sucesso.style.display = 'none';
+      }
+
+      function abrirModal(dados) {
+        _agendamentoId = dados.id;
+        nomeServicoEl.textContent = dados.servico || 'Serviço';
+
+        const prestador = (dados.prestador_nome || '') + ' ' + (dados.prestador_sobrenome || '');
+        const data = dados.data_servico
+          ? new Date(dados.data_servico + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+          : '';
+
+        metaServicoEl.textContent = [prestador.trim(), data, dados.horario].filter(Boolean).join(' · ');
+
+        const s = (dados.servico || '').toLowerCase();
+        const emojiMap = {
+          'eletr': '💡', 'hidra': '🚧', 'mec': '🔧', 'reform': '🏗️',
+          'limpez': '🧹', 'ti': '💻', 'tecnol': '💻', 'jardim': '🌿',
+          'pintur': '🎨', 'segur': '🛡️'
+        };
+        const iconeKey = Object.keys(emojiMap).find(k => s.includes(k));
+        document.querySelector('.av-service-icon').textContent = iconeKey ? emojiMap[iconeKey] : '⚙️';
+
+        resetForm();
+        overlay.classList.add('aberto');
+        document.body.style.overflow = 'hidden';
+        fallbackLoading.style.display = 'none';
+      }
+
+      // Estrelas
+      stars.forEach(star => {
+        star.addEventListener('mouseover', () => {
+          const v = parseInt(star.dataset.v);
+          stars.forEach(s => {
+            const sv = parseInt(s.dataset.v);
+            s.classList.toggle('ativo', sv <= v);
+            s.classList.remove('selecionado');
+          });
+          notaTexto.textContent = TEXTOS_NOTA[v];
+        });
+
+        star.addEventListener('mouseleave', () => {
+          if (_notaSelecionada === 0) {
+            stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
+            notaTexto.textContent = '';
+          } else {
+            stars.forEach(s => {
+              const sv = parseInt(s.dataset.v);
+              s.classList.toggle('selecionado', sv <= _notaSelecionada);
+              s.classList.remove('ativo');
+            });
+            notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+          }
+        });
+
+        star.addEventListener('click', () => {
+          _notaSelecionada = parseInt(star.dataset.v);
+          stars.forEach(s => {
+            const sv = parseInt(s.dataset.v);
+            s.classList.remove('ativo');
+            s.classList.toggle('selecionado', sv <= _notaSelecionada);
+          });
+          notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+          btnEnviar.disabled = false;
+        });
+
+        star.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            star.click();
+          }
+        });
+      });
+
+      btnEnviar.addEventListener('click', async () => {
+        if (!_notaSelecionada || !_agendamentoId) return;
+
+        btnEnviar.classList.add('loading');
+        btnEnviar.disabled = true;
+
+        try {
+          const res = await fetch('/api/salvar_avaliacao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              agendamento_id: _agendamentoId,
+              nota: _notaSelecionada,
+              comentario: comentario.value.trim()
+            })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok || data.erro) {
+            alert(data.erro || 'Erro ao salvar avaliação. Tente novamente.');
+            btnEnviar.classList.remove('loading');
+            btnEnviar.disabled = false;
+            return;
+          }
+
+          form.style.display = 'none';
+          sucesso.style.display = 'flex';
+
+          setTimeout(() => {
+            window.location.href = '/servicos';
+          }, 2500);
+        } catch {
+          alert('Erro de conexão. Tente novamente.');
+          btnEnviar.classList.remove('loading');
+          btnEnviar.disabled = false;
+        }
+      });
+
+      btnPular.addEventListener('click', fecharModalEVoltar);
+      btnPular2.addEventListener('click', fecharModalEVoltar);
+
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) fecharModalEVoltar();
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModalEVoltar();
+      });
+
+      async function carregarPendencia() {
+        try {
+          const res = await fetch('/api/avaliacoes_pendentes');
+          const data = await res.json();
+          if (!data.pendente) {
+            window.location.href = '/servicos';
+            return;
+          }
+          abrirModal(data.pendente);
+        } catch (e) {
+          console.warn('Falha ao carregar avaliação:', e);
+          window.location.href = '/servicos';
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', carregarPendencia);
+      } else {
+        carregarPendencia();
+      }
+    })();
+  </script>
+
+</body>
+
+</html>
+

@@ -69,10 +69,19 @@
 
           <span class="preco"> R$ {{ s.preco }} </span>
 
+          <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+            <span class="avaliacao-label">★</span>
+            <span class="avaliacao-valor">{{ s.media_nota | default(s.avaliacao_media | default('—')) }}</span>
+            <span> — {{ (s.prestador_nome | default('Prestador')) }}</span>
+
+          </div>
+
+
           <button class="btn-agendar" data-servico="{{ s | tojson }}">
             Agendar
           </button>
         </div>
+
 
         {% endfor %}
       </div>

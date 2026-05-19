@@ -1106,7 +1106,87 @@
       } else {
         verificarAvaliacesPendentes();
       }
+<<<<<<< HEAD
     })();
   </script>
+=======
+    });
+
+    star.addEventListener('click', () => {
+      _notaSelecionada = parseInt(star.dataset.v);
+      stars.forEach(s => {
+        const sv = parseInt(s.dataset.v);
+        s.classList.remove('ativo');
+        s.classList.toggle('selecionado', sv <= _notaSelecionada);
+      });
+      notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+      btnEnviar.disabled = false;
+    });
+
+    /* Acessibilidade: teclado */
+    star.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); star.click(); }
+    });
+  });
+
+  /* ── Enviar avaliação ────────────────────────────────── */
+  btnEnviar.addEventListener('click', async () => {
+    if (!_notaSelecionada || !_agendamentoId) return;
+
+    btnEnviar.classList.add('loading');
+    btnEnviar.disabled = true;
+
+    try {
+      const res = await fetch('/api/salvar_avaliacao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agendamento_id: _agendamentoId,
+          nota:           _notaSelecionada,
+          comentario:     comentario.value.trim()
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.erro) {
+        alert(data.erro || 'Erro ao salvar avaliação. Tente novamente.');
+        btnEnviar.classList.remove('loading');
+        btnEnviar.disabled = false;
+        return;
+      }
+
+      /* Mostra tela de sucesso */
+      form.style.display    = 'none';
+      sucesso.style.display = 'flex';
+
+      setTimeout(fecharModal, 2800);
+
+    } catch {
+      alert('Erro de conexão. Tente novamente.');
+      btnEnviar.classList.remove('loading');
+      btnEnviar.disabled = false;
+    }
+  });
+
+  /* ── Pular / fechar ──────────────────────────────────── */
+  btnPular.addEventListener('click', fecharModal);
+  btnPular2.addEventListener('click', fecharModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) fecharModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModal();
+  });
+
+  /* Avaliação pendente NÃO é exibida neste perfil.
+     O fluxo acontece na rota /avaliar imediatamente após o login. */
+
+})();
+</script>
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  FIM DO BLOCO — Cole acima de </body>                    ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
 </body>
 </html>

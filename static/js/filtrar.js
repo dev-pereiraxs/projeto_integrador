@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
       servico.categoria ||
       "Geral";
 
+    const avaliacao = servico.avaliacao_media ?? servico.avaliacao ?? servico.media ?? "—";
+    const prestadorNome = servico.prestador_nome ?? servico.nome_prestador ?? "Prestador";
+
     return `
       <div class="card" data-categoria="${categoriaNome}">
 
@@ -65,9 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
           ${servico.descricao || ""}
         </p>
 
+        <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+          <span class="avaliacao-label">★</span>
+          <span class="avaliacao-valor">${avaliacao}</span>
+          <span> — ${prestadorNome}</span>
+        </div>
+
       </div>
     `;
   }
+
 
   // 🔥 RENDERIZA SERVIÇOS
   function render() {

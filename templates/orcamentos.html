@@ -346,12 +346,114 @@
           <p>Preencha os dados abaixo e conectaremos você aos melhores profissionais disponíveis.</p>
         </div>
 
+<<<<<<< HEAD
         <!-- Aviso -->
         <div class="notice">
           <span class="notice-icon">📋</span>
           <p>
             Seu orçamento será enviado aos prestadores cadastrados na categoria selecionada.
             Eles entrarão em contato diretamente pelo <strong>telefone</strong> ou <strong>e-mail</strong> informado.
+=======
+        <!-- ── Seção 2: Categoria ── -->
+        <div class="form-section">
+          <div class="section-title">Categoria do Serviço</div>
+
+          <div class="cat-grid" id="cat-grid">
+
+            <label class="cat-option" data-value="Tecnologia">
+              <input type="radio" name="categoria" value="Tecnologia">
+              <div class="cat-icon">💻</div>
+              <div class="cat-info">
+                <div class="cat-name">Tecnologia / TI</div>
+                <div class="cat-desc">Suporte técnico, redes e computadores</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+            <label class="cat-option" data-value="Mecânica">
+              <input type="radio" name="categoria" value="Mecânica">
+              <div class="cat-icon">🔧</div>
+              <div class="cat-info">
+                <div class="cat-name">Mecânica</div>
+                <div class="cat-desc">Manutenção preventiva e corretiva</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+            <label class="cat-option" data-value="Elétrica">
+              <input type="radio" name="categoria" value="Elétrica">
+              <div class="cat-icon">⚡</div>
+              <div class="cat-info">
+                <div class="cat-name">Elétrica</div>
+                <div class="cat-desc">Instalações e reparos com segurança</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+            <label class="cat-option" data-value="Hidráulica">
+              <input type="radio" name="categoria" value="Hidráulica">
+              <div class="cat-icon">🚿</div>
+              <div class="cat-info">
+                <div class="cat-name">Hidráulica</div>
+                <div class="cat-desc">Resolva vazamentos sem complicação</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+            <label class="cat-option" data-value="Reformas">
+              <input type="radio" name="categoria" value="Reformas">
+              <div class="cat-icon">🏗️</div>
+              <div class="cat-info">
+                <div class="cat-name">Reformas</div>
+                <div class="cat-desc">Pintura e melhorias para seu espaço</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+            <label class="cat-option" data-value="Limpeza">
+              <input type="radio" name="categoria" value="Limpeza">
+              <div class="cat-icon">🧹</div>
+              <div class="cat-info">
+                <div class="cat-name">Limpeza</div>
+                <div class="cat-desc">Faxina com profissionais avaliados</div>
+              </div>
+              <div class="cat-check"><div class="cat-check-dot"></div></div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- ── Seção 3: Descrição ── -->
+        <div class="form-section">
+          <div class="section-title">Detalhes do Serviço</div>
+
+          <div class="input-box">
+            <label class="form-label" for="descricao">Descreva o que você precisa</label>
+            <div class="input-field textarea-field">
+              <textarea
+                class="form-control"
+                id="descricao"
+                placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."
+              required></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Rodapé com botão ── -->
+        <div class="form-footer">
+          <button class="btn-submit" id="btnEnviar" type="button">
+            <span class="btn-label">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:4px">
+                <path d="M2 8l10-6v12L2 8z" fill="white"/>
+              </svg>
+              Enviar Solicitação
+            </span>
+            <div class="btn-spinner"></div>
+          </button>
+
+          <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px">
+            🔒 Seus dados são protegidos e usados apenas para contato dos prestadores.
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
           </p>
         </div>
 
@@ -569,9 +671,17 @@
         const telefone = telefoneInput.value.trim();
         const descricao = document.getElementById('descricao').value.trim();
 
+<<<<<<< HEAD
         if (!nome) { alert('Informe seu nome.'); return; }
         if (!telefone) { alert('Informe seu telefone.'); return; }
         if (!categoriaSelecionada) { alert('Selecione uma categoria.'); return; }
+=======
+      if (!nome)                 { alert('Informe seu nome.');        return; }
+      if (!telefone)             { alert('Informe seu telefone.');    return; }
+      if (!categoriaSelecionada) { alert('Selecione uma categoria.'); return; }
+      if (!descricao)            { alert('Descreva o que você precisa (observação é obrigatória).'); return; }
+
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
 
         btn.classList.add('loading');
         btn.disabled = true;
@@ -618,8 +728,35 @@
           btn.classList.remove('loading');
           btn.disabled = false;
         }
+<<<<<<< HEAD
       });
     </script>
+=======
+
+        const promessas = prestadores.map(p =>
+          emailjs.send('service_b6ejlqp', 'template_ju6fbyc', {
+            ...dadosBase,
+            email_prestador: p.email,
+            nome_prestador: `${p.nome} ${p.sobrenome}`
+          })
+        );
+
+        if (email) {
+          promessas.push(emailjs.send('service_b6ejlqp', 'template_a9a80tv', dadosBase));
+        }
+
+        await Promise.all(promessas);
+        window.location.href = '/sucesso-orcamento';
+
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao enviar. Tente novamente.');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    });
+  </script>
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
 
 </body>
 

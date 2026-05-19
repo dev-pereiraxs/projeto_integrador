@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+<<<<<<< HEAD
 
 <head>
   <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
@@ -790,14 +791,45 @@
       from {
         transform: scale(.6);
         opacity: 0
+=======
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agenda Fácil – Agendamento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
       }
 
-      to {
-        transform: scale(1);
-        opacity: 1
+      :root {
+        --bg: #080d1f;
+        --glass: rgba(255, 255, 255, 0.055);
+        --glass-b: rgba(255, 255, 255, 0.09);
+        --border: rgba(255, 255, 255, 0.1);
+        --border-h: rgba(255, 255, 255, 0.2);
+        --blue: #3b82f6;
+        --blue-g: linear-gradient(135deg, #2563eb, #1d4ed8);
+        --text: #f0f4ff;
+        --muted: rgba(200, 210, 255, 0.55);
+        --gold: #f59e0b;
+        --green: #4ade80;
+        --red: #f87171;
+        --radius: 14px;
+        --radius-sm: 9px;
+        --header-h: 64px;
       }
-    }
 
+<<<<<<< HEAD
     @keyframes spin {
       to {
         transform: rotate(360deg)
@@ -871,55 +903,1055 @@
       animation: spin .7s linear infinite;
       display: none
     }
+=======
+      html {
+        scroll-behavior: smooth;
+      }
 
-    .btn-agendar.loading .spinner {
-      display: block
-    }
+      body {
+        font-family: "Outfit", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
 
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          radial-gradient(
+            ellipse 60% 50% at 20% 15%,
+            rgba(37, 99, 235, 0.18) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 55% 45% at 80% 80%,
+            rgba(99, 38, 220, 0.15) 0%,
+            transparent 65%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 50% 50%,
+            rgba(14, 20, 60, 0.9) 0%,
+            transparent 100%
+          );
+      }
+
+<<<<<<< HEAD
     .btn-agendar.loading .btn-text {
       display: none
     }
 
     @media(max-width:720px) {
+=======
+      /* HEADER */
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        background: rgba(8, 13, 31, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--blue-g);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .logo-text {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.2px;
+      }
+
+      .nav-desktop {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-link {
+        font-size: 14px;
+        color: var(--muted);
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          color 0.2s,
+          background 0.2s;
+        white-space: nowrap;
+        background: none;
+        border: none;
+        font-family: inherit;
+      }
+
+      .nav-link:hover {
+        color: var(--text);
+        background: var(--glass-b);
+      }
+
+      .avatar-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: 99px;
+        padding: 5px 14px 5px 5px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: border-color 0.2s;
+      }
+
+      .avatar-pill:hover {
+        border-color: var(--border-h);
+      }
+
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--blue-g);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+
+      .avatar-pill .user-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .btn-logout {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--red);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 99px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+        white-space: nowrap;
+      }
+
+      .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.18);
+        border-color: rgba(239, 68, 68, 0.45);
+      }
+
+      .btn-login {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 6px 16px;
+        border-radius: 99px;
+        border: 1px solid var(--border);
+        transition:
+          color 0.2s,
+          border-color 0.2s,
+          background 0.2s;
+      }
+
+      .btn-login:hover {
+        color: var(--text);
+        background: var(--glass-b);
+        border-color: var(--border-h);
+      }
+
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        border-radius: 9px;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+        flex-shrink: 0;
+      }
+
+      .hamburger:hover {
+        background: var(--glass-b);
+        border-color: var(--border-h);
+      }
+
+      .hamburger span {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: var(--text);
+        border-radius: 2px;
+        transition:
+          transform 0.28s ease,
+          opacity 0.28s ease;
+      }
+
+      .hamburger.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .hamburger.open span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      .hamburger.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+
+      /* MOBILE MENU */
+      .mobile-menu {
+        position: fixed;
+        top: var(--header-h);
+        left: 0;
+        right: 0;
+        z-index: 199;
+        background: rgba(8, 13, 31, 0.97);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border);
+        transform: translateY(-6px);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          transform 0.26s ease,
+          opacity 0.26s ease;
+      }
+
+      .mobile-menu.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .mobile-menu-inner {
+        padding: 16px 18px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .mobile-user-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        margin-bottom: 8px;
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
+      .mobile-user-info .m-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .mobile-user-info .m-role {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 12px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background 0.18s,
+          color 0.18s;
+      }
+
+      .mobile-nav-item:hover {
+        background: var(--glass-b);
+        color: var(--text);
+      }
+
+      .m-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--glass-b);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+        transition:
+          background 0.18s,
+          border-color 0.18s;
+      }
+
+      .mobile-nav-item:hover .m-icon {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .mobile-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 6px 0;
+      }
+
+      .mobile-nav-item.logout {
+        color: var(--red);
+      }
+
+      .mobile-nav-item.logout .m-icon {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+      }
+
+      .mobile-nav-item.logout:hover {
+        background: rgba(239, 68, 68, 0.07);
+      }
+
+      .mobile-nav-item.logout:hover .m-icon {
+        background: rgba(239, 68, 68, 0.18);
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+
+      /* PAGE */
+      .page-wrapper {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+      }
+
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
       .body {
-        padding: 24px 16px 48px
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 36px 24px 60px;
       }
 
       .page-title {
-        font-size: 22px
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+        margin-bottom: 24px;
       }
 
-      .two-col {
-        grid-template-columns: 1fr
+      .glass {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
       }
 
+      /* PROVIDER CARD */
       .prof-card {
-        padding: 14px 16px
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        margin-bottom: 16px;
+        gap: 16px;
+        flex-wrap: wrap;
       }
 
+      .prof-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .prof-photo {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+        border: 2px solid rgba(59, 130, 246, 0.35);
+      }
+
+      .prof-info {
+        min-width: 0;
+      }
+
+      .prof-name {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .prof-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .stars {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .star {
+        color: var(--gold);
+        font-size: 14px;
+      }
+
+      .rating-score {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-left: 5px;
+      }
+
+      .rating-text {
+        font-size: 12px;
+        color: var(--muted);
+        margin-left: 3px;
+      }
+
+      .badge-verified {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(74, 222, 128, 0.08);
+        border: 1px solid rgba(74, 222, 128, 0.22);
+        border-radius: 99px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--green);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* SERVICE INFO */
       .servico-info {
-        padding: 14px 16px
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .cat-badge {
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.28);
+        border-radius: 99px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #93c5fd;
+      }
+
+      .servico-titulo {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .servico-desc {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .servico-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      }
+
+      .servico-meta-item {
+        font-size: 13px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .servico-preco-badge {
+        font-size: 16px;
+        font-weight: 700;
+        color: #93c5fd;
+        background: rgba(59, 130, 246, 0.12);
+        border-radius: 8px;
+        padding: 4px 12px;
+      }
+
+      /* TWO-COL */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 310px;
+        gap: 20px;
+        align-items: start;
+      }
+
+      /* CALENDAR */
+      .cal-panel {
+        padding: 22px;
+      }
+
+      .cal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .cal-month {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .cal-nav {
+        display: flex;
+        gap: 6px;
+      }
+
+      .cal-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: var(--glass-b);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 15px;
+        color: var(--muted);
+        transition: all 0.2s;
+        user-select: none;
+      }
+
+      .cal-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--text);
+        border-color: var(--border-h);
+      }
+
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+      }
+
+      .cal-dow {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        text-align: center;
+        padding: 4px 0;
+      }
+
+      .cal-day {
+        aspect-ratio: 1;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        cursor: default;
+        color: rgba(200, 210, 255, 0.25);
+        transition: all 0.18s;
+        position: relative;
+      }
+
+      .cal-day.available {
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .cal-day.available:hover {
+        background: var(--glass-b);
+      }
+
+      .cal-day.available.has-dot::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--blue);
+      }
+
+      .cal-day.selected {
+        background: var(--blue-g);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      /* TIME SLOTS */
+      .section-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin: 22px 0 10px;
+      }
+
+      .time-slots {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        min-height: 42px;
+        align-items: flex-start;
+      }
+
+      .time-btn {
+        padding: 8px 16px;
+        border-radius: 9px;
+        background: var(--glass-b);
+        border: 1px solid var(--border);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        transition: all 0.18s;
+      }
+
+      .time-btn:hover {
+        border-color: var(--border-h);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .time-btn.selected {
+        background: var(--blue-g);
+        border-color: transparent;
+        color: white;
+      }
+
+      .time-btn.ocupado {
+        opacity: 0.35;
+        cursor: not-allowed;
+        text-decoration: line-through;
+        pointer-events: none;
+        background: rgba(248, 113, 113, 0.07);
+        border-color: rgba(248, 113, 113, 0.18);
+        color: var(--red);
+      }
+
+      .slots-loading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .slots-loading-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(200, 210, 255, 0.2);
+        border-top-color: var(--blue);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        flex-shrink: 0;
+      }
+
+      /* OBSERVATIONS */
+      .obs-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin: 22px 0 8px;
+      }
+
+      .obs-input {
+        width: 100%;
+        padding: 10px 14px;
+        background: var(--glass-b);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .obs-input::placeholder {
+        color: var(--muted);
+      }
+      .obs-input:focus {
+        border-color: var(--blue);
+      }
+
+      /* SUMMARY CARD */
+      .summary-card {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .summary-card::before {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.15) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .sum-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 16px;
+      }
+
+      .sum-prof {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .sum-photo {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        flex-shrink: 0;
+      }
+
+      .sum-name {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .sum-sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 14px 0;
+      }
+
+      .sum-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .sum-row:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .sum-row-label {
+        font-size: 13px;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+
+      .sum-row-value {
+        font-size: 13px;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      .sum-total {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .sum-total-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #93c5fd;
+      }
+
+      .confirm-btn {
+        margin-top: 18px;
+        width: 100%;
+        padding: 13px;
+        background: var(--blue-g);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.2px;
+        transition:
+          opacity 0.2s,
+          transform 0.15s;
+      }
+
+      .confirm-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+      .confirm-btn:active {
+        transform: translateY(0);
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(5, 8, 20, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
       }
 
       .modal-box {
-        padding: 24px 18px 20px
+        width: 100%;
+        max-width: 440px;
+        background: #0e1730;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 18px;
+        padding: 32px 28px 28px;
+        position: relative;
+        box-shadow:
+          0 0 0 1px rgba(59, 130, 246, 0.12),
+          0 24px 60px rgba(0, 0, 0, 0.55),
+          0 0 80px rgba(37, 99, 235, 0.08);
+        transform: translateY(12px) scale(0.97);
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .modal-overlay.open .modal-box {
+        transform: translateY(0) scale(1);
+      }
+
+      .modal-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 8px;
+        letter-spacing: -0.2px;
+      }
+
+      .modal-payment-notice {
+        background: rgba(245, 158, 11, 0.07);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin: 16px 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .modal-payment-notice .notice-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .modal-payment-notice p {
+        font-size: 13px;
+        color: rgba(253, 230, 138, 0.9);
+        line-height: 1.6;
+      }
+
+      .modal-question {
+        font-size: 14px;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+
+      .modal-summary {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .modal-summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+
+      .modal-summary-row span:first-child {
+        color: var(--muted);
+      }
+      .modal-summary-row span:last-child {
+        font-weight: 600;
+      }
+
+      .modal-summary-row.total span:first-child {
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .modal-summary-row.total span:last-child {
+        color: #93c5fd;
+        font-size: 15px;
       }
 
       .modal-actions {
-        flex-direction: column
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
       }
-    }
 
-    @media(max-width:480px) {
-      .badge-verified {
-        display: none
+      .btn-agendar {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 11px;
+        background: var(--blue-g);
+        color: white;
+        font-family: "Outfit", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.2px;
+        transition:
+          opacity 0.2s,
+          transform 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
-    }
-  </style>
-</head>
 
-<body>
+      .btn-agendar:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+      .btn-agendar:active {
+        transform: translateY(0);
+      }
 
+<<<<<<< HEAD
   {# ── Header ── #}
   {% include 'partials/header.html' %}
 
@@ -984,11 +2016,172 @@
           <div class="time-slots" id="time-slots">
             <span style="font-size:13px;color:var(--muted)">Selecione uma data para ver os horários.</span>
           </div>
+=======
+      .btn-agendar.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
 
-          <label class="obs-label" for="obs-input">Observações</label>
-          <input class="obs-input" type="text" id="obs-input" placeholder="Ex: Trazer chave de fenda..." />
-        </div>
+      .btn-cancelar-modal {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        background: transparent;
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
 
+      .btn-cancelar-modal:hover {
+        background: var(--glass-b);
+        color: var(--text);
+        border-color: var(--border-h);
+      }
+
+      /* ── ESTADO DE SUCESSO DO MODAL ── */
+      .modal-success {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .modal-success.visible {
+        display: flex;
+      }
+
+      .success-check-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981, #059669);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow:
+          0 0 0 10px rgba(16, 185, 129, 0.13),
+          0 10px 24px rgba(16, 185, 129, 0.3);
+        animation: popIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .success-check-wrap svg {
+        stroke-dasharray: 40;
+        stroke-dashoffset: 40;
+        animation: drawCheck 0.4s 0.3s ease forwards;
+      }
+
+      @keyframes drawCheck {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .success-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+
+      .success-sub {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.65;
+        margin-bottom: 20px;
+      }
+
+      .success-info-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 24px;
+      }
+
+      .btn-google-cal {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        padding: 13px 16px;
+        border-radius: 11px;
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        background: rgba(59, 130, 246, 0.1);
+        color: #93c5fd;
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          background 0.2s,
+          border-color 0.2s,
+          color 0.2s;
+        margin-bottom: 10px;
+      }
+
+      .btn-google-cal:hover {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.55);
+        color: #bfdbfe;
+      }
+
+      .btn-agendamentos {
+        width: 100%;
+        padding: 14px;
+        border-radius: 11px;
+        background: var(--blue-g);
+        border: none;
+        color: white;
+        font-family: "Outfit", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition:
+          opacity 0.2s,
+          transform 0.15s;
+        margin-bottom: 10px;
+      }
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
+
+      .btn-agendamentos:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+      }
+
+<<<<<<< HEAD
         <div class="summary-card">
           <div class="sum-title">Resumo do Agendamento</div>
           <div class="sum-prof">
@@ -998,37 +2191,94 @@
               <div class="sum-sub" id="sum-prestador-area">—</div>
             </div>
           </div>
+=======
+      .btn-perfil-sec {
+        width: 100%;
+        padding: 12px;
+        border-radius: 11px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
 
-          <div class="divider"></div>
+      .btn-perfil-sec:hover {
+        background: var(--glass-b);
+        color: var(--text);
+        border-color: var(--border-h);
+      }
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
 
-          <div class="sum-row">
-            <span class="sum-row-label">Serviço</span>
-            <span class="sum-row-value" id="sum-titulo" style="max-width:160px">—</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Categoria</span>
-            <span class="sum-row-value" id="sum-categoria">—</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Data</span>
-            <span class="sum-row-value" id="sum-data">Selecione uma data</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Horário</span>
-            <span class="sum-row-value" id="sum-hora">—</span>
-          </div>
-          <div class="sum-row">
-            <span class="sum-row-label">Orçamento</span>
-            <span class="sum-row-value" id="sum-preco">R$ —</span>
-          </div>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-          <div class="divider"></div>
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: none;
+      }
 
-          <div class="sum-row">
-            <span class="sum-row-label sum-total">Total</span>
-            <span class="sum-total-value" id="sum-total">R$ —</span>
-          </div>
+      .btn-agendar.loading .spinner {
+        display: block;
+      }
+      .btn-agendar.loading .btn-text {
+        display: none;
+      }
 
+      /* RESPONSIVE */
+      @media (max-width: 720px) {
+        .header {
+          padding: 0 18px;
+        }
+        .nav-desktop {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .body {
+          padding: 24px 16px 48px;
+        }
+        .page-title {
+          font-size: 22px;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+        .prof-card {
+          padding: 14px 16px;
+        }
+        .servico-info {
+          padding: 14px 16px;
+        }
+        .modal-box {
+          padding: 24px 18px 20px;
+        }
+        .modal-actions {
+          flex-direction: column;
+        }
+      }
+
+<<<<<<< HEAD
           <button class="confirm-btn" id="btn-confirmar">Confirmar Agendamento</button>
         </div>
       </div>
@@ -1100,14 +2350,59 @@
           Adicione ao Google Agenda para não esquecer.
         </p>
         <a class="btn-google-cal" id="btn-add-calendar" href="#" target="_blank" rel="noopener">
+=======
+      @media (max-width: 480px) {
+        .badge-verified {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="header">
+      <a class="logo" href="/">
+        <div class="logo-icon">
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <rect x="1" y="3" width="16" height="14" rx="2" stroke="#93c5fd" stroke-width="1.5" />
-            <path d="M1 7h16" stroke="#93c5fd" stroke-width="1.5" />
-            <path d="M5 1v4M13 1v4" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round" />
-            <path d="M6 11h6M9 9v4" stroke="#93c5fd" stroke-width="1.3" stroke-linecap="round" />
+            <rect
+              x="1.5"
+              y="1.5"
+              width="15"
+              height="15"
+              rx="3"
+              stroke="white"
+              stroke-width="1.5"
+            />
+            <path
+              d="M5 9l3 3 5-5"
+              stroke="white"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
-          Adicionar ao Google Agenda
+        </div>
+        <span class="logo-text">Agenda Fácil</span>
+      </a>
+
+      <nav class="nav-desktop">
+        <a class="nav-link" href="/">Início</a>
+        <a class="nav-link" href="/servicos">Serviços</a>
+
+        {% if session.get('usuario_logado') %}
+        <a class="avatar-pill" href="/perfil">
+          <div class="avatar" id="user-initials">
+            {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
+            '?'))[0] | upper }}
+          </div>
+          <span class="user-name"
+            >{{ session.get('usuario_nome', session.get('usuario_logado'))
+            }}</span
+          >
         </a>
+<<<<<<< HEAD
         <button class="btn-continuar" id="btn-continuar">Ir para minha conta</button>
       </div>
     </div>
@@ -1118,13 +2413,87 @@
     <div style="max-width:900px;margin:0 auto;">
       <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
       <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+=======
+        <a href="/logout" class="btn-logout">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path
+              d="M5 2H2.5A1 1 0 001.5 3v7a1 1 0 001 1H5M9 9.5l3-3-3-3M12 6.5H5"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Sair
+        </a>
+        {% else %}
+        <a href="/login" class="btn-login">Entrar</a>
+        {% endif %}
+      </nav>
+
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
       <div
-        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
+        class="hamburger"
+        id="hamburger"
+        aria-label="Abrir menu"
+        role="button"
+        tabindex="0"
+      >
+        <span></span><span></span><span></span>
+      </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div
+      class="mobile-menu"
+      id="mobile-menu"
+      role="navigation"
+      aria-label="Menu mobile"
+    >
+      <div class="mobile-menu-inner">
+        {% if session.get('usuario_logado') %}
+        <div class="mobile-user-row">
+          <div
+            class="avatar"
+            style="width: 38px; height: 38px; font-size: 14px"
+          >
+            {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
+            '?'))[0] | upper }}
+          </div>
+          <div class="mobile-user-info">
+            <div class="m-name">
+              {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+            </div>
+            <div class="m-role">Cliente</div>
+          </div>
+        </div>
+        {% endif %}
+
+        <a class="mobile-nav-item" href="/"
+          ><span class="m-icon">🏠</span>Início</a
+        >
+        <a class="mobile-nav-item" href="/servicos"
+          ><span class="m-icon">🔧</span>Serviços</a
+        >
+
+        {% if session.get('usuario_logado') %}
+        <a class="mobile-nav-item" href="/perfil"
+          ><span class="m-icon">👤</span>Meu Perfil</a
+        >
+        <div class="mobile-divider"></div>
+        <a class="mobile-nav-item logout" href="/logout"
+          ><span class="m-icon">🚪</span>Logout</a
+        >
+        {% else %}
+        <div class="mobile-divider"></div>
+        <a class="mobile-nav-item" href="/login"
+          ><span class="m-icon">🔑</span>Entrar</a
+        >
+        {% endif %}
       </div>
     </div>
-  </footer>
 
+<<<<<<< HEAD
   <script>
     /* ── Dados do serviço ──────────────────────────────────── */
     const servico = window.servicoAtual || (function () {
@@ -1140,12 +2509,478 @@
         prestador_email: ''
       };
     })();
+=======
+    <!-- MAIN -->
+    <div class="page-wrapper">
+      <div class="body">
+        <div class="page-title">Agendar Serviço</div>
 
-    function formatPreco(valor) {
-      const n = parseFloat(String(valor).replace(',', '.')) || 0;
-      return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-    }
+        <!-- PROVIDER CARD -->
+        <div class="glass prof-card">
+          <div class="prof-left">
+            <div class="prof-photo" id="prof-emoji">👷</div>
+            <div class="prof-info">
+              <div class="prof-name" id="prof-nome">—</div>
+              <div class="prof-sub" id="prof-area">—</div>
+              <div class="stars">
+                <span class="star">★</span><span class="star">★</span>
+                <span class="star">★</span><span class="star">★</span>
+                <span class="star">★</span>
+                <span class="rating-score">4,8</span>
+                <span class="rating-text">(127 avaliações)</span>
+              </div>
+            </div>
+          </div>
+          <div class="badge-verified">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path
+                d="M2.5 6.5l3 3 5-5"
+                stroke="#4ade80"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Verificado
+          </div>
+        </div>
 
+        <!-- SERVICE INFO -->
+        <div class="glass servico-info">
+          <div class="cat-badge" id="info-categoria">Geral</div>
+          <div class="servico-titulo" id="info-titulo">
+            Carregando serviço...
+          </div>
+          <div class="servico-desc" id="info-descricao"></div>
+          <div class="servico-meta">
+            <span class="servico-meta-item">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle
+                  cx="7"
+                  cy="7"
+                  r="5.5"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                />
+                <path
+                  d="M7 4.5v3l2 1.5"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              Duração: <strong id="info-duracao">-</strong>h
+            </span>
+            <span class="servico-preco-badge" id="info-preco">R$ 0,00</span>
+          </div>
+        </div>
+
+        <!-- TWO COLUMN -->
+        <div class="two-col">
+          <!-- LEFT: Calendário + Horários + Obs -->
+          <div class="glass cal-panel">
+            <div class="cal-header">
+              <span class="cal-month" id="cal-month-label">Maio 2025</span>
+              <div class="cal-nav">
+                <div class="cal-btn" id="cal-prev">‹</div>
+                <div class="cal-btn" id="cal-next">›</div>
+              </div>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+
+            <div class="section-title">Horários Disponíveis</div>
+
+            <div class="time-slots" id="time-slots">
+              <span style="font-size: 13px; color: var(--muted)"
+                >Selecione uma data para ver os horários.</span
+              >
+            </div>
+
+            <label class="obs-label" for="obs-input">Observações</label>
+            <input
+              class="obs-input"
+              type="text"
+              id="obs-input"
+              placeholder="Ex: Trazer chave de fenda..."
+            />
+          </div>
+
+          <!-- RIGHT: Resumo -->
+          <div class="summary-card">
+            <div class="sum-title">Resumo do Agendamento</div>
+
+            <div class="sum-prof">
+              <div class="sum-photo" id="sum-photo-emoji">👷</div>
+              <div>
+                <div class="sum-name" id="sum-prestador-nome">—</div>
+                <div class="sum-sub" id="sum-prestador-area">—</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="sum-row">
+              <span class="sum-row-label">Serviço</span>
+              <span
+                class="sum-row-value"
+                id="sum-titulo"
+                style="max-width: 160px"
+                >—</span
+              >
+            </div>
+            <div class="sum-row">
+              <span class="sum-row-label">Categoria</span>
+              <span class="sum-row-value" id="sum-categoria">—</span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-row-label">Data</span>
+              <span class="sum-row-value" id="sum-data"
+                >Selecione uma data</span
+              >
+            </div>
+            <div class="sum-row">
+              <span class="sum-row-label">Horário</span>
+              <span class="sum-row-value" id="sum-hora">—</span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-row-label">Orçamento</span>
+              <span class="sum-row-value" id="sum-preco">R$ —</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="sum-row">
+              <span class="sum-row-label sum-total">Total</span>
+              <span class="sum-total-value" id="sum-total">R$ —</span>
+            </div>
+
+            <button class="confirm-btn" id="btn-confirmar">
+              Confirmar Agendamento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <div
+      class="modal-overlay"
+      id="modal-pagamento"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-box">
+        <!-- ── Estado inicial: confirmação ── -->
+        <div id="modal-confirm-state">
+          <div class="modal-icon">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+              <path
+                d="M13 3L2 22h22L13 3z"
+                stroke="#f59e0b"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M13 10v5"
+                stroke="#f59e0b"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <circle cx="13" cy="18.5" r="1" fill="#f59e0b" />
+            </svg>
+          </div>
+
+          <h2 class="modal-title" id="modal-title">
+            Atenção antes de prosseguir
+          </h2>
+
+          <div class="modal-payment-notice">
+            <span class="notice-icon">💳</span>
+            <p>
+              O pagamento será efetuado
+              <strong>diretamente com o prestador de serviços</strong>, não pela
+              plataforma.
+            </p>
+          </div>
+
+          <p class="modal-question">
+            Tem certeza que deseja prosseguir com o agendamento?
+          </p>
+
+          <div class="modal-summary">
+            <div class="modal-summary-row">
+              <span>Serviço</span>
+              <span id="modal-sum-titulo">—</span>
+            </div>
+            <div class="modal-summary-row">
+              <span>Data &amp; Horário</span>
+              <span id="modal-sum-datahora">—</span>
+            </div>
+            <div class="modal-summary-row total">
+              <span>Valor estimado</span>
+              <span id="modal-sum-preco">R$ —</span>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-agendar" id="btn-agendar-agora">
+              <span class="btn-text">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  style="margin-right: 4px; vertical-align: -2px"
+                >
+                  <path
+                    d="M3 8l4 4 6-6"
+                    stroke="white"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Sim, agendar agora
+              </span>
+              <div class="spinner"></div>
+            </button>
+            <button class="btn-cancelar-modal" id="btn-cancelar-modal">
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Estado de sucesso ── -->
+        <div class="modal-success" id="modal-success-state">
+          <div class="success-check-wrap">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M7 16l6 6 12-12" />
+            </svg>
+          </div>
+
+          <div class="success-title">Agendamento confirmado!</div>
+
+          <p class="success-sub">
+            Seu serviço foi agendado com sucesso.<br />
+            Em breve o prestador entrará em contato via
+            <strong style="color: var(--text)">WhatsApp</strong> ou
+            <strong style="color: var(--text)">SMS</strong>.
+          </p>
+
+          <div class="success-info-pill">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+              <circle
+                cx="7.5"
+                cy="7.5"
+                r="6"
+                stroke="currentColor"
+                stroke-width="1.3"
+              />
+              <path
+                d="M7.5 4.5v3l2 1.5"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Aguarde o contato do profissional
+          </div>
+
+          <a
+            class="btn-google-cal"
+            id="btn-add-calendar"
+            href="#"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+              <rect
+                x="1"
+                y="2.5"
+                width="15"
+                height="13"
+                rx="2"
+                stroke="#93c5fd"
+                stroke-width="1.4"
+              />
+              <path d="M1 6.5h15" stroke="#93c5fd" stroke-width="1.4" />
+              <path
+                d="M5 1v3M12 1v3"
+                stroke="#93c5fd"
+                stroke-width="1.4"
+                stroke-linecap="round"
+              />
+              <path
+                d="M5.5 10.5h6M8.5 8.5v4"
+                stroke="#93c5fd"
+                stroke-width="1.3"
+                stroke-linecap="round"
+              />
+            </svg>
+            Adicionar ao Google Agenda
+          </a>
+
+          <a class="btn-agendamentos" href="/agendamentos">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect
+                x="1.5"
+                y="2"
+                width="13"
+                height="12"
+                rx="2"
+                stroke="white"
+                stroke-width="1.4"
+              />
+              <path d="M1.5 6h13" stroke="white" stroke-width="1.4" />
+              <path
+                d="M5 1v2M11 1v2"
+                stroke="white"
+                stroke-width="1.4"
+                stroke-linecap="round"
+              />
+            </svg>
+            Ver meus agendamentos
+          </a>
+
+          <div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+            <a class="btn-agendamentos" href="/servicos">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3h4l1 2h3v9H2V5h3l1-2z" stroke="white" stroke-width="1.4" stroke-linejoin="round" />
+                <path d="M4.5 7.5h7" stroke="white" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+              Voltar a serviços
+            </a>
+
+<a class="btn-perfil-sec" href="/perfil">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle
+                  cx="7.5"
+                  cy="5"
+                  r="3"
+                  stroke="currentColor"
+                  stroke-width="1.3"
+                />
+                <path
+                  d="M1.5 13.5c0-3.314 2.686-5 6-5s6 1.686 6 5"
+                  stroke="currentColor"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                />
+              </svg>
+              Ir para meu perfil
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer
+      style="
+        background: #0f172a;
+        color: rgba(255, 255, 255, 0.55);
+        text-align: center;
+        padding: 32px 20px 24px;
+        font-size: 13px;
+        margin-top: 48px;
+      "
+    >
+      <div style="max-width: 900px; margin: 0 auto">
+        <strong style="color: #fff; font-size: 15px">Agenda Fácil</strong>
+        <p style="margin: 6px 0 14px">
+          Conectando pessoas a profissionais de confiança.
+        </p>
+        <div
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 14px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+          "
+        >
+          © 2025 Agenda Fácil. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      /* ══════════════════════════════════════
+       MOBILE MENU
+    ══════════════════════════════════════ */
+      const hamburger = document.getElementById("hamburger");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      hamburger.addEventListener("click", () => {
+        const isOpen = mobileMenu.classList.toggle("open");
+        hamburger.classList.toggle("open", isOpen);
+        hamburger.setAttribute("aria-expanded", isOpen);
+      });
+
+      mobileMenu.querySelectorAll(".mobile-nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          mobileMenu.classList.remove("open");
+          hamburger.classList.remove("open");
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+          mobileMenu.classList.remove("open");
+          hamburger.classList.remove("open");
+        }
+      });
+
+      /* ══════════════════════════════════════
+       DADOS DO SERVIÇO
+    ══════════════════════════════════════ */
+      function getServicoData() {
+        if (window.servicoAtual) return window.servicoAtual;
+        const stored = localStorage.getItem("servicoSelecionado");
+        if (stored) {
+          try {
+            return JSON.parse(stored);
+          } catch (e) {}
+        }
+        const p = new URLSearchParams(location.search);
+        if (p.get("titulo")) {
+          return {
+            titulo: p.get("titulo") || "",
+            preco: p.get("preco") || "0.00",
+            categoria: p.get("categoria") || "Geral",
+            descricao: p.get("descricao") || "",
+            duracao: p.get("duracao") || "-",
+          };
+        }
+        return {
+          titulo: "Serviço não encontrado",
+          preco: "0.00",
+          categoria: "Geral",
+          descricao: "",
+          duracao: "-",
+        };
+      }
+
+      const servico = getServicoData();
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
+
+      function formatPreco(valor) {
+        const n = parseFloat(String(valor).replace(",", ".")) || 0;
+        return "R$ " + n.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+      }
+
+<<<<<<< HEAD
     /* Preenche info do serviço */
     document.getElementById('info-categoria').textContent = servico.categoria || 'Geral';
     document.getElementById('info-titulo').textContent = servico.titulo || '';
@@ -1231,12 +3066,116 @@
           el.addEventListener('click', () => selectDate(date));
         } else {
           el.className = 'cal-day';
+=======
+      function preencherServico() {
+        document.getElementById("info-categoria").textContent =
+          servico.categoria;
+        document.getElementById("info-titulo").textContent = servico.titulo;
+        document.getElementById("info-descricao").textContent =
+          servico.descricao;
+        document.getElementById("info-duracao").textContent = servico.duracao;
+        document.getElementById("info-preco").textContent = formatPreco(
+          servico.preco,
+        );
+
+        document.getElementById("sum-titulo").textContent = servico.titulo;
+        document.getElementById("sum-categoria").textContent =
+          servico.categoria;
+        document.getElementById("sum-preco").textContent = formatPreco(
+          servico.preco,
+        );
+        document.getElementById("sum-total").textContent = formatPreco(
+          servico.preco,
+        );
+
+        const nomePrestador =
+          servico.nome && servico.sobrenome
+            ? servico.nome + " " + servico.sobrenome
+            : servico.nome || "Prestador";
+        const areaPrestador =
+          servico.areas_atuacao ||
+          servico.area_atuacao ||
+          servico.categoria ||
+          "Prestador";
+
+        document.getElementById("prof-nome").textContent = nomePrestador;
+        document.getElementById("prof-area").textContent = areaPrestador;
+        document.getElementById("sum-prestador-nome").textContent =
+          nomePrestador;
+        document.getElementById("sum-prestador-area").textContent =
+          areaPrestador;
+
+        const iniciais = nomePrestador
+          .split(" ")
+          .map((p) => p[0])
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+        document.getElementById("prof-emoji").textContent = iniciais || "👷";
+        document.getElementById("sum-photo-emoji").textContent =
+          iniciais || "👷";
+      }
+
+      preencherServico();
+
+      /* ══════════════════════════════════════
+       CALENDÁRIO
+    ══════════════════════════════════════ */
+      let selectedDate = null;
+      let selectedTime = null;
+
+      const MONTHS = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ];
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      let calYear = today.getFullYear();
+      let calMonth = today.getMonth();
+
+      function buildCalendar() {
+        const grid = document.getElementById("cal-grid");
+        grid.innerHTML = "";
+
+        document.getElementById("cal-month-label").textContent =
+          MONTHS[calMonth] + " " + calYear;
+
+        const firstDay = new Date(calYear, calMonth, 1).getDay();
+        const offset = (firstDay + 6) % 7;
+        const days = new Date(calYear, calMonth + 1, 0).getDate();
+
+        ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].forEach((d) => {
+          const el = document.createElement("div");
+          el.className = "cal-dow";
+          el.textContent = d;
+          grid.appendChild(el);
+        });
+
+        for (let i = 0; i < offset; i++) {
+          const el = document.createElement("div");
+          el.className = "cal-day";
+          grid.appendChild(el);
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
         }
 
-        grid.appendChild(el);
-      }
-    }
+        for (let d = 1; d <= days; d++) {
+          const el = document.createElement("div");
+          const date = new Date(calYear, calMonth, d);
+          const isPast = date < today;
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
+<<<<<<< HEAD
     /* ─── FIX: selecionar data atualiza resumo E carrega horários ─── */
     function selectDate(date) {
       selectedDate = date;
@@ -1254,16 +3193,59 @@
       if (calYear > today.getFullYear() || calMonth > today.getMonth()) {
         calMonth--;
         if (calMonth < 0) { calMonth = 11; calYear--; }
-        buildCalendar();
+=======
+          el.textContent = d;
+
+          const isSelected =
+            selectedDate &&
+            selectedDate.getFullYear() === calYear &&
+            selectedDate.getMonth() === calMonth &&
+            selectedDate.getDate() === d;
+
+          if (isSelected) {
+            el.className = "cal-day selected";
+          } else if (!isPast && !isWeekend) {
+            el.className = "cal-day available has-dot";
+            el.addEventListener("click", () => {
+              selectedDate = date;
+              selectedTime = null;
+              document.getElementById("sum-hora").textContent = "—";
+              updateSummary();
+              buildCalendar();
+              carregarHorarios(date);
+            });
+          } else {
+            el.className = "cal-day";
+          }
+
+          grid.appendChild(el);
+        }
       }
-    });
 
-    document.getElementById('cal-next').addEventListener('click', () => {
-      calMonth++;
-      if (calMonth > 11) { calMonth = 0; calYear++; }
+      document.getElementById("cal-prev").addEventListener("click", () => {
+        if (calYear > today.getFullYear() || calMonth > today.getMonth()) {
+          calMonth--;
+          if (calMonth < 0) {
+            calMonth = 11;
+            calYear--;
+          }
+          buildCalendar();
+        }
+      });
+
+      document.getElementById("cal-next").addEventListener("click", () => {
+        calMonth++;
+        if (calMonth > 11) {
+          calMonth = 0;
+          calYear++;
+        }
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
+        buildCalendar();
+      });
+
       buildCalendar();
-    });
 
+<<<<<<< HEAD
     buildCalendar();
 
     /* ── Horários ──────────────────────────────────────────── */
@@ -1304,11 +3286,45 @@
             selectedTime = hora;
             document.getElementById('sum-hora').textContent = hora;
           });
+=======
+      /* ══════════════════════════════════════
+       HORÁRIOS
+    ══════════════════════════════════════ */
+      const HORARIOS_TODOS = [
+        "09:00",
+        "10:00",
+        "11:00",
+        "14:00",
+        "15:00",
+        "16:00",
+      ];
+
+      async function carregarHorarios(data) {
+        const slotsEl = document.getElementById("time-slots");
+        const dataISO = data.toISOString().split("T")[0];
+        const email = servico.prestador_email || "";
+
+        slotsEl.innerHTML = `
+        <div class="slots-loading">
+          <div class="slots-loading-spinner"></div>
+          Verificando disponibilidade...
+        </div>`;
+
+        let ocupados = [];
+        try {
+          const res = await fetch(
+            `/api/horarios_bloqueados?data=${dataISO}&prestador_email=${encodeURIComponent(email)}`,
+          );
+          const json = await res.json();
+          ocupados = Array.isArray(json) ? json : json.ocupados || [];
+        } catch (e) {
+          console.error("Erro ao buscar horários bloqueados:", e);
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
         }
 
-        slotsEl.appendChild(btn);
-      });
+        slotsEl.innerHTML = "";
 
+<<<<<<< HEAD
       /* Se não há slots disponíveis, avisa */
       const disponiveis = slotsEl.querySelectorAll('.time-btn:not(.ocupado)').length;
       if (disponiveis === 0) {
@@ -1401,5 +3417,147 @@
     });
   </script>
 </body>
+=======
+        HORARIOS_TODOS.forEach((hora) => {
+          const btn = document.createElement("div");
+          btn.className = "time-btn";
+          btn.dataset.time = hora;
+          btn.textContent = hora;
 
+          if (ocupados.includes(hora)) {
+            btn.classList.add("ocupado");
+            btn.title = "Horário já reservado";
+          } else {
+            btn.addEventListener("click", () => {
+              slotsEl
+                .querySelectorAll(".time-btn")
+                .forEach((b) => b.classList.remove("selected"));
+              btn.classList.add("selected");
+              selectedTime = hora;
+              updateSummary();
+            });
+          }
+
+          slotsEl.appendChild(btn);
+        });
+
+        if (ocupados.length >= HORARIOS_TODOS.length) {
+          const aviso = document.createElement("p");
+          aviso.style.cssText =
+            "font-size:13px;color:var(--red);margin-top:4px;width:100%";
+          aviso.textContent =
+            "Sem horários disponíveis neste dia. Escolha outra data.";
+          slotsEl.appendChild(aviso);
+        }
+      }
+
+      function updateSummary() {
+        if (selectedDate) {
+          const dd = String(selectedDate.getDate()).padStart(2, "0");
+          const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
+          document.getElementById("sum-data").textContent = `${dd} ${mm}`;
+        }
+        if (selectedTime) {
+          document.getElementById("sum-hora").textContent = selectedTime;
+        }
+      }
+
+      /* ══════════════════════════════════════
+       MODAL DE CONFIRMAÇÃO
+    ══════════════════════════════════════ */
+      const modalOverlay = document.getElementById("modal-pagamento");
+      const btnConfirmar = document.getElementById("btn-confirmar");
+      const btnCancelar = document.getElementById("btn-cancelar-modal");
+      const btnAgendar = document.getElementById("btn-agendar-agora");
+      const confirmState = document.getElementById("modal-confirm-state");
+      const successState = document.getElementById("modal-success-state");
+      const btnAddCalendar = document.getElementById("btn-add-calendar");
+
+      btnConfirmar.addEventListener("click", () => {
+        if (!selectedDate || !selectedTime) {
+          alert("Selecione data e horário antes de prosseguir.");
+          return;
+        }
+
+        const dd = String(selectedDate.getDate()).padStart(2, "0");
+        const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
+
+        document.getElementById("modal-sum-titulo").textContent =
+          servico.titulo || "—";
+        document.getElementById("modal-sum-datahora").textContent =
+          `${dd} ${mm} às ${selectedTime}`;
+        document.getElementById("modal-sum-preco").textContent = formatPreco(
+          servico.preco,
+        );
+
+        confirmState.style.display = "";
+        successState.classList.remove("visible");
+
+        modalOverlay.classList.add("open");
+        document.body.style.overflow = "hidden";
+      });
+
+      btnCancelar.addEventListener("click", fecharModal);
+
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) fecharModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") fecharModal();
+      });
+
+      function fecharModal() {
+        modalOverlay.classList.remove("open");
+        document.body.style.overflow = "";
+      }
+
+      /* Envia para o servidor */
+      btnAgendar.addEventListener("click", async () => {
+        btnAgendar.classList.add("loading");
+>>>>>>> 2c93cb62e5ddee2de250254ebc2baca40a1abf78
+
+        const payload = {
+          servico: servico.titulo,
+          preco: servico.preco,
+          prestador_email: servico.prestador_email || "",
+          data: selectedDate.toISOString().split("T")[0],
+          horario: selectedTime,
+          obs: document.getElementById("obs-input").value,
+        };
+
+        try {
+          const res = await fetch("/salvar_agendamento", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (data.erro) {
+            btnAgendar.classList.remove("loading");
+            fecharModal();
+            alert(data.erro);
+            return;
+          }
+
+          if (data.calendar_url) {
+            btnAddCalendar.href = data.calendar_url;
+            btnAddCalendar.style.display = "";
+          } else {
+            btnAddCalendar.style.display = "none";
+          }
+
+          btnAgendar.classList.remove("loading");
+          confirmState.style.display = "none";
+          successState.classList.add("visible");
+        } catch (err) {
+          console.error(err);
+          btnAgendar.classList.remove("loading");
+          fecharModal();
+          alert("Erro de conexão com o servidor. Tente novamente.");
+        }
+      });
+    </script>
+  </body>
 </html>
