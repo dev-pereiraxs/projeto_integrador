@@ -6,83 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../static/global.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 
-    <link rel="stylesheet" href="../static/servicos.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='servicos.css') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}" id="xbr4s9">
 
     <!-- TAILWIND -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <title>Agenda Fácil</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
   </head>
+
 
   <body>
     <!-- =========================================================
        HEADER / NAVBAR
   ========================================================== -->
-    <header class="navbar">
-      <div class="navbar-inner">
-        <!-- LOGO -->
-        <a href="/" class="navbar-brand">
-          <span class="navbar-brand-mark"> AF </span>
+    {% include 'partials/header.html' %}
 
-          Agenda Fácil
-        </a>
-
-        <!-- BOTÃO MOBILE -->
-        <button
-          type="button"
-          class="navbar-toggle"
-          id="navbarToggle"
-          aria-label="Abrir menu"
-          aria-expanded="false"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <!-- MENU -->
-        <nav class="navbar-links" id="navbarLinks">
-          <a href="/" class="navbar-link"> Home </a>
-
-          <a href="/servicos" class="navbar-link active"> Serviços </a>
-
-          {% if session.get("tipo_usuario") != "prestador" %}
-
-          <a href="/prestador" class="navbar-link navbar-link--ghost">
-            Quero ser prestador
-          </a>
-
-          {% endif %} {% if session.get("tipo_usuario") == "prestador" %}
-
-          <a href="/painel" class="navbar-link navbar-link--primary">
-            Meu Painel
-          </a>
-
-          {% endif %} {% if session.get("usuario_logado") %}
-
-          <!-- PERFIL -->
-          <a href="/meu_perfil" class="navbar-user-pill">
-            <div class="navbar-avatar">👤</div>
-
-            <span class="navbar-user-name">
-              {{ session.get("usuario_nome") or session.get("usuario_logado") }}
-            </span>
-          </a>
-
-          <!-- SAIR -->
-          <a href="/logout" class="navbar-link navbar-link--danger"> Sair </a>
-
-          {% else %}
-
-          <!-- ENTRAR -->
-          <a href="/login" class="navbar-link navbar-link--primary"> Entrar </a>
-
-          {% endif %}
-        </nav>
-      </div>
-    </header>
 
     <!-- =========================================================
        CONTEÚDO
@@ -176,28 +120,15 @@
     <!-- =========================================================
        SCRIPT NAVBAR MOBILE
   ========================================================== -->
-    <script>
-      const navbarToggle = document.getElementById("navbarToggle");
 
-      const navbarLinks = document.getElementById("navbarLinks");
-
-      if (navbarToggle && navbarLinks) {
-        navbarToggle.addEventListener("click", () => {
-          navbarToggle.classList.toggle("open");
-
-          navbarLinks.classList.toggle("open");
-
-          const expanded =
-            navbarToggle.getAttribute("aria-expanded") === "true";
-
-          navbarToggle.setAttribute("aria-expanded", !expanded);
-        });
-      }
-    </script>
 
     <!-- JS -->
-    <script src="../static/js/filtrar.js"></script>
+    <script id="ep42xe" src="{{ url_for('static', filename='js/premium-header.js') }}" defer></script>
 
-    <script src="../static/js/agenda_facil.js"></script>
+    <script src="{{ url_for('static', filename='js/filtrar.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
+
+
   </body>
 </html>

@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda Fácil</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,48 +20,11 @@
 
   <div class="page-shell">
 
-    <!-- HEADER -->
-    <!-- HEADER -->
-    <header class="topbar container">
-
-      <a class="brand" href="#inicio">
-        <span class="brand-mark"></span>
-        <span>Agenda Fácil</span>
-      </a>
-
-      <!-- BOTÃO MOBILE -->
-      <button class="menu-toggle" id="menuToggle">
-        ☰
-      </button>
-
-      <!-- MENU -->
-      <nav class="nav-links" id="mobileMenu">
-
-        {% if session.get('usuario_logado') %}
-
-        <a href="{{ url_for('meu_perfil') }}" class="nav-profile">
-          👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-        </a>
-
-        <a href="{{ url_for('servicos') }}">Serviços</a>
-
-        <a href="{{ url_for('logout') }}" class="btn btn-secondary nav-logout">
-          Sair
-        </a>
-
-        {% else %}
-
-        <a href="{{ url_for('login') }}">Entrar</a>
-
-        <a href="{{ url_for('cadastro') }}">Cadastrar-se</a>
-
-        {% endif %}
-
-      </nav>
-
-    </header>
+    <!-- PREMIUM HEADER (padronizado) -->
+    {% include 'partials/header.html' %}
 
     <!-- HERO -->
+
     <main>
       <section class="hero container" id="inicio">
 
@@ -285,14 +250,7 @@
     </div>
   </footer>
 
-  <script>
-    const menuToggle = document.getElementById('menuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('active');
-    });
-  </script>
+  <script src="{{ url_for('static', filename='js/premium-header.js') }}" defer></script>
 
   <!-- BOTÃO VOLTAR AO TOPO -->
   <button id="backToTop" aria-label="Voltar ao topo">

@@ -63,7 +63,11 @@
       margin-bottom: 20px;
     }
 
-    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
     .notice p {
       font-size: 13px;
@@ -85,7 +89,7 @@
       padding: 24px 28px;
     }
 
-    .form-section + .form-section {
+    .form-section+.form-section {
       border-top: 1px solid var(--border);
     }
 
@@ -146,7 +150,9 @@
       box-shadow: 0 0 0 3px rgba(43, 115, 255, .10);
     }
 
-    .cat-option input[type="radio"] { display: none; }
+    .cat-option input[type="radio"] {
+      display: none;
+    }
 
     .cat-icon {
       width: 38px;
@@ -164,10 +170,13 @@
 
     .cat-option.selected .cat-icon {
       background: var(--primary-soft);
-      border-color: rgba(43,115,255,.25);
+      border-color: rgba(43, 115, 255, .25);
     }
 
-    .cat-info { min-width: 0; flex: 1 }
+    .cat-info {
+      min-width: 0;
+      flex: 1
+    }
 
     .cat-name {
       font-size: 13px;
@@ -211,7 +220,9 @@
       display: none;
     }
 
-    .cat-option.selected .cat-check-dot { display: block; }
+    .cat-option.selected .cat-check-dot {
+      display: block;
+    }
 
     /* ── Textarea ── */
     .input-field.textarea-field {
@@ -258,7 +269,9 @@
       box-shadow: 0 12px 28px rgba(43, 115, 255, .36);
     }
 
-    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:active {
+      transform: translateY(0);
+    }
 
     .btn-submit:disabled {
       opacity: .6;
@@ -267,362 +280,347 @@
     }
 
     /* Spinner */
-    @keyframes spin { to { transform: rotate(360deg) } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
 
     .btn-spinner {
       width: 16px;
       height: 16px;
-      border: 2px solid rgba(255,255,255,.35);
+      border: 2px solid rgba(255, 255, 255, .35);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: none;
     }
 
-    .btn-submit.loading .btn-spinner { display: block; }
-    .btn-submit.loading .btn-label   { display: none; }
+    .btn-submit.loading .btn-spinner {
+      display: block;
+    }
+
+    .btn-submit.loading .btn-label {
+      display: none;
+    }
 
     /* ── Responsivo ── */
     @media (max-width: 640px) {
-      .page-content { padding: 24px 16px 48px; }
-      .form-section { padding: 20px 18px; }
-      .form-footer  { padding: 18px 18px 24px; }
-      .field-grid-2 { grid-template-columns: 1fr; }
-      .cat-grid     { grid-template-columns: 1fr; }
+      .page-content {
+        padding: 24px 16px 48px;
+      }
+
+      .form-section {
+        padding: 20px 18px;
+      }
+
+      .form-footer {
+        padding: 18px 18px 24px;
+      }
+
+      .field-grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .cat-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ══ NAVBAR (componente global.css) ══ -->
-  <header class="navbar">
-    <div class="navbar-inner">
-
-      <a class="navbar-brand" href="/">
-        <span class="navbar-brand-mark">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5"/>
-            <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        Agenda Fácil
-      </a>
-
-      <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav class="navbar-links" id="navbar-links">
-        <a class="navbar-link" href="/">Início</a>
-        <a class="navbar-link" href="/servicos">Serviços</a>
-
-        {% if session.get('usuario_logado') %}
-        <a class="navbar-user-pill" href="/perfil">
-          <div class="navbar-avatar">
-            {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
-          </div>
-          <span class="navbar-user-name">
-            {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-          </span>
-        </a>
-        <a class="navbar-link navbar-link--danger" href="/logout">Sair</a>
-        {% else %}
-        <a class="navbar-link navbar-link--ghost" href="/login">Entrar</a>
-        {% endif %}
-      </nav>
-
-    </div>
-  </header>
+  {% include 'partials/header.html' %}
 
   <!-- ══ CONTEÚDO ══ -->
   <main class="page-content">
-    <div class="page-inner">
+    <!-- ══ CONTEÚDO ══ -->
+    <main class="page-content">
+      <div class="page-inner">
 
-      <!-- Cabeçalho -->
-      <div class="page-heading">
-        <span class="eyebrow eyebrow-light">Orçamento gratuito</span>
-        <h1>Solicitar Orçamento</h1>
-        <p>Preencha os dados abaixo e conectaremos você aos melhores profissionais disponíveis.</p>
-      </div>
-
-      <!-- Aviso -->
-      <div class="notice">
-        <span class="notice-icon">📋</span>
-        <p>
-          Seu orçamento será enviado aos prestadores cadastrados na categoria selecionada.
-          Eles entrarão em contato diretamente pelo <strong>telefone</strong> ou <strong>e-mail</strong> informado.
-        </p>
-      </div>
-
-      <!-- Card do formulário -->
-      <div class="form-card">
-
-        <!-- ── Seção 1: Dados Pessoais ── -->
-        <div class="form-section">
-          <div class="section-title">Dados Pessoais</div>
-
-          <div class="field-grid-2" style="margin-bottom: 14px">
-
-            <div class="input-box">
-              <label class="form-label" for="nome">
-                Nome <span style="color:var(--cancel)">*</span>
-              </label>
-              <div class="input-field">
-                <i>👤</i>
-                <input class="form-control" type="text" id="nome" placeholder="Seu nome completo" required>
-              </div>
-            </div>
-
-            <div class="input-box">
-              <label class="form-label" for="telefone">
-                Telefone <span style="color:var(--cancel)">*</span>
-              </label>
-              <div class="input-field">
-                <i>📱</i>
-                <input class="form-control" type="tel" id="telefone" placeholder="(00) 00000-0000" required>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="input-box">
-            <label class="form-label" for="email">
-              E-mail
-              <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:4px">(opcional — receba cópia da solicitação)</span>
-            </label>
-            <div class="input-field">
-              <i>✉️</i>
-              <input class="form-control" type="email" id="email" placeholder="seu@email.com">
-            </div>
-          </div>
+        <!-- Cabeçalho -->
+        <div class="page-heading">
+          <span class="eyebrow eyebrow-light">Orçamento gratuito</span>
+          <h1>Solicitar Orçamento</h1>
+          <p>Preencha os dados abaixo e conectaremos você aos melhores profissionais disponíveis.</p>
         </div>
 
-        <!-- ── Seção 2: Categoria ── -->
-        <div class="form-section">
-          <div class="section-title">Categoria do Serviço</div>
-
-          <div class="cat-grid" id="cat-grid">
-
-            <label class="cat-option" data-value="Tecnologia">
-              <input type="radio" name="categoria" value="Tecnologia">
-              <div class="cat-icon">💻</div>
-              <div class="cat-info">
-                <div class="cat-name">Tecnologia / TI</div>
-                <div class="cat-desc">Suporte técnico, redes e computadores</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-            <label class="cat-option" data-value="Mecânica">
-              <input type="radio" name="categoria" value="Mecânica">
-              <div class="cat-icon">🔧</div>
-              <div class="cat-info">
-                <div class="cat-name">Mecânica</div>
-                <div class="cat-desc">Manutenção preventiva e corretiva</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-            <label class="cat-option" data-value="Elétrica">
-              <input type="radio" name="categoria" value="Elétrica">
-              <div class="cat-icon">⚡</div>
-              <div class="cat-info">
-                <div class="cat-name">Elétrica</div>
-                <div class="cat-desc">Instalações e reparos com segurança</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-            <label class="cat-option" data-value="Hidráulica">
-              <input type="radio" name="categoria" value="Hidráulica">
-              <div class="cat-icon">🚿</div>
-              <div class="cat-info">
-                <div class="cat-name">Hidráulica</div>
-                <div class="cat-desc">Resolva vazamentos sem complicação</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-            <label class="cat-option" data-value="Reformas">
-              <input type="radio" name="categoria" value="Reformas">
-              <div class="cat-icon">🏗️</div>
-              <div class="cat-info">
-                <div class="cat-name">Reformas</div>
-                <div class="cat-desc">Pintura e melhorias para seu espaço</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-            <label class="cat-option" data-value="Limpeza">
-              <input type="radio" name="categoria" value="Limpeza">
-              <div class="cat-icon">🧹</div>
-              <div class="cat-info">
-                <div class="cat-name">Limpeza</div>
-                <div class="cat-desc">Faxina com profissionais avaliados</div>
-              </div>
-              <div class="cat-check"><div class="cat-check-dot"></div></div>
-            </label>
-
-          </div>
-        </div>
-
-        <!-- ── Seção 3: Descrição ── -->
-        <div class="form-section">
-          <div class="section-title">Detalhes do Serviço</div>
-
-          <div class="input-box">
-            <label class="form-label" for="descricao">Descreva o que você precisa</label>
-            <div class="input-field textarea-field">
-              <textarea
-                class="form-control"
-                id="descricao"
-                placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Rodapé com botão ── -->
-        <div class="form-footer">
-          <button class="btn-submit" id="btnEnviar" type="button">
-            <span class="btn-label">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:4px">
-                <path d="M2 8l10-6v12L2 8z" fill="white"/>
-              </svg>
-              Enviar Solicitação
-            </span>
-            <div class="btn-spinner"></div>
-          </button>
-
-          <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px">
-            🔒 Seus dados são protegidos e usados apenas para contato dos prestadores.
+        <!-- Aviso -->
+        <div class="notice">
+          <span class="notice-icon">📋</span>
+          <p>
+            Seu orçamento será enviado aos prestadores cadastrados na categoria selecionada.
+            Eles entrarão em contato diretamente pelo <strong>telefone</strong> ou <strong>e-mail</strong> informado.
           </p>
         </div>
 
-      </div><!-- /form-card -->
-    </div>
-  </main>
+        <!-- Card do formulário -->
+        <div class="form-card">
 
-  <!-- ══ FOOTER (componente global.css) ══ -->
-  <footer class="footer">
-    <div class="footer__inner">
-      <strong class="footer__brand">Agenda Fácil</strong>
-      <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
-      <div class="footer__links">
-        <a href="#">Termos de Uso</a>
-        <a href="#">Privacidade</a>
-        <a href="#">Contato</a>
+          <!-- ── Seção 1: Dados Pessoais ── -->
+          <div class="form-section">
+            <div class="section-title">Dados Pessoais</div>
+
+            <div class="field-grid-2" style="margin-bottom: 14px">
+
+              <div class="input-box">
+                <label class="form-label" for="nome">
+                  Nome <span style="color:var(--cancel)">*</span>
+                </label>
+                <div class="input-field">
+                  <i>👤</i>
+                  <input class="form-control" type="text" id="nome" placeholder="Seu nome completo" required>
+                </div>
+              </div>
+
+              <div class="input-box">
+                <label class="form-label" for="telefone">
+                  Telefone <span style="color:var(--cancel)">*</span>
+                </label>
+                <div class="input-field">
+                  <i>📱</i>
+                  <input class="form-control" type="tel" id="telefone" placeholder="(00) 00000-0000" required>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="input-box">
+              <label class="form-label" for="email">
+                E-mail
+                <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:4px">(opcional — receba
+                  cópia da solicitação)</span>
+              </label>
+              <div class="input-field">
+                <i>✉️</i>
+                <input class="form-control" type="email" id="email" placeholder="seu@email.com">
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Seção 2: Categoria ── -->
+          <div class="form-section">
+            <div class="section-title">Categoria do Serviço</div>
+
+            <div class="cat-grid" id="cat-grid">
+
+              <label class="cat-option" data-value="Tecnologia">
+                <input type="radio" name="categoria" value="Tecnologia">
+                <div class="cat-icon">💻</div>
+                <div class="cat-info">
+                  <div class="cat-name">Tecnologia / TI</div>
+                  <div class="cat-desc">Suporte técnico, redes e computadores</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+              <label class="cat-option" data-value="Mecânica">
+                <input type="radio" name="categoria" value="Mecânica">
+                <div class="cat-icon">🔧</div>
+                <div class="cat-info">
+                  <div class="cat-name">Mecânica</div>
+                  <div class="cat-desc">Manutenção preventiva e corretiva</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+              <label class="cat-option" data-value="Elétrica">
+                <input type="radio" name="categoria" value="Elétrica">
+                <div class="cat-icon">⚡</div>
+                <div class="cat-info">
+                  <div class="cat-name">Elétrica</div>
+                  <div class="cat-desc">Instalações e reparos com segurança</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+              <label class="cat-option" data-value="Hidráulica">
+                <input type="radio" name="categoria" value="Hidráulica">
+                <div class="cat-icon">🚿</div>
+                <div class="cat-info">
+                  <div class="cat-name">Hidráulica</div>
+                  <div class="cat-desc">Resolva vazamentos sem complicação</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+              <label class="cat-option" data-value="Reformas">
+                <input type="radio" name="categoria" value="Reformas">
+                <div class="cat-icon">🏗️</div>
+                <div class="cat-info">
+                  <div class="cat-name">Reformas</div>
+                  <div class="cat-desc">Pintura e melhorias para seu espaço</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+              <label class="cat-option" data-value="Limpeza">
+                <input type="radio" name="categoria" value="Limpeza">
+                <div class="cat-icon">🧹</div>
+                <div class="cat-info">
+                  <div class="cat-name">Limpeza</div>
+                  <div class="cat-desc">Faxina com profissionais avaliados</div>
+                </div>
+                <div class="cat-check">
+                  <div class="cat-check-dot"></div>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- ── Seção 3: Descrição ── -->
+          <div class="form-section">
+            <div class="section-title">Detalhes do Serviço</div>
+
+            <div class="input-box">
+              <label class="form-label" for="descricao">Descreva o que você precisa</label>
+              <div class="input-field textarea-field">
+                <textarea class="form-control" id="descricao"
+                  placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Rodapé com botão ── -->
+          <div class="form-footer">
+            <button class="btn-submit" id="btnEnviar" type="button">
+              <span class="btn-label">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                  style="vertical-align:-2px;margin-right:4px">
+                  <path d="M2 8l10-6v12L2 8z" fill="white" />
+                </svg>
+                Enviar Solicitação
+              </span>
+              <div class="btn-spinner"></div>
+            </button>
+
+            <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px">
+              🔒 Seus dados são protegidos e usados apenas para contato dos prestadores.
+            </p>
+          </div>
+
+        </div><!-- /form-card -->
       </div>
-      <p class="footer__copy">&copy; 2025 Agenda Fácil. Todos os direitos reservados.</p>
-    </div>
-  </footer>
+    </main>
 
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <!-- ══ FOOTER (componente global.css) ══ -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <strong class="footer__brand">Agenda Fácil</strong>
+        <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
+        <div class="footer__links">
+          <a href="#">Termos de Uso</a>
+          <a href="#">Privacidade</a>
+          <a href="#">Contato</a>
+        </div>
+        <p class="footer__copy">&copy; 2025 Agenda Fácil. Todos os direitos reservados.</p>
+      </div>
+    </footer>
 
-  <script>
-    /* ── Navbar toggle ── */
-    const toggle = document.getElementById('navbar-toggle');
-    const links  = document.getElementById('navbar-links');
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-    toggle.addEventListener('click', () => {
-      const open = links.classList.toggle('open');
-      toggle.classList.toggle('open', open);
-    });
+    <script>
 
-    document.addEventListener('click', e => {
-      if (!toggle.contains(e.target) && !links.contains(e.target)) {
-        links.classList.remove('open');
-        toggle.classList.remove('open');
-      }
-    });
 
-    /* ── Categoria cards ── */
-    let categoriaSelecionada = '';
+      /* ── Categoria cards ── */
+      let categoriaSelecionada = '';
 
-    document.querySelectorAll('.cat-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        categoriaSelecionada = opt.dataset.value;
-        opt.querySelector('input[type="radio"]').checked = true;
+      document.querySelectorAll('.cat-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          categoriaSelecionada = opt.dataset.value;
+          opt.querySelector('input[type="radio"]').checked = true;
+        });
       });
-    });
 
-    /* ── Máscara de telefone ── */
-    const telefoneInput = document.getElementById('telefone');
-    telefoneInput.addEventListener('input', () => {
-      let v = telefoneInput.value.replace(/\D/g, '');
-      if (v.length > 11) v = v.slice(0, 11);
-      v = v.replace(/(\d{2})(\d)/, '($1) $2');
-      v = v.replace(/(\d{5})(\d)/, '$1-$2');
-      telefoneInput.value = v;
-    });
+      /* ── Máscara de telefone ── */
+      const telefoneInput = document.getElementById('telefone');
+      telefoneInput.addEventListener('input', () => {
+        let v = telefoneInput.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        v = v.replace(/(\d{2})(\d)/, '($1) $2');
+        v = v.replace(/(\d{5})(\d)/, '$1-$2');
+        telefoneInput.value = v;
+      });
 
-    /* ── EmailJS ── */
-    (function () { emailjs.init("uX9VTM1RJGpHB17ex"); })();
+      /* ── EmailJS ── */
+      (function () { emailjs.init("uX9VTM1RJGpHB17ex"); })();
 
-    /* ── Envio ── */
-    const btn = document.getElementById('btnEnviar');
+      /* ── Envio ── */
+      const btn = document.getElementById('btnEnviar');
 
-    btn.addEventListener('click', async () => {
-      const nome      = document.getElementById('nome').value.trim();
-      const email     = document.getElementById('email').value.trim();
-      const telefone  = telefoneInput.value.trim();
-      const descricao = document.getElementById('descricao').value.trim();
+      btn.addEventListener('click', async () => {
+        const nome = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const telefone = telefoneInput.value.trim();
+        const descricao = document.getElementById('descricao').value.trim();
 
-      if (!nome)                 { alert('Informe seu nome.');        return; }
-      if (!telefone)             { alert('Informe seu telefone.');    return; }
-      if (!categoriaSelecionada) { alert('Selecione uma categoria.'); return; }
+        if (!nome) { alert('Informe seu nome.'); return; }
+        if (!telefone) { alert('Informe seu telefone.'); return; }
+        if (!categoriaSelecionada) { alert('Selecione uma categoria.'); return; }
 
-      btn.classList.add('loading');
-      btn.disabled = true;
+        btn.classList.add('loading');
+        btn.disabled = true;
 
-      const dadosBase = {
-        nome,
-        email: email || 'Não informado',
-        telefone,
-        categoria: categoriaSelecionada,
-        descricao
-      };
+        const dadosBase = {
+          nome,
+          email: email || 'Não informado',
+          telefone,
+          categoria: categoriaSelecionada,
+          descricao
+        };
 
-      try {
-        const res = await fetch(
-          `/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoriaSelecionada)}`
-        );
-        const prestadores = await res.json();
+        try {
+          const res = await fetch(
+            `/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoriaSelecionada)}`
+          );
+          const prestadores = await res.json();
 
-        if (!prestadores.length) {
-          alert('Nenhum prestador disponível para esta categoria.');
+          if (!prestadores.length) {
+            alert('Nenhum prestador disponível para esta categoria.');
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            return;
+          }
+
+          const promessas = prestadores.map(p =>
+            emailjs.send('service_b6ejlqp', 'template_ju6fbyc', {
+              ...dadosBase,
+              email_prestador: p.email,
+              nome_prestador: `${p.nome} ${p.sobrenome}`
+            })
+          );
+
+          if (email) {
+            promessas.push(emailjs.send('service_b6ejlqp', 'template_a9a80tv', dadosBase));
+          }
+
+          await Promise.all(promessas);
+          window.location.href = '/sucesso-agendamento';
+
+        } catch (err) {
+          console.error(err);
+          alert('Erro ao enviar. Tente novamente.');
           btn.classList.remove('loading');
           btn.disabled = false;
-          return;
         }
-
-        const promessas = prestadores.map(p =>
-          emailjs.send('service_b6ejlqp', 'template_ju6fbyc', {
-            ...dadosBase,
-            email_prestador: p.email,
-            nome_prestador: `${p.nome} ${p.sobrenome}`
-          })
-        );
-
-        if (email) {
-          promessas.push(emailjs.send('service_b6ejlqp', 'template_a9a80tv', dadosBase));
-        }
-
-        await Promise.all(promessas);
-        window.location.href = '/sucesso-agendamento';
-
-      } catch (err) {
-        console.error(err);
-        alert('Erro ao enviar. Tente novamente.');
-        btn.classList.remove('loading');
-        btn.disabled = false;
-      }
-    });
-  </script>
+      });
+    </script>
 
 </body>
+
 </html>

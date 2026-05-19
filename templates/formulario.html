@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Novo Serviço</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../static/global.css">
@@ -13,26 +15,8 @@
 
 <body class="bg-[var(--bg)]">
 
-  <header class="site-header">
-    <div class="header-container">
-
-      <a href="#" class="logo">Agenda Fácil</a>
-
-      <nav class="nav-menu" id="navMenu">
-        <a href="#">Início</a>
-        <a href="#">Serviços</a>
-        <a href="#">Meu Perfil</a>
-        <a href="#">Sair</a>
-      </nav>
-
-      <div class="menu-toggle" id="menuToggle">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-
-    </div>
-  </header>
+  <!-- HEADER (padronizado) -->
+  {% include 'partials/header.html' %}
   <div class="form-wrapper">
     <h1 class="form-title">Cadastrar Novo Serviço</h1>
 

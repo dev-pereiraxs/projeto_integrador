@@ -1,11 +1,14 @@
 <!doctype html>
 <html lang="pt-br">
 
-<head>
+  <head>
+    <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel do Prestador – Agenda Fácil</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}" id="xbr4s9">
   <link rel="stylesheet" href="../static/global.css">
   <link rel="stylesheet" href="../static/painel.css">
 
@@ -520,6 +523,9 @@
 <body class="bg-[var(--bg)] text-[var(--text)]">
   <div class="painel-wrapper">
 
+    <!-- Premium Header -->
+    {% include 'partials/header.html' %}
+
     <!-- Cabeçalho -->
     <div class="painel-header">
       <h1 style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
@@ -620,7 +626,9 @@
   </div>
 
   <!-- pn.js renderiza as listas -->
-  <script src="../static/js/pn.js"></script>
+  <script src="{{ url_for('static', filename='js/pn.js') }}"></script>
+
+  <script src="{{ url_for('static', filename='js/premium-header.js') }}" defer id="ep42xe"></script>
 
   <script>
     /* ═══════════════════════════════════════════════

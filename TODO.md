@@ -1,9 +1,6 @@
-# TODO — Perfil do Prestador (todos_agendamentos)
+# TODO
 
-- [ ] Substituir integralmente a função `perfil_prestador` em `app.py` pelo código fornecido (inclui `todos_agendamentos` e serialização de `data_servico`).
-- [x] Verificar se `templates/perfil-prestador.html` está usando `todos_agendamentos` (se não, ajustar o template). 
-- [x] Rodar o app e conferir visualmente a aba/Pedidos no perfil do prestador.
-
-
-
+- [ ] Substituir o ícone do logo no header (`templates/partials/header.html`) pelo arquivo `static/img/agenda-facil.png`.
+- [ ] Adicionar favicon `static/img/agenda-facil.png` na aba do navegador em todas as páginas que possuem `<head>` (ex.: `principal.html`, `login.html`, `servicos.html`, `formulario.html`, `agendamento.html`, `painel.html`, `perfil-*.html`, `orcamentos.html`, e templates admin quando aplicável).
+- [ ] Testar no navegador: confirmar favicon visível e imagem do header carregando.
 
