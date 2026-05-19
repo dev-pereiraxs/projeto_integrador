@@ -273,6 +273,11 @@ def agendamentos():
 def sucesso_servico():
     return render_template("sucesso.html")
 
+@app.route("/sucesso-orcamento")
+def sucesso_orcamento():
+    return render_template("sucesso_orcamento.html")
+
+
 @app.route("/sucesso-conclusao")
 def sucesso_conclusao():
     if "usuario_logado" not in session:
@@ -317,7 +322,8 @@ def autenticar():
         session["usuario_logado"] = email
         session["tipo_usuario"]   = "cliente"
         session["usuario_nome"]   = cliente["nome"] + " " + cliente["sobrenome"]
-        return redirect(url_for("servicos"))
+        return redirect(url_for("avaliar"))
+
 
     return render_template("login.html", erro="E-mail ou senha inválidos")
 
@@ -490,15 +496,38 @@ def listar_servicos():
     try:
         conn   = connectar()
         cursor = conn.cursor(dictionary=True)
+
+        # Inclui nome do prestador e média de avaliações (da tabela avaliacoes_prestadores).
         cursor.execute("""
-            SELECT s.*, p.nome, p.sobrenome, p.areas_atuacao
+            SELECT
+                s.*, 
+                p.nome AS prestador_nome,
+                p.sobrenome AS prestador_sobrenome,
+                p.areas_atuacao,
+                COALESCE(ROUND(AVG(av.nota), 1), NULL) AS media_nota
             FROM servicos_anunciados s
             JOIN cadastro_prestadores p ON s.prestador_email = p.email
+            LEFT JOIN agendamentos a
+                   ON a.prestador_email = p.email
+                  AND a.status = 'concluido'
+            LEFT JOIN avaliacoes_prestadores av
+                   ON av.agendamento_id = a.id
+            GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao
             ORDER BY s.id DESC
         """)
+
         dados = cursor.fetchall()
+
+        # Back-compat: aliases usados no front
+        for row in dados:
+            row["avaliacao_media"] = row.get("media_nota")
+            row["nome_prestador"] = (
+                f"{row.get('prestador_nome','')} {row.get('prestador_sobrenome','')}"
+            ).strip() or "Prestador"
+
         cursor.close(); conn.close()
         return jsonify(dados)
+
     except Exception as e:
         # Retorna JSON sempre (evita o front tentar parsear HTML como JSON)
         try:
@@ -1197,6 +1226,57 @@ def agendamento_confirmado():
 # =========================
 # ROTAS DE AVALIAÇÃO — Agenda Fácil
 # ============================================================
+
+@app.route("/avaliar")
+def avaliar():
+    """Exibe a modal/fluxo de avaliação pendente imediatamente após o login (cliente)."""
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
+        return redirect(url_for("servicos"))
+
+    # Reaproveita a mesma lógica da API (sem duplicar regras na tela)
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT
+                a.id,
+                a.servico,
+                a.prestador_email,
+                a.data_servico,
+                a.horario,
+                p.nome        AS prestador_nome,
+                p.sobrenome   AS prestador_sobrenome
+            FROM agendamentos a
+            LEFT JOIN cadastro_prestadores p
+                   ON a.prestador_email = p.email
+            LEFT JOIN avaliacoes_prestadores av
+                   ON av.agendamento_id = a.id
+            WHERE a.cliente_email = %s
+              AND a.status        = 'concluido'
+              AND av.id           IS NULL
+            ORDER BY a.data_servico DESC
+            LIMIT 1
+        """, (session["usuario_logado"],))
+        pendente = cursor.fetchone()
+
+        if pendente and pendente.get("data_servico"):
+            pendente["data_servico"] = str(pendente["data_servico"])
+
+        if not pendente:
+            return redirect(url_for("servicos"))
+
+        # A tela em avaliações pega a pendência via API, mas retornamos template mesmo assim.
+        return render_template("avaliar.html", pendente=pendente)
+    finally:
+        try:
+            cursor.close()
+        except:
+            pass
+        try:
+            conn.close()
+        except:
+            pass
+
 
 # ── 1. Verificar avaliações pendentes do cliente ─────────────
 @app.route("/api/avaliacoes_pendentes")

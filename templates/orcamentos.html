@@ -478,7 +478,7 @@
                 class="form-control"
                 id="descricao"
                 placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."
-              ></textarea>
+              required></textarea>
             </div>
           </div>
         </div>
@@ -575,6 +575,8 @@
       if (!nome)                 { alert('Informe seu nome.');        return; }
       if (!telefone)             { alert('Informe seu telefone.');    return; }
       if (!categoriaSelecionada) { alert('Selecione uma categoria.'); return; }
+      if (!descricao)            { alert('Descreva o que você precisa (observação é obrigatória).'); return; }
+
 
       btn.classList.add('loading');
       btn.disabled = true;
@@ -613,7 +615,7 @@
         }
 
         await Promise.all(promessas);
-        window.location.href = '/sucesso-agendamento';
+        window.location.href = '/sucesso-orcamento';
 
       } catch (err) {
         console.error(err);

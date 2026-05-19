@@ -1536,26 +1536,8 @@
     if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModal();
   });
 
-  /* ── Verificar pendências ao carregar a página ────────── */
-  async function verificarAvaliacesPendentes() {
-    try {
-      const res  = await fetch('/api/avaliacoes_pendentes');
-      const data = await res.json();
-      if (data.pendente) {
-        /* Pequeno delay para suavizar a entrada */
-        setTimeout(() => abrirModal(data.pendente), 600);
-      }
-    } catch (e) {
-      console.warn('[Avaliação] Erro ao verificar pendências:', e);
-    }
-  }
-
-  /* Inicia a verificação quando a página carrega */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', verificarAvaliacesPendentes);
-  } else {
-    verificarAvaliacesPendentes();
-  }
+  /* Avaliação pendente NÃO é exibida neste perfil.
+     O fluxo acontece na rota /avaliar imediatamente após o login. */
 
 })();
 </script>

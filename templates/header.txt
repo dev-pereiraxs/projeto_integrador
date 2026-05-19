@@ -1,0 +1,179 @@
+<!-- =========================================================
+     HEADER PREMIUM — Agenda Fácil
+     Desktop + Mobile + Flask/Jinja2
+========================================================== -->
+
+<link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}">
+
+<header class="af-header">
+
+  <div class="af-header__container">
+
+    <!-- LOGO -->
+    <a href="/" class="af-logo">
+      <div class="af-logo__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M8 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <rect x="3" y="5" width="18" height="16" rx="4" stroke="white" stroke-width="2"/>
+          <path d="M3 10H21" stroke="white" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <span class="af-logo__text">
+        Agenda Fácil
+      </span>
+    </a>
+
+    <!-- NAV DESKTOP -->
+    <nav class="af-nav">
+
+      <a href="/" class="af-link">
+        Início
+      </a>
+
+      <a href="/servicos" class="af-link">
+        Serviços
+      </a>
+
+      {% if session.get('tipo_usuario') != 'prestador' and session.get('usuario_logado') %}
+      <a href="/prestador" class="af-link af-link--ghost">
+        Quero ser prestador
+      </a>
+      {% endif %}
+
+      {% if session.get('tipo_usuario') == 'prestador' %}
+      <a href="/painel" class="af-link af-link--primary">
+        Painel
+      </a>
+      {% endif %}
+
+    </nav>
+
+    <!-- RIGHT -->
+    <div class="af-right">
+
+      {% if session.get('usuario_logado') %}
+
+      <!-- PERFIL -->
+      <a href="/perfil" class="af-user">
+
+        <div class="af-avatar">
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
+        </div>
+
+        <span class="af-user__name">
+          {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+        </span>
+
+      </a>
+
+      <!-- SAIR -->
+      <a href="/logout" class="af-logout">
+        Sair
+      </a>
+
+      {% else %}
+
+      <a href="/login" class="af-btn">
+        Entrar
+      </a>
+
+      {% endif %}
+
+      <!-- HAMBURGER -->
+      <button class="af-hamburger" id="afHamburger">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- =========================================================
+     MOBILE MENU
+========================================================== -->
+
+<div class="af-mobile" id="afMobileMenu">
+
+  <div class="af-mobile__content">
+
+    {% if session.get('usuario_logado') %}
+
+    <div class="af-mobile-user">
+
+      <div class="af-mobile-user__avatar">
+        {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
+      </div>
+
+      <div>
+
+        <div class="af-mobile-user__name">
+          {{ session.get('usuario_nome', session.get('usuario_logado')) }}
+        </div>
+
+        <div class="af-mobile-user__role">
+          {% if session.get('tipo_usuario') == 'prestador' %}
+            Prestador
+          {% else %}
+            Cliente
+          {% endif %}
+        </div>
+
+      </div>
+
+    </div>
+
+    {% endif %}
+
+    <a href="/" class="af-mobile-link">
+      Início
+    </a>
+
+    <a href="/servicos" class="af-mobile-link">
+      Serviços
+    </a>
+
+    {% if session.get('tipo_usuario') != 'prestador' and session.get('usuario_logado') %}
+    <a href="/prestador" class="af-mobile-link">
+      Quero ser prestador
+    </a>
+    {% endif %}
+
+    {% if session.get('tipo_usuario') == 'prestador' %}
+    <a href="/painel" class="af-mobile-link af-mobile-link--primary">
+      Painel
+    </a>
+    {% endif %}
+
+    <div class="af-mobile-divider"></div>
+
+    {% if session.get('usuario_logado') %}
+
+    <a href="/perfil" class="af-mobile-link">
+      Perfil
+    </a>
+
+    <a href="/logout" class="af-mobile-link af-mobile-link--danger">
+      Sair
+    </a>
+
+    {% else %}
+
+    <a href="/login" class="af-mobile-link">
+      Entrar
+    </a>
+
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/premium-header.js') }}" defer></script>

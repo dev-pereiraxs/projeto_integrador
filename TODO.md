@@ -1,9 +1,9 @@
-# TODO — Perfil do Prestador (todos_agendamentos)
+# TODO – Avaliação no login e remoção do perfil
 
-- [ ] Substituir integralmente a função `perfil_prestador` em `app.py` pelo código fornecido (inclui `todos_agendamentos` e serialização de `data_servico`).
-- [x] Verificar se `templates/perfil-prestador.html` está usando `todos_agendamentos` (se não, ajustar o template). 
-- [x] Rodar o app e conferir visualmente a aba/Pedidos no perfil do prestador.
+- [ ] Criar rota no `app.py` para exibir avaliação pendente imediatamente após login do cliente (ex.: `/avaliar`), redirecionando para `/servicos` quando não houver pendência.
 
-
-
+- [ ] Ajustar fluxo de login (`/autenticar` e `/callback`) para clientes irem para `/avaliar` em vez de `/servicos`.
+- [ ] Remover a modal e o script de avaliação de `templates/perfil-cliente.html` (para não aparecer mais no perfil).
+- [ ] Garantir que a tela de avaliação redirecione para `/servicos` após salvar ou pular.
+- [ ] Rodar/testar: login com pendência e sem pendência; avaliar; pular; verificar sumiço do modal do perfil.
 
