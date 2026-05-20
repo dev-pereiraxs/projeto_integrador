@@ -1,109 +1,143 @@
 <!doctype html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/servicos.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Agenda Fácil</title>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<body>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 
-  <!-- NAVBAR -->
-  <header class="topo">
-    <div class="topo-container">
-      <div class="logo">Agenda Fácil</div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='servicos.css') }}" />
 
-      <!-- Botão hamburger (só aparece no mobile) -->
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    <link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}" id="xbr4s9">
 
-      <nav id="navMenu">
-        <a href="/">Home</a>
-        <a href="/servicos">Serviços</a>
+    <!-- TAILWIND -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        {% if session.get('tipo_usuario') != 'prestador' %}
-        <a href="/prestador" class="btn-quero-ser-prestador">Quero ser prestador</a>
-        {% endif %}
+    <title>Agenda Fácil</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
 
-        {% if session.get('tipo_usuario') == 'prestador' %}
-        <a href="/painel" class="btn-painel">Meu Painel</a>
-        {% endif %}
+  </head>
 
-        {% if session.get('usuario_logado') %}
-        <a href="/meu_perfil" class="btn-perfil">
-          👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-        </a>
-        <a href="/logout" class="btn-sair">🚪 Sair</a>
-        {% else %}
-        <a href="/login" class="btn-entrar">Entrar</a>
-        {% endif %}
-      </nav>
-    </div>
-  </header>
 
-  <!-- CONTEÚDO -->
-  <div class="page-wrapper">
+  <body>
+    <!-- =========================================================
+       HEADER / NAVBAR
+  ========================================================== -->
+    {% include 'partials/header.html' %}
 
-    <h1 class="page-title">Serviços Disponíveis</h1>
 
-    <!-- BUSCA + FILTRO -->
-    <div class="filtro-bar">
-      <input id="busca" type="text" placeholder="Buscar serviço..." />
-      <select id="filtroCategoria">
-        <option value="todas">Todas as categorias</option>
-        <option value="tecnologia">Tecnologia</option>
-        <option value="mecanica">Mecânica</option>
-        <option value="eletrica">Elétrica</option>
-        <option value="hidraulica">Hidráulica</option>
-        <option value="reformas">Reformas</option>
-        <option value="limpeza">Limpeza</option>
-      </select>
-    </div>
+    <!-- =========================================================
+       CONTEÚDO
+  ========================================================== -->
+    <main class="page-wrapper">
+      <!-- TÍTULO -->
+      <h1 class="page-title">Serviços Disponíveis</h1>
 
-    <!-- GRID DE SERVIÇOS -->
-    <div id="lista-servicos" class="servicos-grid">
-      {% for s in servicos %}
-      <div class="card">
-        <h3>{{ s.titulo }}</h3>
-        <p>{{ s.descricao }}</p>
-        <span class="preco">R$ {{ s.preco }}</span>
-        <button class="btn-agendar" data-servico='{{ s | tojson }}'>Agendar</button>
+      <!-- FILTROS -->
+      <div class="filtro-bar">
+        <!-- BUSCA -->
+        <input id="busca" type="text" placeholder="Buscar serviço..." />
+
+        <!-- CATEGORIA -->
+        <select id="filtroCategoria">
+          <option value="todas">Todas as categorias</option>
+
+          <option value="tecnologia">Tecnologia</option>
+
+          <option value="mecanica">Mecânica</option>
+
+          <option value="eletrica">Elétrica</option>
+
+          <option value="hidraulica">Hidráulica</option>
+
+          <option value="reformas">Reformas</option>
+
+          <option value="limpeza">Limpeza</option>
+        </select>
       </div>
-      {% endfor %}
-    </div>
 
-    <!-- CTA -->
-    <div class="orcamentos-card">
-      <div class="cta-box">
-        <h2>Não achou seu serviço?</h2>
-        <p>Solicite um orçamento personalizado.</p>
-        <a href="/orcamentos" class="btn-orcamento">Solicitar orçamento</a>
+      <!-- GRID -->
+      <div id="lista-servicos" class="servicos-grid">
+        {% for s in servicos %}
+
+        <div class="card">
+          <h3>{{ s.titulo }}</h3>
+
+          <p>{{ s.descricao }}</p>
+
+          <span class="preco"> R$ {{ s.preco }} </span>
+
+          <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+            <span class="avaliacao-label">★</span>
+            <span class="avaliacao-valor">{{ s.media_nota | default(s.avaliacao_media | default('—')) }}</span>
+            <span> — {{ (s.prestador_nome | default('Prestador')) }}</span>
+
+          </div>
+
+
+          <button class="btn-agendar" data-servico="{{ s | tojson }}">
+            Agendar
+          </button>
+        </div>
+
+
+        {% endfor %}
       </div>
-    </div>
 
-  </div>
+      <!-- PAGINAÇÃO -->
+      <div class="pagination" id="pagination"></div>
 
-  <script>
-    const usuarioLogado = "{{ session.get('usuario_logado', '') }}";
+      <!-- CTA -->
+      <section class="orcamentos-card">
+        <div class="cta-box">
+          <h2>Não achou seu serviço?</h2>
 
-    // Hamburger toggle
-    const toggle = document.getElementById('navToggle');
-    const menu   = document.getElementById('navMenu');
-    toggle.addEventListener('click', () => {
-      menu.classList.toggle('nav-open');
-      toggle.classList.toggle('nav-toggle--active');
-    });
-  </script>
+          <p>Solicite um orçamento personalizado.</p>
 
-  <script src="../static/js/filtrar.js"></script>
-  <script src="../static/js/agenda_facil.js"></script>
+          <a href="/orcamentos" class="btn-orcamento"> Solicitar orçamento </a>
+        </div>
+      </section>
+    </main>
 
-</body>
+    <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <strong class="footer__brand"> Agenda Fácil </strong>
+
+        <p class="footer__tagline">
+          Conectando pessoas a profissionais de confiança.
+        </p>
+
+        <div class="footer__links">
+          <a href="#"> Termos </a>
+
+          <a href="#"> Privacidade </a>
+
+          <a href="#"> Contato </a>
+        </div>
+
+        <p class="footer__copy">
+          © 2025 Agenda Fácil. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================================================
+       SCRIPT NAVBAR MOBILE
+  ========================================================== -->
+
+
+    <!-- JS -->
+    <script id="ep42xe" src="{{ url_for('static', filename='js/premium-header.js') }}" defer></script>
+
+    <script src="{{ url_for('static', filename='js/filtrar.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
+
+
+  </body>
 </html>

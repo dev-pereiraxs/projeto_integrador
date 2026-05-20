@@ -3,116 +3,204 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("lista-servicos");
   const buscaInput = document.getElementById("busca");
   const filtroCategoria = document.getElementById("filtroCategoria");
+  const pagination = document.getElementById("pagination");
 
-  // Agora começa vazio. O banco de dados é quem vai preencher!
+  // LISTA COMPLETA
   let servicos = [];
 
-  // 🔥 BUSCA OS DADOS NO PYTHON (MYSQL)
+  // LISTA FILTRADA
+  let servicosFiltrados = [];
+
+  // PAGINAÇÃO
+  const itensPorPagina = 12;
+  let paginaAtual = 1;
+
+  // 🔥 BUSCA SERVIÇOS NO MYSQL
   function carregarServicosDoBanco() {
-    fetch('/api/listar_servicos')
+    fetch("/api/listar_servicos")
       .then(response => response.json())
       .then(data => {
-        servicos = data; // Salva os serviços que vieram do banco
-        render();        // Manda desenhar os cards na tela
+
+        servicos = data;
+        servicosFiltrados = data;
+
+        render();
       })
       .catch(erro => {
+
         console.error("Erro ao buscar serviços:", erro);
-        container.innerHTML = "<p class='col-span-full text-center text-red-500'>Erro ao carregar os serviços.</p>";
+
+        container.innerHTML = `
+          <p class="col-span-full text-center text-red-500">
+            Erro ao carregar os serviços.
+          </p>
+        `;
       });
   }
 
   // 🔥 CRIA CARD
   function criarCard(servico, index) {
-    // No banco salvamos como "area_atuacao", então ajustamos aqui
-    const categoriaNome = servico.area_atuacao || servico.categoria || "Geral";
+
+    const categoriaNome =
+      servico.area_atuacao ||
+      servico.categoria ||
+      "Geral";
+
+    const avaliacao = servico.avaliacao_media ?? servico.avaliacao ?? servico.media ?? "—";
+    const prestadorNome = servico.prestador_nome ?? servico.nome_prestador ?? "Prestador";
 
     return `
       <div class="card" data-categoria="${categoriaNome}">
-        <span class="tag azul">${categoriaNome}</span>
-        <span class="preco">R$ ${servico.preco || "0.00"}</span>
-        <h3>${servico.titulo}</h3>
-        <p>${servico.descricao || ""}</p>
-        <small class="text-gray-500">
-          Duração: ${servico.duracao || "-"}h
-        </small>
-        <button class="btn-agendar" data-index="${index}">
-          Agendar
-        </button>
+
+        <span class="tag azul">
+          ${categoriaNome}
+        </span>
+
+        <span class="preco">
+          R$ ${servico.preco || "0.00"}
+        </span>
+
+        <h3>
+          ${servico.titulo || "Sem título"}
+        </h3>
+
+        <p>
+          ${servico.descricao || ""}
+        </p>
+
+        <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+          <span class="avaliacao-label">★</span>
+          <span class="avaliacao-valor">${avaliacao}</span>
+          <span> — ${prestadorNome}</span>
+        </div>
+
       </div>
     `;
   }
 
-  // 🔥 ADICIONA EVENTO NOS BOTÕES
-  function adicionarEventos(listaAtual = servicos) {
-    const botoes = document.querySelectorAll(".btn-agendar");
 
-    botoes.forEach((btn, i) => {
-      btn.addEventListener("click", () => {
-
-        // Usamos a variável que o Flask injeta no HTML
-        if (typeof usuarioLogado === 'undefined' || usuarioLogado === "") {
-          alert("Você precisa estar logado para agendar!");
-          window.location.href = "/login";
-          return;
-        }
-
-        const servicoSelecionado = listaAtual[i];
-
-        // Aqui nós mantemos o localStorage, pois a tela de Agendamentos (calendário)
-        // ainda precisa saber em qual card você clicou!
-        localStorage.setItem(
-          "servicoSelecionado",
-          JSON.stringify(servicoSelecionado)
-        );
-
-        // Vai para a página de agendamento
-        window.location.href = "/agendamentos";
-      });
-    });
-  }
-
-  // 🔥 RENDER INICIAL
+  // 🔥 RENDERIZA SERVIÇOS
   function render() {
-    if (servicos.length === 0) {
-      container.innerHTML = "<p class='col-span-full text-center text-gray-500'>Nenhum serviço disponível no momento.</p>";
+
+    container.innerHTML = "";
+
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+
+    const itensPagina = servicosFiltrados.slice(inicio, fim);
+
+    if (itensPagina.length === 0) {
+
+      container.innerHTML = `
+        <p class="col-span-full text-center text-gray-500">
+          Nenhum serviço encontrado.
+        </p>
+      `;
+
       return;
     }
 
-    container.innerHTML = servicos
-      .map((s, i) => criarCard(s, i))
-      .join("");
+    // Renderiza cards com botões (Agendar) para manter compatibilidade com o fluxo atual.
+    itensPagina.forEach((servico, index) => {
+      // criarCard() atual não inclui o botão; adicionamos aqui.
+      const card = document.createElement('div');
+      card.innerHTML = criarCard(servico, index);
 
-    adicionarEventos();
-  }
+      const cardEl = card.firstElementChild;
+      if (cardEl) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-agendar';
+        btn.textContent = 'Agendar';
+        // usa o dataset.servico porque a agenda_facil.js lê btn.dataset.servico
+        btn.dataset.servico = JSON.stringify(servico);
 
-  // 🔥 FILTRO
-  function filtrar() {
-    const texto = buscaInput.value.toLowerCase();
-    const categoria = filtroCategoria.value.toLowerCase();
+        // garante o redirecionamento com os dados do card
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          try {
+            localStorage.setItem('servicoSelecionado', JSON.stringify(servico));
+          } catch (e) {}
+          // rota correta no backend (app.py)
+          window.location.href = '/agendamentos';
+        });
 
-    const filtrados = servicos.filter(s => {
-      const cat = (s.area_atuacao || s.categoria || "").toLowerCase();
 
-      const matchTexto =
-        s.titulo.toLowerCase().includes(texto) ||
-        (s.descricao || "").toLowerCase().includes(texto);
 
-      const matchCategoria =
-        categoria === "todas" || cat === categoria;
+        cardEl.appendChild(btn);
+      }
 
-      return matchTexto && matchCategoria;
+
+      container.appendChild(cardEl);
     });
 
-    container.innerHTML = filtrados
-      .map((s, i) => criarCard(s, i))
-      .join("");
 
-    adicionarEventos(filtrados);
+    // paginação não implementada neste arquivo (evita erro no console)
   }
 
-  buscaInput.addEventListener("input", filtrar);
-  filtroCategoria.addEventListener("change", filtrar);
+  // 🔥 TROCAR PÁGINA
+  window.trocarPagina = function(pagina) {
 
-  // 🔥 DÁ O START NA APLICAÇÃO (Chama a função de buscar no banco)
+    paginaAtual = pagina;
+
+    render();
+  };
+
+  // 🔥 FILTRO DE BUSCA
+  buscaInput.addEventListener("input", aplicarFiltros);
+
+  // 🔥 FILTRO DE CATEGORIA
+  filtroCategoria.addEventListener("change", aplicarFiltros);
+
+  function aplicarFiltros() {
+
+    const textoBusca = buscaInput.value.toLowerCase();
+
+    const categoriaSelecionada =
+      filtroCategoria.value.toLowerCase();
+
+    // Normaliza o valor do dropdown "todas" (mostra todos) para ser compatível
+    // com a lógica do filtro.
+    const categoriaTodas = categoriaSelecionada === "todas";
+
+
+    servicosFiltrados = servicos.filter(servico => {
+
+      const titulo =
+        (servico.titulo || "").toLowerCase();
+
+      const descricao =
+        (servico.descricao || "").toLowerCase();
+
+      const categoria =
+        (
+          servico.area_atuacao ||
+          servico.categoria ||
+          ""
+        ).toLowerCase();
+
+      const correspondeBusca =
+        titulo.includes(textoBusca) ||
+        descricao.includes(textoBusca);
+
+      // Dropdown usa value="todas" quando o usuário quer ver todas.
+      // O filtro deve tratar isso como sem restrição.
+      const correspondeCategoria =
+        categoriaTodas ||
+        categoriaSelecionada === "" ||
+        categoria === categoriaSelecionada;
+
+
+      return correspondeBusca && correspondeCategoria;
+    });
+
+    paginaAtual = 1;
+
+    render();
+  }
+
+  // 🔥 INICIA
   carregarServicosDoBanco();
+
 });
+

@@ -1,0 +1,206 @@
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='premium-header.css') }}"
+/>
+
+{# Wrapper com position:relative para o menu mobile se posicionar corretamente
+#}
+<div class="af-header-wrap">
+  <header class="af-header">
+    <div class="af-header__inner">
+      {# ── LOGO (esquerda) ── #}
+      <a class="af-logo" href="/" aria-label="Agenda Fácil">
+        <span class="af-logo__mark">
+          <img
+            class="af-logo__img"
+            src="{{ url_for('static', filename='img/agenda-facil.png') }}"
+            alt="Agenda Fácil"
+          />
+        </span>
+        <span class="af-logo__text"
+          >Agenda <span class="af-logo__text--accent">Fácil</span></span
+        >
+      </a>
+
+      {# ── NAV DESKTOP (direita) ── #}
+      <nav class="af-nav af-nav--desktop" aria-label="Navegação principal">
+        <a class="af-nav__link" href="/">
+          <svg
+            class="af-nav__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Home
+        </a>
+
+        <a class="af-nav__link" href="/servicos">
+          <svg
+            class="af-nav__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          Serviços
+        </a>
+
+        {# Clientes: link para virar prestador #} {% if
+        session.get('usuario_logado') and session.get('tipo_usuario') !=
+        'prestador' %}
+        <a class="af-nav__link" href="/prestador">
+          <svg
+            class="af-nav__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Quero ser Prestador
+        </a>
+        {% endif %} {# Prestadores: painel #} {% if session.get('tipo_usuario')
+        == 'prestador' %}
+        <a class="af-nav__link af-nav__link--primary" href="/painel">
+          <svg
+            class="af-nav__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Meu Painel
+        </a>
+        {% endif %}
+      </nav>
+
+      {# ── USER PILL (logado) ── #} {% if session.get('usuario_logado') %}
+      <a
+        class="af-user-pill"
+        href="{{ url_for('meu_perfil') }}"
+        aria-label="Meu perfil"
+      >
+        <span class="af-user-pill__avatar">
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
+          '?'))[0] | upper }}
+        </span>
+        <span class="af-user-pill__name">
+          {{ session.get('usuario_nome', session.get('usuario_logado', '')) }}
+        </span>
+      </a>
+      {% endif %} {# ── SAIR / ENTRAR ── #}
+      <a
+        class="af-nav__link af-nav__link--{% if session.get('usuario_logado') %}danger{% else %}primary{% endif %}"
+        href="{% if session.get('usuario_logado') %}/logout{% else %}/login{% endif %}"
+      >
+        {% if session.get('usuario_logado') %}
+        <svg
+          class="af-nav__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        Sair {% else %} Entrar {% endif %}
+      </a>
+
+      {# ── HAMBURGER ── #}
+      <button
+        class="af-hamburger"
+        id="afHamburger"
+        type="button"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+        aria-controls="afMobileMenu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  {# ── MOBILE MENU ── #}
+  <div
+    class="af-mobile"
+    id="afMobileMenu"
+    role="navigation"
+    aria-label="Menu mobile"
+    aria-hidden="true"
+  >
+    <div class="af-mobile__inner">
+      {# Card do usuário logado #} {% if session.get('usuario_logado') %}
+      <a class="af-mobile-user" href="{{ url_for('meu_perfil') }}">
+        <span class="af-mobile-user__avatar">
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
+          '?'))[0] | upper }}
+        </span>
+        <div class="af-mobile-user__meta">
+          <span class="af-mobile-user__name"
+            >{{ session.get('usuario_nome', session.get('usuario_logado', ''))
+            }}</span
+          >
+          <span class="af-mobile-user__role">
+            {% if session.get('tipo_usuario') == 'prestador' %}Prestador{% else
+            %}Cliente{% endif %}
+          </span>
+        </div>
+      </a>
+      <div class="af-mobile__divider"></div>
+      {% endif %}
+
+      <a class="af-mobile__link" href="/">Home</a>
+      <a class="af-mobile__link" href="/servicos">Serviços</a>
+
+      {% if session.get('usuario_logado') and session.get('tipo_usuario') !=
+      'prestador' %}
+      <a class="af-mobile__link" href="/prestador">Quero ser Prestador</a>
+      {% endif %} {% if session.get('tipo_usuario') == 'prestador' %}
+      <a class="af-mobile__link af-mobile__link--primary" href="/painel"
+        >Meu Painel</a
+      >
+      {% endif %} {% if session.get('usuario_logado') %}
+      <a class="af-mobile__link" href="{{ url_for('meu_perfil') }}"
+        >Meu Perfil</a
+      >
+      {% endif %}
+
+      <div class="af-mobile__divider"></div>
+
+      <a
+        class="af-mobile__link af-mobile__link--{% if session.get('usuario_logado') %}danger{% else %}primary{% endif %}"
+        href="{% if session.get('usuario_logado') %}/logout{% else %}/login{% endif %}"
+      >
+        {% if session.get('usuario_logado') %}Sair{% else %}Entrar{% endif %}
+      </a>
+    </div>
+  </div>
+</div>
+{# /af-header-wrap #}
+
+<script
+  src="{{ url_for('static', filename='premium-header.js') }}"
+  defer
+></script>

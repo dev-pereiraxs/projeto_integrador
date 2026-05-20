@@ -5,61 +5,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda Fácil</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/princss.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='princss.css') }}" />
+  
 </head>
 
-<body>
+<body class="pg-home">
+
+
 
   <div class="page-shell">
 
-    <!-- HEADER -->
-    <!-- HEADER -->
-    <header class="topbar container">
-
-      <a class="brand" href="#inicio">
-        <span class="brand-mark"></span>
-        <span>Agenda Fácil</span>
-      </a>
-
-      <!-- BOTÃO MOBILE -->
-      <button class="menu-toggle" id="menuToggle">
-        ☰
-      </button>
-
-      <!-- MENU -->
-      <nav class="nav-links" id="mobileMenu">
-
-        {% if session.get('usuario_logado') %}
-
-        <a href="{{ url_for('meu_perfil') }}" class="nav-profile">
-          👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-        </a>
-
-        <a href="{{ url_for('servicos') }}">Serviços</a>
-
-        <a href="{{ url_for('logout') }}" class="btn btn-secondary nav-logout">
-          Sair
-        </a>
-
-        {% else %}
-
-        <a href="{{ url_for('login') }}">Entrar</a>
-
-        <a href="{{ url_for('cadastro') }}">Cadastrar-se</a>
-
-        {% endif %}
-
-      </nav>
-
-    </header>
+    <!-- HEADER / NAVBAR (padronizado) -->
+    {% include 'partials/header.html' %}
 
     <!-- HERO -->
+
     <main>
       <section class="hero container" id="inicio">
 
@@ -112,13 +80,6 @@
         <h2>Como funciona</h2>
 
         <div class="steps-grid">
-
-          <article class="step-card">
-            <span class="step-number">1</span>
-            <h3>Escolha o serviço</h3>
-            <p>Selecione a categoria desejada e descreva sua necessidade.</p>
-          </article>
-
           <article class="step-card">
             <span class="step-number">2</span>
             <h3>Encontre um profissional</h3>
@@ -135,59 +96,105 @@
       </section>
 
       <!-- CATEGORIAS -->
-      <section class="categories-section container" id="categorias">
-        <h2>Categorias de serviço</h2>
+      <!-- CATEGORIAS -->
+      <section class="categories-section" id="categorias">
+        <div class="container">
+          <span class="eyebrow">Encontre o profissional certo</span>
+          <h2>Categorias de serviço</h2>
+        </div>
 
-        <div class="categories-grid">
+        <div class="marquee-outer">
+          <div class="marquee-track">
 
-          <article class="service-card">
-            <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
-            <div>
-              <h3>Tecnologia / TI</h3>
-              <p>Suporte técnico, redes e computadores.</p>
-            </div>
-          </article>
+            <!-- Bloco original -->
+            <article class="service-card">
+              <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
+              <div>
+                <h3>Tecnologia / TI</h3>
+                <p>Suporte técnico, redes e computadores.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/mecanica.png" alt="Mecânica" class="service-icon">
+              <div>
+                <h3>Mecânica</h3>
+                <p>Manutenção preventiva e corretiva.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/eletrica.png" alt="Elétrica" class="service-icon">
+              <div>
+                <h3>Elétrica</h3>
+                <p>Instalações e reparos com segurança.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/hidraulica.png" alt="Hidráulica" class="service-icon">
+              <div>
+                <h3>Hidráulica</h3>
+                <p>Resolva vazamentos sem complicação.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/reformas.png" alt="Reformas" class="service-icon">
+              <div>
+                <h3>Reformas</h3>
+                <p>Pintura e melhorias para seu espaço.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/limpeza.png" alt="Limpeza" class="service-icon">
+              <div>
+                <h3>Limpeza</h3>
+                <p>Faxina com profissionais avaliados.</p>
+              </div>
+            </article>
 
-          <article class="service-card">
-            <img src="../static/img/mecanica.png" alt="Mecânica" class="service-icon">
-            <div>
-              <h3>Mecânica</h3>
-              <p>Manutenção preventiva e corretiva.</p>
-            </div>
-          </article>
+            <!-- Bloco duplicado (necessário pro loop ser contínuo) -->
+            <article class="service-card">
+              <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
+              <div>
+                <h3>Tecnologia / TI</h3>
+                <p>Suporte técnico, redes e computadores.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/mecanica.png" alt="Mecânica" class="service-icon">
+              <div>
+                <h3>Mecânica</h3>
+                <p>Manutenção preventiva e corretiva.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/eletrica.png" alt="Elétrica" class="service-icon">
+              <div>
+                <h3>Elétrica</h3>
+                <p>Instalações e reparos com segurança.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/hidraulica.png" alt="Hidráulica" class="service-icon">
+              <div>
+                <h3>Hidráulica</h3>
+                <p>Resolva vazamentos sem complicação.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/reformas.png" alt="Reformas" class="service-icon">
+              <div>
+                <h3>Reformas</h3>
+                <p>Pintura e melhorias para seu espaço.</p>
+              </div>
+            </article>
+            <article class="service-card">
+              <img src="../static/img/limpeza.png" alt="Limpeza" class="service-icon">
+              <div>
+                <h3>Limpeza</h3>
+                <p>Faxina com profissionais avaliados.</p>
+              </div>
+            </article>
 
-          <article class="service-card">
-            <img src="../static/img/eletrica.png" alt="Elétrica" class="service-icon">
-            <div>
-              <h3>Elétrica</h3>
-              <p>Instalações e reparos com segurança.</p>
-            </div>
-          </article>
-
-          <article class="service-card">
-            <img src="../static/img/hidraulica.png" alt="Hidráulica" class="service-icon">
-            <div>
-              <h3>Hidráulica</h3>
-              <p>Resolva vazamentos sem complicação.</p>
-            </div>
-          </article>
-
-          <article class="service-card">
-            <img src="../static/img/reformas.png" alt="Reformas" class="service-icon">
-            <div>
-              <h3>Reformas</h3>
-              <p>Pintura e melhorias para seu espaço.</p>
-            </div>
-          </article>
-
-          <article class="service-card">
-            <img src="../static/img/limpeza.png" alt="Limpeza" class="service-icon">
-            <div>
-              <h3>Limpeza</h3>
-              <p>Faxina com profissionais avaliados.</p>
-            </div>
-          </article>
-
+          </div>
         </div>
       </section>
 
@@ -239,11 +246,6 @@
     <div style="max-width:900px;margin:0 auto;">
       <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
       <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:12px;margin-bottom:14px;">
-        <a href="/servicos" style="color:rgba(255,255,255,.45);text-decoration:none;">Serviços</a>
-        <a href="/prestador" style="color:rgba(255,255,255,.45);text-decoration:none;">Seja Prestador</a>
-        <a href="/orcamentos" style="color:rgba(255,255,255,.45);text-decoration:none;">Orçamentos</a>
-      </div>
       <div
         style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
         © 2025 Agenda Fácil. Todos os direitos reservados.
@@ -251,22 +253,18 @@
     </div>
   </footer>
 
-  <script>
-    const menuToggle = document.getElementById('menuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
 
-    menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('active');
-    });
-  </script>
 
   <!-- BOTÃO VOLTAR AO TOPO -->
   <button id="backToTop" aria-label="Voltar ao topo">
     ↑
   </button>
 
+
+
   <script>
     const backToTop = document.getElementById("backToTop");
+
 
     window.addEventListener("scroll", () => {
       if (window.scrollY > 300) {
@@ -284,6 +282,82 @@
     });
   </script>
 
+
+  <script>
+    /* ── CARROSSEL DE CATEGORIAS ── */
+    (function () {
+      const track = document.getElementById('carouselTrack');
+      const dotsEl = document.getElementById('carouselDots');
+      const btnPrev = document.querySelector('.carousel-btn--prev');
+      const btnNext = document.querySelector('.carousel-btn--next');
+
+      if (!track) return;
+
+      const cards = Array.from(track.children);
+      let current = 0;
+
+      function visibleCount() {
+        const w = track.parentElement.offsetWidth;
+        if (w < 641) return 1;
+        if (w < 961) return 2;
+        return 3;
+      }
+
+      function totalSteps() {
+        return Math.ceil(cards.length / visibleCount());
+      }
+
+      function buildDots() {
+        dotsEl.innerHTML = '';
+        for (let i = 0; i < totalSteps(); i++) {
+          const dot = document.createElement('button');
+          dot.className = 'carousel-dot' + (i === current ? ' active' : '');
+          dot.setAttribute('aria-label', `Ir para slide ${i + 1}`);
+          dot.addEventListener('click', () => goTo(i));
+          dotsEl.appendChild(dot);
+        }
+      }
+
+      function goTo(index) {
+        const steps = totalSteps();
+        current = Math.max(0, Math.min(index, steps - 1));
+
+        const visible = visibleCount();
+        const gap = 20;
+        const cardWidth = (track.parentElement.offsetWidth - gap * (visible - 1)) / visible;
+        const offset = current * visible * (cardWidth + gap);
+
+        track.style.transform = `translateX(-${offset}px)`;
+
+        // Atualiza dots
+        document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === current);
+        });
+
+        // Atualiza botões
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current >= steps - 1;
+      }
+
+      btnPrev.addEventListener('click', () => goTo(current - 1));
+      btnNext.addEventListener('click', () => goTo(current + 1));
+
+      // Swipe no mobile
+      let startX = 0;
+      track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', e => {
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
+      }, { passive: true });
+
+      // Recalcula ao redimensionar
+      window.addEventListener('resize', () => { buildDots(); goTo(0); });
+
+      // Init
+      buildDots();
+      goTo(0);
+    })();
+  </script>
 </body>
 
 </html>

@@ -3,70 +3,1085 @@
 
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ prestador.nome }} {{ prestador.sobrenome }} – Agenda Fácil</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap"
     rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/perfil.css">
+    :root {
+      --blue: #2563eb;
+      --blue-d: #1d4ed8;
+      --blue-gl: linear-gradient(135deg, #2563eb, #1d4ed8);
+      --green: #10b981;
+      --gold: #f59e0b;
+      --text: #1a2340;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --white: #ffffff;
+      --radius: 14px;
+      --navy: #0f172a;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f1f5f9;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      padding: 48px 24px 80px;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .hero-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero-avatar-wrap img,
+    .hero-avatar-initials {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid rgba(255, 255, 255, .2);
+      object-fit: cover;
+    }
+
+    .hero-avatar-initials {
+      background: var(--blue-gl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .upload-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #2563eb;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, .15);
+      border: 1px solid rgba(16, 185, 129, .4);
+      color: #6ee7b7;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .hero-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .hero-areas {
+      font-size: 14px;
+      color: rgba(255, 255, 255, .6);
+      margin-bottom: 12px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-stat-val {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .5);
+    }
+
+    .hero-stat-div {
+      width: 1px;
+      background: rgba(255, 255, 255, .15);
+      align-self: stretch;
+    }
+
+    .btn-edit-hero {
+      margin-left: auto;
+      padding: 8px 18px;
+      background: rgba(255, 255, 255, .15);
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-edit-hero:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    @media (max-width: 680px) {
+      .hero-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+
+      .hero-stats {
+        justify-content: center;
+      }
+
+      .btn-edit-hero {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    /* ── PAGE GRID ── */
+    .page {
+      max-width: 900px;
+      margin: -40px auto 0;
+      padding: 0 24px 48px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      padding: 0 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 20px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ── SERVIÇOS ── */
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all .2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .service-item:hover {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .service-emoji {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #eff6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .service-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .service-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .service-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--blue);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ── PEDIDOS ── */
+    .pedido-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      transition: border-color .25s, box-shadow .25s;
+      animation: fadeSlide .3s ease both;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .pedido-card:hover {
+      border-color: rgba(37, 99, 235, .2);
+      box-shadow: 0 2px 12px rgba(37, 99, 235, .07);
+    }
+
+    .pedido-card.concluido-card {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .pedido-card.cancelado-card {
+      border-color: #fecaca;
+      background: #fff5f5;
+      opacity: .7;
+    }
+
+    .pedido-emoji {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .pedido-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pedido-servico {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pedido-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pedido-meta-item {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .pedido-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+
+    .badge-pendente {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-confirmado {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-andamento {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .badge-concluido {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-cancelado {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-concluir {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 99px;
+      border: none;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .2px;
+      box-shadow: 0 2px 8px rgba(22, 163, 74, .28);
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-concluir:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(22, 163, 74, .38);
+    }
+
+    .btn-concluir:active {
+      transform: translateY(0);
+    }
+
+    .pedidos-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pedidos-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .pedidos-section {
+      margin-bottom: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty-state span {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* ── AVALIAÇÕES ── */
+    .av-review-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+      transition: border-color .2s, box-shadow .2s;
+      animation: fadeSlide .35s ease both;
+    }
+
+    .av-review-card:hover {
+      border-color: #fde68a;
+      box-shadow: 0 2px 12px rgba(245, 158, 11, .1);
+    }
+
+    .av-review-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .av-reviewer-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .av-reviewer-av {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--blue-gl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .av-reviewer-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .av-reviewer-date {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .av-stars-display {
+      color: #f59e0b;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+
+    .av-review-text {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.65;
+    }
+
+    .av-sem-comentario {
+      font-size: 12px;
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    .av-barra-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .av-barra-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #92400e;
+      min-width: 14px;
+      text-align: right;
+    }
+
+    .av-barra-track {
+      flex: 1;
+      height: 7px;
+      background: rgba(245, 158, 11, .15);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .av-barra-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+      border-radius: 99px;
+      transition: width .6s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .av-barra-count {
+      font-size: 11px;
+      color: #a16207;
+      min-width: 18px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .info-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .info-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .info-label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 1px;
+    }
+
+    .info-value {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .area-tag {
+      display: inline-flex;
+      align-items: center;
+      background: #eff6ff;
+      color: var(--blue);
+      border: 1px solid #bfdbfe;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      margin: 2px;
+    }
+
+    .btn-agendar {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      padding: 13px;
+      background: var(--blue-gl);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn-agendar:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    /* ── MODAL EDITAR ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 900;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      margin: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-box h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .modal-fields {
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-fields input,
+    .modal-fields select,
+    .modal-fields textarea {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+    }
+
+    .modal-fields textarea {
+      resize: vertical;
+    }
+
+    .modal-sep {
+      border: none;
+      border-top: 1px solid #eee;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .modal-actions .btn-save {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .modal-actions .btn-cancel-modal {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    /* ── MODAL CONCLUSÃO ── */
+    .concl-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(4, 7, 18, .65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .concl-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .concl-box {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, .7);
+      border-radius: 22px;
+      padding: 32px 26px 24px;
+      box-shadow: 0 28px 64px rgba(0, 0, 0, .2), 0 0 0 1px rgba(22, 163, 74, .1), inset 0 1px 0 rgba(255, 255, 255, .9);
+      transform: translateY(16px) scale(.96);
+      transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+      position: relative;
+    }
+
+    .concl-overlay.open .concl-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .concl-icon-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      border: 1px solid rgba(22, 163, 74, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 6px 20px rgba(22, 163, 74, .18);
+    }
+
+    .concl-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .concl-sub {
+      font-size: 13px;
+      color: #6b7280;
+      text-align: center;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .concl-service-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 13px 16px;
+      margin-bottom: 22px;
+    }
+
+    .concl-service-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 3px;
+    }
+
+    .concl-service-meta {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .concl-btn-ok {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: white;
+      font-family: 'Sora', 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, .3);
+      transition: opacity .2s, transform .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .concl-btn-ok:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    .concl-btn-ok:active {
+      transform: translateY(0);
+    }
+
+    .concl-btn-ok.loading {
+      opacity: .6;
+      pointer-events: none;
+    }
+
+    .concl-btn-ok.loading .btn-label {
+      display: none;
+    }
+
+    .concl-btn-ok.loading .spinner {
+      display: block;
+    }
+
+    .concl-btn-cancel {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      background: transparent;
+      color: #9ca3af;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .concl-btn-cancel:hover {
+      background: #f9fafb;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255, 255, 255, .3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #052e16;
+      border: 1px solid rgba(74, 222, 128, .3);
+      border-radius: 14px;
+      padding: 13px 20px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .22);
+      color: #bbf7d0;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: opacity .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(22, 163, 74, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Animações ── */
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.96)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes drawChk {
+      to {
+        stroke-dashoffset: 0
+      }
+    }
+
+    #checkSvg path {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      animation: drawChk .4s .5s ease forwards;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <a class="brand" href="/">
-      <div class="brand-icon">
-        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-          <rect x="1.5" y="1.5" width="15" height="15" rx="3" stroke="white" stroke-width="1.5" />
-          <path d="M5 9l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </div>
-      <span class="brand-name">Agenda Fácil</span>
-    </a>
-    <div class="topbar-nav">
-      <a href="/servicos" class="topbar-link">Serviços</a>
-      {% if session.get('usuario_logado') %}
-      <a href="/meu_perfil" class="user-pill">
-        <div class="user-pill-av">{{ (session.get('usuario_nome','?'))[0]|upper }}</div>
-        <span>{{ session.get('usuario_nome', session.get('usuario_logado')) }}</span>
-      </a>
-      <a href="/logout" class="btn-logout">🚪 Sair</a>
-      {% else %}
-      <a href="/login" class="topbar-link">Entrar</a>
-      {% endif %}
-    </div>
-  </div>
+  {# ── Header via include ── #}
+  {% include 'partials/header.html' %}
 
-  <!-- HERO -->
+  {# ── Input oculto para upload de foto ── #}
+  <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+
+  {# ── Hero ── #}
   <div class="hero">
     <div class="hero-inner">
 
-      <!-- Avatar — upload só se for o próprio prestador logado -->
       {% if session.get('usuario_logado') == prestador.email %}
-      <label for="inputFoto" class="avatar-wrapper" title="Trocar foto">
+      <label for="inputFoto" class="hero-avatar-wrap" style="cursor:pointer;" title="Trocar foto">
         {% if prestador.foto %}
-        <img src="{{ prestador.foto }}" id="fotoPreview" class="hero-avatar-img" alt="Foto de perfil">
+        <img src="{{ prestador.foto }}" id="fotoPreview" alt="Foto de {{ prestador.nome }}">
         {% else %}
-        <div class="hero-avatar" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
+        <div class="hero-avatar-initials" id="fotoPreview">{{ (prestador.nome or '?')[0]|upper }}</div>
         {% endif %}
-        <span class="avatar-camera">📷</span>
+        <span class="upload-icon">📷</span>
       </label>
-      <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
       {% else %}
-      {% if prestador.foto %}
-      <img src="{{ prestador.foto }}" class="hero-avatar-img" alt="Foto de perfil">
-      {% else %}
-      <div class="hero-avatar">{{ (prestador.nome or '?')[0]|upper }}</div>
-      {% endif %}
+      <div class="hero-avatar-wrap">
+        {% if prestador.foto %}
+        <img src="{{ prestador.foto }}" alt="Foto de {{ prestador.nome }}">
+        {% else %}
+        <div class="hero-avatar-initials">{{ (prestador.nome or '?')[0]|upper }}</div>
+        {% endif %}
+      </div>
       {% endif %}
 
       <div>
-        <div class="hero-badge hero-badge--prestador">✔ Prestador Verificado</div>
+        <div class="hero-badge">✔ Prestador Verificado</div>
         <div class="hero-name">{{ prestador.nome }} {{ prestador.sobrenome }}</div>
         <div class="hero-areas">{{ prestador.areas_atuacao or 'Prestador de serviços' }}</div>
         <div class="hero-stats">
@@ -81,8 +1096,8 @@
           </div>
           <div class="hero-stat-div"></div>
           <div class="hero-stat">
-            <span class="hero-stat-val" style="color:#fbbf24;">4,8 ★</span>
-            <span class="hero-stat-label">Avaliação</span>
+            <span class="hero-stat-val" id="heroMediaStar" style="color:#fbbf24;">— ★</span>
+            <span class="hero-stat-label" id="heroTotalAv">Avaliações</span>
           </div>
         </div>
       </div>
@@ -90,68 +1105,71 @@
       {% if session.get('usuario_logado') == prestador.email %}
       <button class="btn-edit-hero" onclick="abrirModalEditar()">✏️ Editar Perfil</button>
       {% endif %}
-
     </div>
   </div>
 
-  <!-- MODAL EDITAR PERFIL (prestador) -->
+  {# ── Modal editar perfil ── #}
   <div id="modalEditar" class="modal-overlay">
     <div class="modal-box">
-      <h3 class="modal-title">Editar Perfil</h3>
+      <h3>Editar Perfil</h3>
       <div class="modal-fields">
-        <input id="editNome" class="modal-input" placeholder="Primeiro nome">
-        <input id="editSobrenome" class="modal-input" placeholder="Último nome">
-        <input id="editTelefone" class="modal-input" placeholder="Telefone">
-        <input id="editCidade" class="modal-input" placeholder="Cidade, Estado">
-        <select id="editSexo" class="modal-input">
+        <input id="editNome" placeholder="Primeiro nome">
+        <input id="editSobrenome" placeholder="Último nome">
+        <input id="editTelefone" placeholder="Telefone">
+        <input id="editCidade" placeholder="Cidade, Estado">
+        <select id="editSexo">
           <option value="">Gênero</option>
           <option value="Feminino">Feminino</option>
           <option value="Masculino">Masculino</option>
           <option value="Outro">Outro</option>
         </select>
-        <textarea id="editBio" class="modal-input" placeholder="Sobre você / Bio (aparece no seu perfil)" rows="3"
-          style="min-height:80px;resize:vertical;"></textarea>
-
-        <hr class="modal-divider">
-
-        <label class="modal-cert-label">📄 Adicionar Certificado (PDF, PNG ou JPG)</label>
-        <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg" class="modal-input modal-input--file">
-        <button type="button" class="btn-modal-cert" onclick="uploadCertificado()">⬆️ Enviar Certificado</button>
-        <div id="certStatus" class="modal-cert-status"></div>
+        <textarea id="editBio" placeholder="Sobre você / Bio" rows="3"></textarea>
+        <hr class="modal-sep">
+        <label style="font-size:13px;font-weight:600;color:#374151;">📄 Adicionar Certificado</label>
+        <input type="file" id="inputCert" accept=".pdf,.png,.jpg,.jpeg">
+        <button type="button" onclick="uploadCertificado()"
+          style="padding:9px;background:#f1f5f9;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">⬆️
+          Enviar Certificado</button>
+        <div id="certStatus" style="font-size:12px;color:#10b981;"></div>
       </div>
       <div class="modal-actions">
-        <button class="btn-modal-save" onclick="salvarPerfil()">Salvar</button>
-        <button class="btn-modal-cancel" onclick="fecharModal()">Cancelar</button>
+        <button class="btn-save" onclick="salvarPerfil()">Salvar</button>
+        <button class="btn-cancel-modal" onclick="fecharModal()">Cancelar</button>
       </div>
     </div>
   </div>
 
-  <!-- CONTEÚDO -->
-  <div class="page page--cols">
-
-    <!-- COLUNA PRINCIPAL -->
+  {# ── Conteúdo principal ── #}
+  <div class="page">
     <div>
       <div class="card">
         <div class="tabs">
           <button class="tab-btn active" onclick="switchTab('servicos',this)">Serviços</button>
+          {% if session.get('usuario_logado') == prestador.email %}
+          <button class="tab-btn" id="tabPedidosBtn" onclick="switchTab('pedidos',this)">
+            📋 Pedidos
+            {% set ativos_count =
+            todos_agendamentos|selectattr('status','in',['pendente','confirmado','em_andamento'])|list|length %}
+            {% if ativos_count > 0 %}
+            <span
+              style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#ef4444;color:#fff;font-size:10px;font-weight:700;margin-left:4px;">{{
+              ativos_count }}</span>
+            {% endif %}
+          </button>
+          {% endif %}
           <button class="tab-btn" onclick="switchTab('avaliacoes',this)">Avaliações</button>
           <button class="tab-btn" onclick="switchTab('sobre',this)">Sobre</button>
         </div>
 
-        <!-- SERVIÇOS -->
+        {# ── Aba: Serviços ── #}
         <div class="tab-panel active" id="tab-servicos">
           {% if servicos %}
           {% for s in servicos %}
           <a class="service-item" href="/servicos">
             <div class="service-emoji">
               {% set a = s.area_atuacao|lower %}
-              {% if 'eletr' in a %}💡
-              {% elif 'hidra' in a %}🔧
-              {% elif 'mec' in a %}🔩
-              {% elif 'reform' in a %}🏗️
-              {% elif 'limpez' in a %}🧹
-              {% elif 'ti' in a or 'tecnol' in a %}💻
-              {% else %}⚙️{% endif %}
+              {% if 'eletr' in a %}💡{% elif 'hidra' in a %}🔧{% elif 'mec' in a %}🔩{% elif 'reform' in a %}🏗️{% elif
+              'limpez' in a %}🧹{% elif 'ti' in a or 'tecnol' in a %}💻{% else %}⚙️{% endif %}
             </div>
             <div>
               <div class="service-name">{{ s.titulo }}</div>
@@ -161,52 +1179,157 @@
           </a>
           {% endfor %}
           {% else %}
-          <div class="empty"><span>🔧</span>Nenhum serviço cadastrado ainda.</div>
+          <div class="empty-state"><span>🔧</span>Nenhum serviço cadastrado ainda.</div>
           {% endif %}
         </div>
 
-        <!-- AVALIAÇÕES -->
+        {# ── Aba: Pedidos (só para o próprio prestador) ── #}
+        {% if session.get('usuario_logado') == prestador.email %}
+        <div class="tab-panel" id="tab-pedidos">
+
+          {% set ativos = todos_agendamentos|selectattr('status','in',['pendente','confirmado','em_andamento'])|list %}
+          {% set concluidos = todos_agendamentos|selectattr('status','equalto','concluido')|list %}
+          {% set cancelados = todos_agendamentos|selectattr('status','equalto','cancelado')|list %}
+
+          {% if ativos %}
+          <div class="pedidos-section">
+            <p class="pedidos-section-title">⚡ Aguardando conclusão ({{ ativos|length }})</p>
+            {% for ag in ativos %}
+            {% set s = ag.servico|lower %}
+            <div class="pedido-card" id="pcard-{{ ag.id }}">
+              <div class="pedido-emoji">
+                {% if 'eletr' in s %}💡{% elif 'hidra' in s %}🔧{% elif 'mec' in s %}🔩{% elif 'reform' in s %}🏗️{%
+                elif 'limpez' in s %}🧹{% elif 'ti' in s or 'tecnol' in s %}💻{% else %}⚙️{% endif %}
+              </div>
+              <div class="pedido-info">
+                <div class="pedido-servico">{{ ag.servico }}</div>
+                <div class="pedido-meta">
+                  <span class="pedido-meta-item">👤 {{ ag.cliente_nome or '' }} {{ ag.cliente_sobrenome or '' }}</span>
+                  <span class="pedido-meta-item">📅 {{ ag.data_servico }}</span>
+                  <span class="pedido-meta-item">🕐 {{ ag.horario }}</span>
+                  {% if ag.preco %}<span class="pedido-meta-item" style="color:var(--blue);font-weight:600;">R$ {{
+                    "%.2f"|format(ag.preco) }}</span>{% endif %}
+                </div>
+              </div>
+              <div class="pedido-actions">
+                {% if ag.status == 'pendente' %}
+                <span class="badge badge-pendente">Pendente</span>
+                {% elif ag.status == 'confirmado' %}
+                <span class="badge badge-confirmado">Confirmado</span>
+                {% elif ag.status == 'em_andamento' %}
+                <span class="badge badge-andamento">Em andamento</span>
+                {% endif %}
+                <button class="btn-concluir"
+                  onclick="abrirModalConcluir({{ ag.id }}, '{{ ag.servico|replace("'","\\'")|e }}', '{{ ag.cliente_nome or "" }} {{ ag.cliente_sobrenome or "" }}', '{{ ag.data_servico }}', '{{ ag.horario }}')">
+                  ✓ Concluir
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if concluidos %}
+          <div class="pedidos-section">
+            <p class="pedidos-section-title" style="color:#15803d;">✅ Concluídos ({{ concluidos|length }})</p>
+            {% for ag in concluidos %}
+            {% set s = ag.servico|lower %}
+            <div class="pedido-card concluido-card">
+              <div class="pedido-emoji">
+                {% if 'eletr' in s %}💡{% elif 'hidra' in s %}🔧{% elif 'mec' in s %}🔩{% elif 'reform' in s %}🏗️{%
+                elif 'limpez' in s %}🧹{% elif 'ti' in s or 'tecnol' in s %}💻{% else %}⚙️{% endif %}
+              </div>
+              <div class="pedido-info">
+                <div class="pedido-servico">{{ ag.servico }}</div>
+                <div class="pedido-meta">
+                  <span class="pedido-meta-item">👤 {{ ag.cliente_nome or '' }} {{ ag.cliente_sobrenome or '' }}</span>
+                  <span class="pedido-meta-item">📅 {{ ag.data_servico }}</span>
+                </div>
+              </div>
+              <div class="pedido-actions">
+                <span class="badge badge-concluido">✓ Concluído</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if cancelados %}
+          <div class="pedidos-section">
+            <p class="pedidos-section-title" style="color:#991b1b;">✕ Cancelados ({{ cancelados|length }})</p>
+            {% for ag in cancelados %}
+            {% set s = ag.servico|lower %}
+            <div class="pedido-card cancelado-card">
+              <div class="pedido-emoji" style="opacity:.5;">
+                {% if 'eletr' in s %}💡{% elif 'hidra' in s %}🔧{% elif 'mec' in s %}🔩{% else %}⚙️{% endif %}
+              </div>
+              <div class="pedido-info">
+                <div class="pedido-servico" style="text-decoration:line-through;opacity:.6;">{{ ag.servico }}</div>
+                <div class="pedido-meta">
+                  <span class="pedido-meta-item">👤 {{ ag.cliente_nome or '' }} {{ ag.cliente_sobrenome or '' }}</span>
+                  <span class="pedido-meta-item">📅 {{ ag.data_servico }}</span>
+                </div>
+              </div>
+              <div class="pedido-actions">
+                <span class="badge badge-cancelado">Cancelado</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if not todos_agendamentos %}
+          <div class="empty-state">
+            <span>📋</span>
+            Nenhum pedido ainda.<br>
+            <small style="font-size:12px;color:#9ca3af;margin-top:4px;display:block;">
+              Os agendamentos dos clientes aparecerão aqui.
+            </small>
+          </div>
+          {% endif %}
+
+        </div>
+        {% endif %}
+
+        {# ── Aba: Avaliações ── #}
         <div class="tab-panel" id="tab-avaliacoes">
-          {% if agendamentos_count > 0 %}
-          <div class="review-item">
-            <div class="review-top">
-              <div class="reviewer-info">
-                <div class="reviewer-av">A</div>
-                <div>
-                  <div class="reviewer-name">Ana Oliveira</div>
-                  <div class="reviewer-date">8 meses atrás</div>
+          <div id="avResumo"
+            style="display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:14px;padding:20px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+              <div style="text-align:center;min-width:80px;">
+                <div id="avMediaGrande"
+                  style="font-family:'Sora',sans-serif;font-size:42px;font-weight:700;color:#92400e;line-height:1;margin-bottom:4px;">
+                  —</div>
+                <div id="avEstrelas" style="color:#f59e0b;font-size:18px;letter-spacing:2px;margin-bottom:4px;">☆☆☆☆☆
                 </div>
+                <div id="avTotalLabel" style="font-size:12px;color:#a16207;font-weight:600;"></div>
               </div>
-              <div class="review-stars">★★★★★</div>
+              <div style="flex:1;min-width:160px;" id="avBarras"></div>
             </div>
-            <div class="review-text">Ótimo profissional! Rápido, pontual e muito educado. Recomendo.</div>
           </div>
-          <div class="review-item">
-            <div class="review-top">
-              <div class="reviewer-info">
-                <div class="reviewer-av">R</div>
-                <div>
-                  <div class="reviewer-name">Ricardo Lopes</div>
-                  <div class="reviewer-date">2 semanas atrás</div>
-                </div>
-              </div>
-              <div class="review-stars">★★★★☆</div>
-            </div>
-            <div class="review-text">Excelente atendimento. Trabalho bem feito e preço justo.</div>
+          <div id="avListaLoading" style="text-align:center;padding:40px 20px;color:#9ca3af;font-size:14px;">⏳
+            Carregando avaliações…</div>
+          <div id="avLista"></div>
+          <div id="avVazio" style="display:none;" class="empty-state">
+            <span>⭐</span>Ainda sem avaliações.<br>
+            <small style="font-size:12px;color:#9ca3af;margin-top:4px;display:block;">Complete serviços para receber
+              avaliações.</small>
           </div>
-          {% else %}
-          <div class="empty"><span>⭐</span>Ainda sem avaliações.</div>
-          {% endif %}
         </div>
 
-        <!-- SOBRE -->
+        {# ── Aba: Sobre ── #}
         <div class="tab-panel" id="tab-sobre">
-          <p class="sobre-text">
-            Profissional especializado em <strong>{{ prestador.areas_atuacao or 'serviços gerais' }}</strong>,
-            com foco em qualidade, pontualidade e total satisfação do cliente.
+          <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:16px;">
+            Profissional especializado em <strong>{{ prestador.areas_atuacao or 'serviços gerais' }}</strong>, com foco
+            em qualidade, pontualidade e total satisfação do cliente.
           </p>
-          <div class="sobre-areas">
-            <div class="sobre-areas-label">Áreas de atuação</div>
+          {% if prestador.bio %}
+          <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:16px;">{{ prestador.bio }}</p>
+          {% endif %}
+          <div style="padding:14px;background:#f8fafc;border-radius:10px;">
+            <div
+              style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
+              Áreas de atuação</div>
             {% if prestador.areas_atuacao %}
             {% for area in prestador.areas_atuacao.split(',') %}
             <span class="area-tag">{{ area.strip() }}</span>
@@ -214,15 +1337,14 @@
             {% endif %}
           </div>
         </div>
-      </div>
+
+      </div>{# /card #}
     </div>
 
-    <!-- SIDEBAR -->
+    {# ── Sidebar ── #}
     <div>
       <div class="sidebar-card">
-        <div class="card-header">
-          <span class="card-title">Informações</span>
-        </div>
+        <div class="card-header"><span class="card-title">Informações</span></div>
         <div class="info-item">
           <span class="info-icon">📧</span>
           <div>
@@ -241,7 +1363,14 @@
           <span class="info-icon">✅</span>
           <div>
             <div class="info-label">Jobs concluídos</div>
-            <div class="info-value">{{ agendamentos_count }}</div>
+            <div class="info-value" id="sidebarJobs">{{ agendamentos_count }}</div>
+          </div>
+        </div>
+        <div class="info-item" id="sidebarAvaliacao" style="display:none;">
+          <span class="info-icon">⭐</span>
+          <div>
+            <div class="info-label">Avaliação média</div>
+            <div class="info-value" id="sidebarMedia">—</div>
           </div>
         </div>
         <div class="info-item">
@@ -251,42 +1380,89 @@
             <div class="info-value">{{ servicos|length }}</div>
           </div>
         </div>
-        <a href="/servicos" class="btn-agendar-sidebar">Agendar Serviço</a>
+        <a href="/servicos" class="btn-agendar">Agendar Serviço</a>
       </div>
     </div>
+  </div>{# /page #}
 
-  </div><!-- /page -->
-
-  <!-- FOOTER PADRÃO -->
-  <footer class="footer">
-    <div class="footer__inner">
-      <strong class="footer__brand">Agenda Fácil</strong>
-      <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
-      <nav class="footer__links">
-        <a href="/">Início</a>
-        <a href="/servicos">Serviços</a>
-        <a href="/prestador">Seja Prestador</a>
-        <a href="/orcamentos">Orçamentos</a>
-      </nav>
-      <div class="footer__copy">© 2025 Agenda Fácil. Todos os direitos reservados.</div>
+  {# ── Modal de conclusão ── #}
+  <div class="concl-overlay" id="modalConclusao" role="dialog" aria-modal="true">
+    <div class="concl-box">
+      <div class="concl-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" stroke="#16a34a" stroke-width="1.6" />
+          <path d="M8.5 14l4 4 7-7" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h2 class="concl-title">Concluir Serviço</h2>
+      <p class="concl-sub">Tem certeza que deseja marcar como concluído?<br>O cliente poderá avaliar o atendimento.</p>
+      <div class="concl-service-card">
+        <div class="concl-service-name" id="conclNomeServico">—</div>
+        <div class="concl-service-meta" id="conclMeta">—</div>
+      </div>
+      <button class="concl-btn-ok" id="conclBtnOk">
+        <span class="btn-label">✓ Sim, concluir serviço</span>
+        <span class="spinner"></span>
+      </button>
+      <button class="concl-btn-cancel" id="conclBtnCancel">Cancelar</button>
     </div>
-  </footer>
+  </div>
+
+  {# ── Toast ── #}
+  <div class="toast" id="toastSucesso" role="status">
+    <div class="toast-icon">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2.5 7l3.5 3.5 5.5-6" stroke="#4ade80" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+    Serviço concluído com sucesso!
+  </div>
+
+  {# ── Overlay sucesso (editar perfil) ── #}
+  <div id="overlaySuccesso"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+    <div
+      style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:28px;padding:52px 42px 44px;max-width:400px;width:90%;text-align:center;color:#fff;animation:cardIn .55s cubic-bezier(.22,1,.36,1) both;">
+      <div
+        style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 0 0 14px rgba(16,185,129,.18),0 12px 28px rgba(16,185,129,.4);animation:popIn .5s .1s cubic-bezier(.175,.885,.32,1.275) both;">
+        <svg id="checkSvg" width="34" height="34" viewBox="0 0 36 36" fill="none" stroke="#fff" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 18l7 7 13-13" />
+        </svg>
+      </div>
+      <div
+        style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;margin-bottom:10px;animation:fadeUp .4s .25s ease both;">
+        Perfil atualizado!</div>
+      <p
+        style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:28px;animation:fadeUp .4s .35s ease both;">
+        Suas informações foram salvas<br>com sucesso.</p>
+      <div
+        style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.32);color:rgba(255,255,255,.85);font-size:13px;animation:fadeUp .4s .45s ease both;">
+        ✅ Registro atualizado
+      </div>
+    </div>
+  </div>
 
   <script>
+    /* ── Tabs ── */
     function switchTab(name, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + name).classList.add('active');
+      if (name === 'avaliacoes') carregarAvaliacoes();
     }
 
+    /* ── Modal editar perfil ── */
     function abrirModalEditar() {
-      document.getElementById('editNome').value = "{{ prestador.nome or '' }}";
+      document.getElementById('editNome').value = "{{ prestador.nome      or '' }}";
       document.getElementById('editSobrenome').value = "{{ prestador.sobrenome or '' }}";
-      document.getElementById('editTelefone').value = "{{ prestador.telefone or '' }}";
-      document.getElementById('editCidade').value = "{{ prestador.cidade or '' }}";
-      document.getElementById('editSexo').value = "{{ prestador.sexo or '' }}";
-      document.getElementById('editBio').value = "{{ prestador.bio or '' }}";
+      document.getElementById('editTelefone').value = "{{ prestador.telefone  or '' }}";
+      document.getElementById('editCidade').value = "{{ prestador.cidade    or '' }}";
+      document.getElementById('editSexo').value = "{{ prestador.sexo      or '' }}";
+      document.getElementById('editBio').value = "{{ prestador.bio       or '' }}";
       document.getElementById('modalEditar').classList.add('open');
     }
 
@@ -304,53 +1480,239 @@
         bio: document.getElementById('editBio').value.trim(),
       };
       if (!dados.nome) { alert('Nome é obrigatório'); return; }
-      const res = await fetch('/editar_perfil_prestador', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      });
-      const data = await res.json();
-      if (data.erro) { alert('Erro: ' + data.erro); }
-      else { fecharModal(); location.reload(); }
+      try {
+        const res = await fetch('/editar_perfil_prestador', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok || data?.erro) { alert('Erro: ' + (data?.erro || `HTTP ${res.status}`)); return; }
+
+        fecharModal();
+        const ov = document.getElementById('overlaySuccesso');
+        ov.style.display = 'flex';
+        const path = document.querySelector('#checkSvg path');
+        if (path) { path.style.animation = 'none'; void path.offsetWidth; path.style.animation = ''; }
+        setTimeout(() => { ov.style.display = 'none'; location.reload(); }, 2500);
+      } catch (err) { alert('Falha: ' + err.message); }
     }
 
     async function uploadFoto(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const form = new FormData();
-      form.append('foto', file);
-      const res = await fetch('/salvar_foto', { method: 'POST', body: form });
-      const data = await res.json();
-      if (data.erro) { alert('Erro: ' + data.erro); return; }
-      const preview = document.getElementById('fotoPreview');
-      if (preview.tagName === 'IMG') {
-        preview.src = data.url + '?t=' + Date.now();
-      } else {
-        const img = document.createElement('img');
-        img.src = data.url;
-        img.id = 'fotoPreview';
-        img.className = 'hero-avatar-img';
-        img.alt = 'Foto de perfil';
-        preview.replaceWith(img);
-      }
+      const file = input.files[0]; if (!file) return;
+      const form = new FormData(); form.append('foto', file);
+      try {
+        const res = await fetch('/salvar_foto', { method: 'POST', body: form });
+        const data = await res.json();
+        if (!res.ok || data?.erro) throw new Error(data?.erro || `HTTP ${res.status}`);
+        const preview = document.getElementById('fotoPreview');
+        if (preview.tagName === 'IMG') {
+          preview.src = data.url + '?t=' + Date.now();
+        } else {
+          const img = document.createElement('img');
+          img.src = data.url + '?t=' + Date.now();
+          img.id = 'fotoPreview';
+          img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.2);';
+          preview.replaceWith(img);
+        }
+        setTimeout(() => location.reload(), 800);
+      } catch (err) { alert('Falha no upload: ' + err.message); }
     }
 
     async function uploadCertificado() {
       const input = document.getElementById('inputCert');
-      const file = input.files[0];
-      if (!file) { alert('Selecione um arquivo'); return; }
-      const form = new FormData();
-      form.append('certificado', file);
+      const file = input.files[0]; if (!file) { alert('Selecione um arquivo'); return; }
+      const form = new FormData(); form.append('certificado', file);
       const res = await fetch('/salvar_certificado', { method: 'POST', body: form });
       const data = await res.json();
       document.getElementById('certStatus').textContent =
         data.erro ? 'Erro: ' + data.erro : '✅ ' + data.mensagem;
     }
 
+    /* Fecha modal ao clicar fora */
     document.getElementById('modalEditar').addEventListener('click', function (e) {
       if (e.target === this) fecharModal();
     });
+
+    /* ── Modal de conclusão ── */
+    let _idConcluir = null;
+    const modalConc = document.getElementById('modalConclusao');
+    const btnOk = document.getElementById('conclBtnOk');
+    const btnCancel = document.getElementById('conclBtnCancel');
+    const toast = document.getElementById('toastSucesso');
+    let _toastTimer;
+
+    function abrirModalConcluir(id, servico, cliente, data, horario) {
+      _idConcluir = id;
+      document.getElementById('conclNomeServico').textContent = servico;
+      document.getElementById('conclMeta').textContent =
+        [cliente.trim(), data, horario].filter(Boolean).join(' · ');
+      modalConc.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModalConcluir() {
+      modalConc.classList.remove('open');
+      document.body.style.overflow = '';
+      btnOk.classList.remove('loading');
+    }
+
+    function mostrarToast() {
+      toast.classList.add('show');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    btnCancel.addEventListener('click', fecharModalConcluir);
+    modalConc.addEventListener('click', e => { if (e.target === modalConc) fecharModalConcluir(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModalConcluir(); });
+
+    btnOk.addEventListener('click', async () => {
+      if (!_idConcluir) return;
+      btnOk.classList.add('loading');
+      try {
+        const res = await fetch(`/api/atualizar_status/${_idConcluir}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'concluido' })
+        });
+        const data = await res.json();
+        if (!res.ok || data.erro) {
+          alert(data.erro || 'Erro ao atualizar. Tente novamente.');
+          btnOk.classList.remove('loading');
+          return;
+        }
+        fecharModalConcluir();
+        atualizarCardNaTela(_idConcluir);
+        mostrarToast();
+
+        /* Atualiza contador da sidebar */
+        const sidebarJobs = document.getElementById('sidebarJobs');
+        if (sidebarJobs) sidebarJobs.textContent = parseInt(sidebarJobs.textContent || '0') + 1;
+      } catch {
+        alert('Erro de conexão. Tente novamente.');
+        btnOk.classList.remove('loading');
+      }
+    });
+
+    function atualizarCardNaTela(id) {
+      const card = document.getElementById('pcard-' + id);
+      if (!card) return;
+      card.querySelector('.btn-concluir')?.remove();
+      const badge = card.querySelector('.badge');
+      if (badge) { badge.className = 'badge badge-concluido'; badge.textContent = '✓ Concluído'; }
+      card.classList.add('concluido-card');
+
+      /* Atualiza badge de contagem no botão da aba */
+      setTimeout(() => {
+        const tabBtn = document.getElementById('tabPedidosBtn');
+        if (tabBtn) {
+          const span = tabBtn.querySelector('span');
+          if (span) {
+            const atual = parseInt(span.textContent);
+            if (atual <= 1) span.remove();
+            else span.textContent = atual - 1;
+          }
+        }
+      }, 400);
+    }
+
+    /* ── Avaliações ── */
+    const emailPrestador = "{{ prestador.email|e }}";
+    let avaliacoesCarregadas = false;
+
+    async function carregarAvaliacoes() {
+      if (avaliacoesCarregadas) return;
+      avaliacoesCarregadas = true;
+      try {
+        const res = await fetch(`/api/stats_prestador/${encodeURIComponent(emailPrestador)}`);
+        const data = await res.json();
+
+        document.getElementById('avListaLoading').style.display = 'none';
+
+        const heroMedia = document.getElementById('heroMediaStar');
+        const heroTotal = document.getElementById('heroTotalAv');
+        if (heroMedia) heroMedia.textContent = data.total > 0 ? `${data.media} ★` : '— ★';
+        if (heroTotal) heroTotal.textContent = data.total > 0 ? `${data.total} avaliações` : 'Avaliações';
+
+        const sidebarAv = document.getElementById('sidebarAvaliacao');
+        const sidebarMd = document.getElementById('sidebarMedia');
+        if (sidebarAv && data.total > 0) {
+          sidebarAv.style.display = '';
+          sidebarMd.textContent = `${data.media} ★  (${data.total})`;
+        }
+
+        if (data.total === 0) { document.getElementById('avVazio').style.display = ''; return; }
+
+        const resumo = document.getElementById('avResumo');
+        resumo.style.display = '';
+        document.getElementById('avMediaGrande').textContent = data.media;
+        const ch = Math.round(data.media);
+        document.getElementById('avEstrelas').textContent = '★'.repeat(ch) + '☆'.repeat(5 - ch);
+        document.getElementById('avTotalLabel').textContent =
+          `${data.total} avaliação${data.total !== 1 ? 'ões' : ''}`;
+
+        const barrasEl = document.getElementById('avBarras');
+        if (barrasEl && data.distribuicao) {
+          barrasEl.innerHTML = '';
+          [5, 4, 3, 2, 1].forEach(n => {
+            const count = data.distribuicao[String(n)] || 0;
+            const pct = Math.round((count / data.total) * 100);
+            barrasEl.innerHTML +=
+              `<div class="av-barra-row"><span class="av-barra-label">${n}</span><div class="av-barra-track"><div class="av-barra-fill" style="width:${pct}%"></div></div><span class="av-barra-count">${count}</span></div>`;
+          });
+        }
+
+        const lista = document.getElementById('avLista');
+        lista.innerHTML = '';
+        data.avaliacoes.forEach((av, idx) => {
+          const nome = ((av.cliente_nome || '') + ' ' + (av.cliente_sobrenome || '')).trim() || 'Anônimo';
+          const ini = nome.charAt(0).toUpperCase();
+          const ests = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
+          const dta = av.criado_em
+            ? new Date(av.criado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+            : '';
+          const card = document.createElement('div');
+          card.className = 'av-review-card';
+          card.style.animationDelay = `${idx * 60}ms`;
+          card.innerHTML = `
+            <div class="av-review-top">
+              <div class="av-reviewer-info">
+                <div class="av-reviewer-av">${ini}</div>
+                <div>
+                  <div class="av-reviewer-name">${nome}</div>
+                  <div class="av-reviewer-date">${dta}</div>
+                </div>
+              </div>
+              <div class="av-stars-display" title="${av.nota} de 5">${ests}</div>
+            </div>
+            ${av.comentario
+              ? `<div class="av-review-text">${av.comentario}</div>`
+              : `<div class="av-sem-comentario">Sem comentário</div>`}`;
+          lista.appendChild(card);
+        });
+
+      } catch (e) {
+        console.warn('[Avaliações]', e);
+        document.getElementById('avListaLoading').textContent = 'Erro ao carregar avaliações.';
+      }
+    }
+
+    /* Carrega ao abrir a página para popular o hero stat */
+    carregarAvaliacoes();
   </script>
+
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+    <div style="max-width:900px;margin:0 auto;">
+      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
+      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
+      <div
+        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
+        © 2025 Agenda Fácil. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
 
 </body>
 

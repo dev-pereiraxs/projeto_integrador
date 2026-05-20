@@ -13,10 +13,13 @@
   <link rel="stylesheet" href="../static/logincss.css">
 
   <title>Login - Agenda Fácil</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
 </head>
 
 <body>
-  <div class="formulario">
+ 
+  <div class="formulario" style="padding-top:90px;">
     <h1>Acessar conta</h1>
 
     {% if erro %}
@@ -25,9 +28,11 @@
       <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
     </div>
     {% endif %}
+
     <form action="{{ url_for('autenticar') }}" method="POST" id="form">
 
       <!-- USUÁRIO -->
+
       <div class="caixa-formulario">
         <input type="email" name="email" id="email" class="form-control" required placeholder="Email">
         <i class='bx bxs-user'></i>

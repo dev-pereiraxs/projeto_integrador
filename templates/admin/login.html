@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Ícones -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../../static/global.css">
+  <link rel="stylesheet" href="../../static/logincss.css">
+
+  <title>Login - Admin | Agenda Fácil</title>
+</head>
+
+<body>
+  <div class="formulario">
+    <h1>Acessar conta (Admin)</h1>
+
+    {% if erro %}
+    <div
+      style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-weight: bold;">
+      <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+    </div>
+    {% endif %}
+
+    <form action="{{ url_for('admin_autenticar') }}" method="POST" id="form">
+
+      <!-- USUÁRIO -->
+      <div class="caixa-formulario">
+        <input type="email" name="email" id="email" class="form-control" required placeholder="Email">
+        <i class='bx bxs-user'></i>
+      </div>
+
+      <!-- SENHA -->
+      <div class="caixa-formulario">
+        <input type="password" name="senha" id="password" class="form-control" required placeholder="Senha">
+        <i class="bx bxs-lock-alt"></i>
+      </div>
+
+      <!-- OPÇÕES -->
+      <div class="caixa-lembrar-esqueci">
+        <label>
+          <input type="checkbox"> Lembrar
+        </label>
+        <a href="#">Esqueci minha senha</a>
+      </div>
+
+      <!-- BOTÃO -->
+      <button type="submit" class="btn-default">Entrar</button>
+
+      <!-- DIVISOR -->
+      <div style="display:flex;align-items:center;gap:10px;margin:6px 0 2px;">
+        <hr style="flex:1;border:none;border-top:1px solid rgba(255,255,255,.15);">
+        <span style="font-size:12px;color:#aaa;letter-spacing:.5px;">ou</span>
+        <hr style="flex:1;border:none;border-top:1px solid rgba(255,255,255,.15);">
+      </div>
+
+      <!-- REGISTRO -->
+      <div class="link-registro">
+        <p>
+          Não tem conta?
+          <a href=" {{ url_for('cadastro')}} ">Registrar</a>
+        </p>
+      </div>
+
+    </form>
+  </div>
+</body>
+
+</html>

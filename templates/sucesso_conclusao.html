@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serviço Concluído – Agenda Fácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/global.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(160deg, #0a144a 0%, #1e3a8a 60%, #0e2756 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+      color: #fff;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 20% 20%, rgba(43, 115, 255, .22) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 80% 75%, rgba(16, 185, 129, .22) 0%, transparent 60%);
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+
+      width: 100%;
+      max-width: 460px;
+
+      background: rgba(255, 255, 255, .07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 28px;
+
+      padding: 52px 42px 44px;
+
+      text-align: center;
+
+      box-shadow:
+        0 32px 80px rgba(0, 0, 0, .35),
+        inset 0 1px 0 rgba(255, 255, 255, .08);
+
+      animation: cardEntrance .65s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(24px) scale(.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);   }
+    }
+
+    /* ---- ÍCONE ---- */
+    .check-wrap {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 30px;
+      box-shadow:
+        0 0 0 14px rgba(16, 185, 129, .15),
+        0 12px 30px rgba(16, 185, 129, .40);
+      animation: popIn .55s .1s cubic-bezier(.175, .885, .32, 1.275) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .check-wrap svg {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      animation: drawCheck .4s .5s ease forwards;
+    }
+
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    /* ---- TEXTO ---- */
+    .title {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+      animation: fadeUp .45s .25s ease both;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: rgba(255, 255, 255, .65);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      animation: fadeUp .45s .35s ease both;
+    }
+
+    .subtitle strong { color: rgba(255, 255, 255, .95); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* ---- PILL ---- */
+    .info-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 10px 20px;
+      margin-bottom: 32px;
+
+      border-radius: 999px;
+
+      background: rgba(16, 185, 129, .15);
+      border: 1px solid rgba(16, 185, 129, .30);
+
+      color: rgba(255, 255, 255, .80);
+
+      font-size: 13px;
+      font-weight: 500;
+
+      animation: fadeUp .45s .45s ease both;
+    }
+
+    .info-pill span { font-size: 16px; }
+
+    /* ---- AÇÕES ---- */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeUp .45s .55s ease both;
+    }
+
+    .btn-painel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      width: 100%;
+      padding: 15px 24px;
+
+      background: linear-gradient(135deg, #2b73ff, #1d44d9);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+
+      text-decoration: none;
+
+      box-shadow: 0 10px 26px rgba(43, 115, 255, .30);
+
+      transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .btn-painel:hover {
+      opacity: .92;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(43, 115, 255, .40);
+    }
+
+    .btn-painel:active { transform: scale(.98); }
+
+    .btn-servicos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      width: 100%;
+      padding: 13px 24px;
+
+      background: rgba(255, 255, 255, .08);
+      color: rgba(255, 255, 255, .80);
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 14px;
+
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+
+      text-decoration: none;
+
+      transition: background .2s ease;
+    }
+
+    .btn-servicos:hover { background: rgba(255, 255, 255, .14); }
+
+    /* ---- FOOTER ---- */
+    .footer-note {
+      margin-top: 22px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, .35);
+      letter-spacing: .3px;
+      animation: fadeUp .45s .65s ease both;
+    }
+
+    /* ---- RESPONSIVO ---- */
+    @media (max-width: 520px) {
+      .card {
+        padding: 40px 24px 36px;
+        border-radius: 22px;
+      }
+
+      .title { font-size: 24px; }
+
+      .check-wrap {
+        width: 76px;
+        height: 76px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+
+    <div class="check-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"
+           stroke="#fff" stroke-width="3"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 18l7 7 13-13"/>
+      </svg>
+    </div>
+
+    <h1 class="title">Serviço concluído!</h1>
+
+    <p class="subtitle">
+      O serviço foi marcado como <strong>concluído</strong> com sucesso.<br>
+      O histórico foi atualizado no seu painel.
+    </p>
+
+    <div class="info-pill">
+      <span>✅</span> Registro atualizado com sucesso
+    </div>
+
+    <div class="actions">
+      <a href="{{ url_for('painel') }}" class="btn-painel">
+        📋 Ir para o Painel
+      </a>
+      <a href="{{ url_for('servicos') }}" class="btn-servicos">
+        ← Ver serviços disponíveis
+      </a>
+    </div>
+
+    <p class="footer-note">Agenda Fácil · Conectando pessoas a profissionais</p>
+
+  </div>
+</body>
+</html>
