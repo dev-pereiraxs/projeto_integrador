@@ -103,7 +103,7 @@
             </div>
 
             <div class="services-container">
-                <label class="form-label">Áreas de atuação</label>
+                <label class="form-label">Área de atuação</label>
 
                 <div class="services-grid">
                     <div class="card" data-value="ti"><img src="../static/img//ti.png">
@@ -128,14 +128,12 @@
             </div>
 
 
-            <!-- DIVISOR -->
             <div style="display:flex;align-items:center;gap:10px;margin:4px 0;">
                 <hr style="flex:1;border:none;border-top:1px solid #ddd;">
                 <span style="font-size:12px;color:#999;letter-spacing:.5px;">ou acesse rápido</span>
                 <hr style="flex:1;border:none;border-top:1px solid #ddd;">
             </div>
 
-            <!-- BOTÃO GOOGLE -->
             <a href="/login-google"
                 style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px 16px;border:1.5px solid #ddd;border-radius:8px;background:#fff;color:#444;font-size:14px;font-weight:500;text-decoration:none;transition:background .2s;box-shadow:0 1px 3px rgba(0,0,0,.07);"
                 onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='#fff'">
@@ -188,10 +186,19 @@
             element.innerHTML = (condition ? '✅ ' : '❌ ') + element.textContent.slice(2);
         }
 
-        // Seleção de serviços
+        // Seleção de serviços (PERMITIR APENAS 1)
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
-                card.classList.toggle('selected');
+                // Guarda o estado atual do card clicado (se já estava selecionado ou não)
+                const wasSelected = card.classList.contains('selected');
+
+                // Remove a classe 'selected' de TODOS os cards
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+
+                // Se o card não estava selecionado antes do clique, agora ele será selecionado
+                if (!wasSelected) {
+                    card.classList.add('selected');
+                }
             });
         });
 
@@ -220,18 +227,18 @@
                 .map(card => card.dataset.value);
 
             if (selected.length === 0) {
-                alert('Selecione pelo menos uma área');
+                alert('Selecione uma área de atuação');
                 return;
             }
 
-            // CRIA UM CAMPO OCULTO COM AS ÁREAS PARA O PYTHON
+            // CRIA UM CAMPO OCULTO COM A ÁREA PARA O PYTHON
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
-            hiddenInput.name = 'areas_atuacao';
-            hiddenInput.value = selected.join(', ');
+            hiddenInput.name = 'areas_atuacao'; // Se quiser, depois mude no python para 'area_atuacao' no singular
+            hiddenInput.value = selected[0]; // Pega exatamente o primeiro (e único) item
             this.appendChild(hiddenInput);
 
-            // AGORA SIM! MANDA PARA O PYTHON (Substitui os alerts e console.log antigos)
+            // AGORA SIM! MANDA PARA O PYTHON
             this.submit();
         });
 
