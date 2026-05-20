@@ -61,11 +61,11 @@ function statusLabel(s) {
 
 function statusClass(s) {
   const mapa = {
-    pendente:    "badge-pendente",
-    confirmado:  "badge-confirmado",
-    em_andamento:"badge-andamento",
-    concluido:   "badge-concluido-status",
-    cancelado:   "badge-cancelado"
+    pendente: "badge-pendente",
+    confirmado: "badge-confirmado",
+    em_andamento: "badge-andamento",
+    concluido: "badge-concluido-status",
+    cancelado: "badge-cancelado"
   };
   return mapa[s] || "badge-pendente";
 }
@@ -95,8 +95,8 @@ function render() {
 
     const dataFormatada = p.data_servico
       ? new Date(p.data_servico + "T00:00:00").toLocaleDateString("pt-BR", {
-          day: "2-digit", month: "short", year: "numeric"
-        })
+        day: "2-digit", month: "short", year: "numeric"
+      })
       : "—";
     const horario = p.horario ? ` às ${p.horario}` : "";
     const meta = `${dataFormatada}${horario}`;
@@ -146,7 +146,7 @@ function render() {
 // ============================================================
 // REMOVER (mantido para compatibilidade)
 // ============================================================
-window.remover = function(id) {
+window.remover = function (id) {
   if (!confirm("Tem certeza que deseja excluir este serviço definitivamente?")) return;
 
   fetch("/api/excluir_servico/" + id, { method: "DELETE" })
@@ -180,6 +180,66 @@ window.concluirServicoDireto = function (id) {
     });
 };
 
+// ============================================================
+// ABA: MEUS SERVIÇOS
+// ============================================================
+function carregarServicos() {
+  fetch("/api/meus_servicos")
+    .then(r => r.json())
+    .then(data => {
+      if (data.erro) {
+        lista.innerHTML = `<p class="estado-erro">${data.erro}</p>`;
+        return;
+      }
+      if (data.length === 0) {
+        lista.innerHTML = `
+          <div class="estado-vazio">
+            <span class="estado-vazio__icon">🔧</span>
+            Nenhum serviço cadastrado.
+          </div>`;
+        return;
+      }
+      lista.innerHTML = "";
+      data.forEach(s => {
+        const card = document.createElement("div");
+        card.className = "pedido-card";
+        card.innerHTML = `
+          <div class="pedido-card__info">
+            <div class="pedido-card__titulo">${s.titulo}</div>
+            <div class="pedido-card__meta">
+              <span class="pedido-meta-item">💰 R$ ${s.preco}</span>
+              <span class="pedido-meta-item">📂 ${s.area_atuacao || "—"}</span>
+              ${s.descricao ? `<span class="pedido-meta-item">📝 ${s.descricao}</span>` : ""}
+            </div>
+          </div>
+          <div class="pedido-card__actions">
+            <button class="btn-concluir" onclick="remover(${s.id})">🗑 Excluir</button>
+          </div>
+        `;
+        lista.appendChild(card);
+      });
+    })
+    .catch(() => {
+      lista.innerHTML = `<p class="estado-erro">Erro ao carregar serviços.</p>`;
+    });
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
 document.addEventListener("DOMContentLoaded", function () {
-  carregarMeusServicos();
+  const btnPedidos = document.getElementById("btn-pedidos");
+  const btnServicos = document.getElementById("btn-servicos");
+
+  function setAba(aba) {
+    btnPedidos.classList.toggle("btn-aba-ativo", aba === "pedidos");
+    btnServicos.classList.toggle("btn-aba-ativo", aba === "servicos");
+    if (aba === "pedidos") carregarMeusServicos();
+    else carregarServicos();
+  }
+
+  btnPedidos.addEventListener("click", () => setAba("pedidos"));
+  btnServicos.addEventListener("click", () => setAba("servicos"));
+
+  setAba("pedidos"); // default
 });

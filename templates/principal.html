@@ -12,15 +12,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/princss.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='princss.css') }}" />
+  
 </head>
 
-<body>
+<body class="pg-home">
+
+
 
   <div class="page-shell">
 
-    <!-- PREMIUM HEADER (padronizado) -->
+    <!-- HEADER / NAVBAR (padronizado) -->
     {% include 'partials/header.html' %}
 
     <!-- HERO -->
@@ -250,15 +253,18 @@
     </div>
   </footer>
 
-  <script src="{{ url_for('static', filename='js/premium-header.js') }}" defer></script>
+
 
   <!-- BOTÃO VOLTAR AO TOPO -->
   <button id="backToTop" aria-label="Voltar ao topo">
     ↑
   </button>
 
+
+
   <script>
     const backToTop = document.getElementById("backToTop");
+
 
     window.addEventListener("scroll", () => {
       if (window.scrollY > 300) {

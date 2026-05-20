@@ -1,748 +1,256 @@
 <!doctype html>
 <html lang="pt-br">
-
   <head>
-    <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='img/agenda-facil.png') }}"
+      type="image/png"
+    />
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel do Prestador – Agenda Fácil</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}" id="xbr4s9">
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/painel.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    /* ═══════════════════════════════════════════════
-       ABAS  (Pedidos / Serviços)
-    ═══════════════════════════════════════════════ */
-    .abas-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+    <title>Painel do Prestador – Agenda Fácil</title>
 
-    .btn-aba {
-      min-height: 42px;
-      padding: 10px 20px;
-      border-radius: 999px;
-      border: 1.5px solid var(--border);
-      background: white;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted, #6b7280);
-      cursor: pointer;
-      transition: all .2s;
-    }
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    .btn-aba:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='global.css') }}"
+    />
 
-    .btn-aba-ativo {
-      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-      border-color: transparent;
-      color: white !important;
-    }
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='painel.css') }}"
+    />
 
-    /* ═══════════════════════════════════════════════
-       CARDS DE PEDIDO
-    ═══════════════════════════════════════════════ */
-    .pedido-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-      transition: border-color .3s, box-shadow .3s;
-    }
+    <style>
+      /* =========================================
+         PAINEL
+      ========================================= */
 
-    .pedido-card:hover {
-      border-color: rgba(37, 99, 235, .22);
-      box-shadow: 0 2px 12px rgba(37, 99, 235, .07);
-    }
-
-    .pedido-card__titulo {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #111827;
-    }
-
-    .pedido-card__meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .pedido-meta-item {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .pedido-card__actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-      flex-wrap: wrap;
-    }
-
-    /* ═══════════════════════════════════════════════
-       BADGES DE STATUS
-    ═══════════════════════════════════════════════ */
-    .badge-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 12px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .3px;
-      white-space: nowrap;
-    }
-
-    .badge-pendente {
-      background: #fef9c3;
-      color: #854d0e;
-      border: 1px solid #fde68a;
-    }
-
-    .badge-confirmado {
-      background: #dbeafe;
-      color: #1e40af;
-      border: 1px solid #bfdbfe;
-    }
-
-    .badge-andamento {
-      background: #e0f2fe;
-      color: #0369a1;
-      border: 1px solid #bae6fd;
-    }
-
-    .badge-publicado {
-      background: #f3f4f6;
-      color: #374151;
-      border: 1px solid #e5e7eb;
-    }
-
-    .badge-cancelado {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-
-    .badge-concluido-status {
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-
-    /* Badge animado que surge após confirmar */
-    .badge-concluido {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: #dcfce7;
-      border: 1px solid #86efac;
-      color: #15803d;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .3px;
-      animation: badgePop .35s cubic-bezier(.22, 1, .36, 1) both;
-    }
-
-    .badge-concluido::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #16a34a;
-      box-shadow: 0 0 5px rgba(22, 163, 74, .5);
-    }
-
-    @keyframes badgePop {
-      from {
-        opacity: 0;
-        transform: scale(.8);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* ═══════════════════════════════════════════════
-       BOTÃO "CONCLUIR SERVIÇO"
-    ═══════════════════════════════════════════════ */
-    .btn-concluir {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      color: white;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: .2px;
-      box-shadow: 0 2px 8px rgba(22, 163, 74, .28);
-      transition: opacity .2s, transform .15s, box-shadow .2s;
-      white-space: nowrap;
-    }
-
-    .btn-concluir:hover {
-      opacity: .92;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(22, 163, 74, .38);
-    }
-
-    .btn-concluir:active {
-      transform: translateY(0);
-    }
-
-    /* ═══════════════════════════════════════════════
-       BOTÃO EXCLUIR / CANCELAR (ícone ✕)
-    ═══════════════════════════════════════════════ */
-    .btn-excluir-pedido {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid #fecaca;
-      background: #fff1f2;
-      color: #ef4444;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background .2s, border-color .2s;
-      flex-shrink: 0;
-    }
-
-    .btn-excluir-pedido:hover {
-      background: #fee2e2;
-      border-color: #fca5a5;
-    }
-
-    /* ═══════════════════════════════════════════════
-       ESTADOS VAZIOS / LOADING / ERRO
-    ═══════════════════════════════════════════════ */
-    .estado-loading,
-    .estado-erro {
-      text-align: center;
-      font-size: 14px;
-      color: #9ca3af;
-      padding: 32px 0;
-    }
-
-    .estado-erro {
-      color: #ef4444;
-    }
-
-    .estado-vazio {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 48px 0;
-      color: #9ca3af;
-      font-size: 14px;
-    }
-
-    .estado-vazio__icon {
-      font-size: 36px;
-    }
-
-    /* ═══════════════════════════════════════════════
-       MODAL OVERLAY
-    ═══════════════════════════════════════════════ */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(4, 7, 18, .60);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .25s ease;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    /* ═══════════════════════════════════════════════
-       MODAL BOX
-    ═══════════════════════════════════════════════ */
-    .modal-box {
-      width: 100%;
-      max-width: 420px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      padding: 32px 28px 26px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, .18), 0 0 0 1px rgba(22, 163, 74, .08);
-      transform: translateY(14px) scale(.96);
-      transition: transform .3s cubic-bezier(.22, 1, .36, 1);
-    }
-
-    .modal-overlay.open .modal-box {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-icon-wrap {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: #dcfce7;
-      border: 1px solid #86efac;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-    }
-
-    .modal-title {
-      font-size: 19px;
-      font-weight: 700;
-      color: #111827;
-      text-align: center;
-      margin-bottom: 8px;
-      letter-spacing: -.2px;
-    }
-
-    .modal-subtitle {
-      font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-      line-height: 1.65;
-      margin-bottom: 20px;
-    }
-
-    .modal-service-card {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 24px;
-    }
-
-    .modal-service-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 4px;
-    }
-
-    .modal-service-meta {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    /* ═══════════════════════════════════════════════
-       BOTÕES DO MODAL
-    ═══════════════════════════════════════════════ */
-    .modal-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .btn-modal-confirmar {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      color: white;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: .2px;
-      box-shadow: 0 4px 14px rgba(22, 163, 74, .30);
-      transition: opacity .2s, transform .15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-modal-confirmar:hover {
-      opacity: .9;
-      transform: translateY(-1px);
-    }
-
-    .btn-modal-confirmar:active {
-      transform: translateY(0);
-    }
-
-    .btn-modal-confirmar.loading {
-      opacity: .6;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .btn-modal-cancelar {
-      width: 100%;
-      padding: 13px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 12px;
-      background: transparent;
-      color: #6b7280;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .2s, color .2s, border-color .2s;
-    }
-
-    .btn-modal-cancelar:hover {
-      background: #f9fafb;
-      color: #111827;
-      border-color: #d1d5db;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, .3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none;
-    }
-
-    .btn-modal-confirmar.loading .spinner {
-      display: block;
-    }
-
-    .btn-modal-confirmar.loading .btn-label {
-      display: none;
-    }
-
-    /* ═══════════════════════════════════════════════
-       TOAST DE SUCESSO
-    ═══════════════════════════════════════════════ */
-    .toast-success {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #052e16;
-      border: 1px solid rgba(74, 222, 128, .30);
-      border-radius: 14px;
-      padding: 14px 22px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
-      color: #bbf7d0;
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-      transition: opacity .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1);
-    }
-
-    .toast-success.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: rgba(22, 163, 74, .20);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* ═══════════════════════════════════════════════
-       RESPONSIVO
-    ═══════════════════════════════════════════════ */
-    @media (max-width:600px) {
-      .pedido-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .pedido-card__actions {
+      .painel-wrapper {
         width: 100%;
-        justify-content: flex-end;
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 28px;
       }
 
-      .modal-box {
-        padding: 24px 16px 20px;
+      .painel-main {
+        width: 100%;
       }
+
+      .painel-header {
+        margin-top: 24px;
+        margin-bottom: 26px;
+      }
+
+      .painel-header h1 {
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #0f172a;
+      }
+
+      /* =========================================
+         MÉTRICAS
+      ========================================= */
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .metric-card {
+        background: white;
+        border-radius: 22px;
+        border: 1px solid #e5e7eb;
+        padding: 28px;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+      }
+
+      .metric-card__value {
+        font-size: 42px;
+        font-weight: 800;
+        color: #2563eb;
+        margin-bottom: 6px;
+      }
+
+      .metric-card__label {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      /* =========================================
+         ABAS
+      ========================================= */
 
       .abas-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
         flex-wrap: wrap;
       }
 
-      .btn-novo-servico {
-        width: 100%;
-        text-align: center;
+      .btn-aba {
+        border: none;
+        background: white;
+        border: 1px solid #dbe3f0;
+        padding: 12px 20px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        color: #475569;
+        transition: 0.2s;
       }
-    }
-  </style>
-</head>
 
-<body class="bg-[var(--bg)] text-[var(--text)]">
-  <div class="painel-wrapper">
+      .btn-aba:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+      }
 
-    <!-- Premium Header -->
-    {% include 'partials/header.html' %}
+      .btn-aba-ativo {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border-color: transparent;
+      }
 
-    <!-- Cabeçalho -->
-    <div class="painel-header">
-      <h1 style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-        <span>Painel do Prestador</span>
-        {% if session.get('usuario_logado') %}
-          <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(37,99,235,.15);border:1px solid rgba(59,130,246,.35);padding:6px 12px;border-radius:999px;">
-            👤 {{ session.get('usuario_nome', session.get('usuario_logado')) }}
-          </span>
-        {% endif %}
-      </h1>
-    </div>
+      .btn-novo-servico {
+        margin-left: auto;
+        padding: 13px 22px;
+        border-radius: 999px;
+        text-decoration: none;
+        color: white;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+      }
 
-    <!-- Métricas -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div id="pendentes" class="metric-card__value">0</div>
-        <div class="metric-card__label">Pendentes</div>
-      </div>
-      <div class="metric-card">
-        <div id="andamento" class="metric-card__value">0</div>
-        <div class="metric-card__label">Em Andamento</div>
-      </div>
-      <div class="metric-card">
-        <div id="concluidos" class="metric-card__value">0</div>
-        <div class="metric-card__label">Concluídos</div>
-      </div>
-    </div>
+      /* =========================================
+         RESPONSIVO
+      ========================================= */
 
-    <!-- Abas -->
-    <div class="abas-bar">
-      <button id="btn-pedidos" class="btn-aba btn-aba-ativo">📋 Pedidos</button>
-      <button id="btn-servicos" class="btn-aba">🔧 Meus Serviços</button>
-      <a href="{{ url_for('formulario') }}" class="btn-novo-servico" style="margin-left:auto">
-        + Novo Serviço
-      </a>
-    </div>
-
-    <!-- Lista renderizada pelo pn.js -->
-    <div id="lista"></div>
-
-  </div>
-
-  <!-- ═══════════════════════════════════════════════
-       MODAL DE CONFIRMAÇÃO DE CONCLUSÃO
-  ═══════════════════════════════════════════════ -->
-  <div class="modal-overlay" id="modal-conclusao" role="dialog" aria-modal="true"
-    aria-labelledby="modal-titulo-conclusao">
-    <div class="modal-box">
-
-      <div class="modal-icon-wrap">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="14" r="12" stroke="#16a34a" stroke-width="1.6" />
-          <path d="M8.5 14l4 4 7-7" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-      </div>
-
-      <h2 class="modal-title" id="modal-titulo-conclusao">Concluir Serviço</h2>
-
-      <p class="modal-subtitle">
-        Tem certeza que deseja marcar este serviço como concluído?<br>
-        Essa ação não poderá ser desfeita.
-      </p>
-
-      <div class="modal-service-card">
-        <div class="modal-service-name" id="modal-nome-servico">—</div>
-        <div class="modal-service-meta" id="modal-meta-servico">—</div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-modal-confirmar" id="btn-modal-confirmar">
-          <span class="btn-label">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="vertical-align:-2px;margin-right:4px">
-              <path d="M2.5 7.5l4 4 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-            Sim, concluir serviço
-          </span>
-          <div class="spinner"></div>
-        </button>
-
-        <button class="btn-modal-cancelar" id="btn-modal-cancelar">
-          Cancelar
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Toast de sucesso -->
-  <div class="toast-success" id="toast-sucesso" role="status" aria-live="polite">
-    <div class="toast-icon">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M3 8l4 4 6-6" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </div>
-    Serviço concluído com sucesso!
-  </div>
-
-  <!-- pn.js renderiza as listas -->
-  <script src="{{ url_for('static', filename='js/pn.js') }}"></script>
-
-  <script src="{{ url_for('static', filename='js/premium-header.js') }}" defer id="ep42xe"></script>
-
-  <script>
-    /* ═══════════════════════════════════════════════
-       LÓGICA DO MODAL
-    ═══════════════════════════════════════════════ */
-    let _idAtual = null;
-
-    const modalEl = document.getElementById("modal-conclusao");
-    const btnConfirmarEl = document.getElementById("btn-modal-confirmar");
-    const btnCancelarEl = document.getElementById("btn-modal-cancelar");
-    const toastEl = document.getElementById("toast-sucesso");
-
-    /**
-     * Abre o modal de confirmação.
-     * Chamado no pn.js via:
-     *   concluirServico(ag.id, ag.servico, "12 Mai às 14:00")
-     */
-    window.concluirServico = function (id, nome, meta) {
-      _idAtual = id;
-      document.getElementById("modal-nome-servico").textContent = nome || "Serviço";
-      document.getElementById("modal-meta-servico").textContent = meta || "";
-      modalEl.classList.add("open");
-      document.body.style.overflow = "hidden";
-    };
-
-    function fecharModal() {
-      modalEl.classList.remove("open");
-      document.body.style.overflow = "";
-      btnConfirmarEl.classList.remove("loading");
-    }
-
-    btnCancelarEl.addEventListener("click", fecharModal);
-    modalEl.addEventListener("click", e => { if (e.target === modalEl) fecharModal(); });
-    document.addEventListener("keydown", e => { if (e.key === "Escape") fecharModal(); });
-
-    /* Toast */
-    let _toastTimer = null;
-    function mostrarToast() {
-      toastEl.classList.add("show");
-      clearTimeout(_toastTimer);
-      _toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3500);
-    }
-
-    /* Confirmar → chama a API */
-    btnConfirmarEl.addEventListener("click", async () => {
-      if (!_idAtual) return;
-      btnConfirmarEl.classList.add("loading");
-
-      try {
-        const res = await fetch(`/api/atualizar_status/${_idAtual}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "concluido" })
-        });
-        const data = await res.json();
-
-        if (!res.ok || data.erro) {
-          alert(data.erro || "Erro ao atualizar. Tente novamente.");
-          btnConfirmarEl.classList.remove("loading");
-          return;
+      @media (max-width: 900px) {
+        .metrics-grid {
+          grid-template-columns: 1fr;
         }
 
-        fecharModal();
-        window.location.href = "/sucesso-conclusao";
+        .painel-header h1 {
+          font-size: 30px;
+        }
 
-      } catch {
-        alert("Erro de conexão. Tente novamente.");
-        btnConfirmarEl.classList.remove("loading");
+        .painel-wrapper {
+          padding: 18px;
+        }
       }
-    });
+    </style>
+  </head>
 
-    /* Atualiza o card na UI sem reload */
-    function atualizarCardConcluido(id) {
-      const card = document.querySelector(`[data-agendamento-id="${id}"]`);
-      if (!card) return;
+  <body class="bg-[var(--bg)] text-[var(--text)]">
+    <!-- HEADER -->
+    {% include 'partials/header.html' %}
 
-      /* Remove o botão Concluir */
-      card.querySelector(".btn-concluir")?.remove();
+    <!-- WRAPPER -->
+    <div class="painel-wrapper">
+      <main class="painel-main">
+        <!-- HEADER DO PAINEL -->
+        <div class="painel-header">
+          <h1>
+            Painel do Prestador
 
-      /* Troca o badge de status pelo badge verde animado */
-      const novoBadge = document.createElement("span");
-      novoBadge.className = "badge-concluido";
-      novoBadge.textContent = "Serviço concluído";
+            {% if session.get('usuario_logado') %}
+            <span
+              style="
+                font-size: 13px;
+                font-weight: 700;
+                color: #64748b;
+                background: rgba(37, 99, 235, 0.08);
+                border: 1px solid rgba(37, 99, 235, 0.16);
+                padding: 6px 12px;
+                border-radius: 999px;
+                vertical-align: middle;
+              "
+            >
+              {{ session.get('usuario_nome',
+              session.get('usuario_logado')) }}
+            </span>
+            {% endif %}
+          </h1>
+        </div>
 
-      const badgeAtual = card.querySelector(".badge-pill");
-      if (badgeAtual) badgeAtual.replaceWith(novoBadge);
-      else card.querySelector(".pedido-card__actions")?.prepend(novoBadge);
+        <!-- MÉTRICAS -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div id="pendentes" class="metric-card__value">0</div>
+            <div class="metric-card__label">Pendentes</div>
+          </div>
 
-      /* Borda verde sutil */
-      card.style.transition = "border-color .4s, box-shadow .4s";
-      card.style.borderColor = "rgba(22,163,74,.28)";
-      card.style.boxShadow = "0 0 0 1px rgba(22,163,74,.10)";
+          <div class="metric-card">
+            <div id="andamento" class="metric-card__value">0</div>
+            <div class="metric-card__label">Em Andamento</div>
+          </div>
 
-      /* Atualiza contadores */
-      const elC = document.getElementById("concluidos");
-      if (elC) elC.textContent = parseInt(elC.textContent || "0") + 1;
-      const elP = document.getElementById("pendentes");
-      if (elP && parseInt(elP.textContent) > 0)
-        elP.textContent = parseInt(elP.textContent) - 1;
-    }
-  </script>
+          <div class="metric-card">
+            <div id="concluidos" class="metric-card__value">0</div>
+            <div class="metric-card__label">Concluídos</div>
+          </div>
+        </div>
 
-  <footer
-    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-    <div style="max-width:900px;margin:0 auto;">
-      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div
-        style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
-      </div>
+        <!-- ABAS -->
+        <div class="abas-bar">
+          <button id="btn-pedidos" class="btn-aba btn-aba-ativo">
+            📋 Pedidos
+          </button>
+
+          <button id="btn-servicos" class="btn-aba">
+            🔧 Meus Serviços
+          </button>
+
+          <a
+            href="{{ url_for('formulario') }}"
+            class="btn-novo-servico"
+          >
+            + Novo Serviço
+          </a>
+        </div>
+
+        <!-- LISTA -->
+        <div id="lista"></div>
+      </main>
     </div>
-  </footer>
 
-</body>
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='js/pn.js') }}"></script>
 
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <strong class="footer__brand">
+          Agenda Fácil
+        </strong>
+
+        <p class="footer__tagline">
+          Conectando pessoas a profissionais de confiança.
+        </p>
+
+        <div class="footer__links">
+          <a href="#">Termos</a>
+          <a href="#">Privacidade</a>
+          <a href="#">Contato</a>
+        </div>
+
+        <p class="footer__copy">
+          © 2025 Agenda Fácil. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>
