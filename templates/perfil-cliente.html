@@ -873,9 +873,33 @@
     function switchTab(name, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       document.getElementById('tab-' + name).classList.add('active');
     }
+
+    function abrirTabPeloQuery() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('tab');
+
+        const btnAg = document.querySelector(".tab-btn[onclick*='switchTab(\\'agendamentos\\'']") || null;
+        const btnDados = document.querySelector(".tab-btn[onclick*='switchTab(\\'dados\\'']") || null;
+
+        if (tab === 'agendamentos') {
+          switchTab('agendamentos', btnAg);
+          return;
+        }
+        if (tab === 'dados') {
+          switchTab('dados', btnDados);
+        }
+      } catch (e) { /* noop */ }
+    }
+
+
+
+
+    /* ── Query para abrir aba automaticamente ── */
+    abrirTabPeloQuery();
 
     /* ── Cancelar agendamento ── */
     async function cancelar(id) {
