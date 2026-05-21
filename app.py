@@ -7,38 +7,27 @@ import pathlib
 import requests as http_requests
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-import mysql.connector
-from authlib.integrations.flask_client import OAuth
-import os
-from dotenv import load_dotenv
-import pathlib
-import requests as http_requests
-from datetime import datetime, timedelta
-from urllib.parse import urlencode
 import resend
-
-# IMPORT NOVO PARA O ESQUECI A SENHA
 from itsdangerous import URLSafeTimedSerializer
-resend.api_key = os.getenv("RESEND_API_KEY")
+import bcrypt
+from functools import wraps
+
+# Carrega as variáveis do arquivo .env
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
 
-# CONFIGURAÇÃO NOVA PARA O "LEMBRAR DE MIM" (Dura 30 dias)
+# Configura a chave da API do Resend
+resend.api_key = os.getenv("RESEND_API_KEY")
+
+# Configuração para o "Lembrar de Mim" durar 30 dias na sessão permanente
 app.permanent_session_lifetime = timedelta(days=30)
 
-# GERADOR DE TOKENS SEGUROS PARA SENHA
+# Gerador de tokens seguros com expiração para a senha
 serializer = URLSafeTimedSerializer(app.secret_key)
 
-
-load_dotenv()
-
-app = Flask(__name__)
-app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
-
-CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID")
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 # =========================
@@ -51,12 +40,12 @@ google = oauth.register(
     client_secret=CLIENT_SECRET,
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={
-        # ← ALTERADO: adicionado calendar.events ao scope
         "scope": "openid email profile https://www.googleapis.com/auth/calendar.events",
-        "access_type": "offline",   # ← garante refresh_token (opcional mas recomendado)
-        "prompt": "consent",        # ← força re-autorização para obter o token de calendar
+        "access_type": "offline",
+        "prompt": "consent",
     },
 )
+
 
 # =========================
 # BANCO DE DADOS
@@ -69,24 +58,77 @@ def connectar():
         database="servicos"
     )
 
+
 # =========================
-# ← NOVO: HELPER — CRIA EVENTO NO GOOGLE CALENDAR
+# DECORADORES AUXILIARES ADMIN
+# =========================
+def is_admin_logged_in():
+    return session.get("tipo_usuario") == "admin" and bool(session.get("usuario_logado"))
+
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not is_admin_logged_in():
+            return redirect(url_for("admin_login_page"))
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+# =========================
+# FUNÇÃO TRANSMISSORA DO RESEND
+# =========================
+def enviar_email_recuperacao(destinatario, link_recuperacao):
+    """Dispara o e-mail de redefinição usando a API oficial da Resend."""
+    remetente = "onboarding@resend.dev"
+
+    html_conteudo = f"""
+    <html>
+      <body style="font-family: 'DM Sans', Arial, sans-serif; color: #1a2340; padding: 20px; line-height: 1.6;">
+        <h2 style="color: #2563eb; font-family: 'Sora', sans-serif;">Agenda Fácil</h2>
+        <p>Olá,</p>
+        <p>Recebemos uma solicitação para redefinir a senha vinculada ao seu e-mail.</p>
+        <p>Para escolher uma nova senha e recuperar o acesso, clique no botão abaixo:</p>
+        <div style="margin: 24px 0;">
+          <a href="{link_recuperacao}" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">Redefinir Minha Senha</a>
+        </div>
+        <p style="font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 24px;">
+          Se você não solicitou essa alteração, pode ignorar este e-mail com segurança. O link expira em 1 hora.
+        </p>
+      </body>
+    </html>
+    """
+
+    try:
+        params = {
+            "from": remetente,
+            "to": destinatario,
+            "subject": "Recuperação de Senha - Agenda Fácil",
+            "html": html_conteudo
+        }
+        resend.Emails.send(params)
+        print(f"[Resend] E-mail enviado com sucesso para {destinatario}")
+        return True
+    except Exception as e:
+        print(f"[Resend Erro] Falha crítica ao disparar API: {e}")
+        return False
+
+
+# =========================
+# HELPER — GOOGLE CALENDAR
 # =========================
 def gerar_url_google_agenda(titulo, data_str, horario, duracao_horas, prestador_nome, obs=""):
-    """
-    Gera a URL universal 'Adicionar ao Google Agenda' — funciona sem OAuth,
-    qualquer usuário pode clicar e adicionar o evento à própria conta.
-    """
     try:
         start_dt = datetime.strptime(f"{data_str} {horario}", "%Y-%m-%d %H:%M")
-        end_dt   = start_dt + timedelta(hours=float(duracao_horas or 1))
+        end_dt = start_dt + timedelta(hours=float(duracao_horas or 1))
 
         params = {
-            "action" : "TEMPLATE",
-            "text"   : f"Agendamento: {titulo}",
-            "dates"  : f"{start_dt.strftime('%Y%m%dT%H%M%S')}/{end_dt.strftime('%Y%m%dT%H%M%S')}",
+            "action": "TEMPLATE",
+            "text": f"Agendamento: {titulo}",
+            "dates": f"{start_dt.strftime('%Y%m%dT%H%M%S')}/{end_dt.strftime('%Y%m%dT%H%M%S')}",
             "details": f"Prestador: {prestador_nome}\nObservações: {obs or '—'}\n\nAgendado via Agenda Fácil",
-            "ctz"    : "America/Sao_Paulo",
+            "ctz": "America/Sao_Paulo",
         }
         return "https://calendar.google.com/calendar/render?" + urlencode(params)
     except Exception as e:
@@ -95,15 +137,11 @@ def gerar_url_google_agenda(titulo, data_str, horario, duracao_horas, prestador_
 
 
 def criar_evento_google_calendar(access_token, titulo, data_str, horario,
-                                  duracao_horas, prestador_nome,
-                                  cliente_email, prestador_email, obs=""):
-    """
-    Cria um evento no Google Calendar do usuário via API OAuth e envia
-    convite automático para o e-mail do prestador.
-    """
+                                 duracao_horas, prestador_nome,
+                                 cliente_email, prestador_email, obs=""):
     try:
         start_dt = datetime.strptime(f"{data_str} {horario}", "%Y-%m-%d %H:%M")
-        end_dt   = start_dt + timedelta(hours=float(duracao_horas or 1))
+        end_dt = start_dt + timedelta(hours=float(duracao_horas or 1))
 
         evento = {
             "summary": f"Agendamento: {titulo}",
@@ -120,18 +158,17 @@ def criar_evento_google_calendar(access_token, titulo, data_str, horario,
                 "dateTime": end_dt.strftime("%Y-%m-%dT%H:%M:%S"),
                 "timeZone": "America/Sao_Paulo",
             },
-            # ← Envia convite para o prestador automaticamente
             "attendees": [
-                {"email": cliente_email,   "displayName": "Cliente"},
+                {"email": cliente_email, "displayName": "Cliente"},
                 {"email": prestador_email, "displayName": prestador_nome},
             ],
-            "guestsCanModify"        : False,
+            "guestsCanModify": False,
             "guestsCanSeeOtherGuests": True,
             "reminders": {
                 "useDefault": False,
                 "overrides": [
-                    {"method": "email",  "minutes": 1440},  # 24h antes
-                    {"method": "popup",  "minutes": 60},    # 1h antes
+                    {"method": "email", "minutes": 1440},
+                    {"method": "popup", "minutes": 60},
                 ],
             },
         }
@@ -142,7 +179,6 @@ def criar_evento_google_calendar(access_token, titulo, data_str, horario,
         }
 
         res = http_requests.post(
-            # sendUpdates=all → Google envia e-mail de convite para os attendees
             "https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=all",
             headers=headers,
             json=evento,
@@ -155,18 +191,17 @@ def criar_evento_google_calendar(access_token, titulo, data_str, horario,
         else:
             print(f"[Calendar] Erro {res.status_code}: {res.text}")
             return False, None
-
     except Exception as e:
         print(f"[Calendar] Exceção ao criar evento: {e}")
         return False, None
 
+
 # =========================
-# NOTIFICAÇÕES — helpers
+# NOTIFICAÇÕES — HELPER
 # =========================
 def criar_notificacao(prestador_email, tipo, mensagem, agendamento_id=None):
-    """Insere uma notificação para o prestador."""
     try:
-        conn   = connectar()
+        conn = connectar()
         cursor = conn.cursor()
         cursor.execute(
             """INSERT INTO notificacoes (prestador_email, tipo, mensagem, agendamento_id)
@@ -177,8 +212,11 @@ def criar_notificacao(prestador_email, tipo, mensagem, agendamento_id=None):
     except Exception as e:
         print(f"[Notificações] Erro ao criar: {e}")
     finally:
-        try: cursor.close(); conn.close()
-        except: pass
+        try:
+            cursor.close(); conn.close()
+        except:
+            pass
+
 
 # =========================
 # GOOGLE LOGIN
@@ -197,29 +235,26 @@ def callback():
     if not user_info:
         return render_template("login.html", erro="Erro ao obter dados do Google.")
 
-    nome      = user_info.get("given_name", "")
+    nome = user_info.get("given_name", "")
     sobrenome = user_info.get("family_name", "")
-    email     = user_info.get("email")
+    email = user_info.get("email")
 
-    # ← NOVO: guarda o access_token na sessão para usar no Calendar
     session["google_token"] = token.get("access_token")
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # Verifica se já existe como prestador
     cursor.execute("SELECT * FROM cadastro_prestadores WHERE email = %s", (email,))
     prestador = cursor.fetchone()
 
     if prestador:
         session["usuario_logado"] = email
-        session["tipo_usuario"]   = "prestador"
-        session["usuario_nome"]   = prestador["nome"] + " " + prestador["sobrenome"]
-        cursor.close()
+        session["tipo_usuario"] = "prestador"
+        session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
+        cursor.close();
         conn.close()
         return redirect(url_for("servicos"))
 
-    # Verifica se já existe como cliente
     cursor.execute("SELECT * FROM cadastro_clientes WHERE email = %s", (email,))
     cliente = cursor.fetchone()
 
@@ -233,13 +268,14 @@ def callback():
         except Exception as e:
             print("Erro ao criar conta Google:", e)
 
-    cursor.close()
+    cursor.close();
     conn.close()
 
     session["usuario_logado"] = email
-    session["tipo_usuario"]   = "cliente"
-    session["usuario_nome"]   = nome + " " + sobrenome
+    session["tipo_usuario"] = "cliente"
+    session["usuario_nome"] = nome + " " + sobrenome
     return redirect(url_for("servicos"))
+
 
 # =========================
 # PÁGINAS PÚBLICAS
@@ -248,17 +284,20 @@ def callback():
 def index():
     return render_template("principal.html")
 
+
 @app.route("/cadastro")
 def cadastro():
     return render_template("cadastro.html")
+
 
 @app.route("/login")
 def login():
     return render_template("login.html")
 
+
 @app.route("/servicos")
 def servicos():
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT s.*, p.nome, p.sobrenome, p.areas_atuacao
@@ -267,24 +306,30 @@ def servicos():
         ORDER BY s.id DESC
     """)
     lista = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return render_template("servicos.html", servicos=lista)
+
 
 @app.route("/perfil")
 def perfil():
     return render_template("cliente.html")
 
+
 @app.route("/prestador")
 def prestador():
     return render_template("prestador.html")
+
 
 @app.route("/orcamentos")
 def orcamento():
     return render_template("orcamentos.html")
 
+
 @app.route("/painel")
 def painel():
     return render_template("painel.html")
+
 
 @app.route("/formulario")
 def formulario():
@@ -292,13 +337,16 @@ def formulario():
         return redirect(url_for("login"))
     return render_template("formulario.html")
 
+
 @app.route("/agendamentos")
 def agendamentos():
     return render_template("agendamento.html")
 
+
 @app.route("/sucesso-agendamento")
 def sucesso_servico():
     return render_template("sucessoservico.html")
+
 
 @app.route("/sucesso-orcamento")
 def sucesso_orcamento():
@@ -311,6 +359,7 @@ def sucesso_conclusao():
         return redirect(url_for("login"))
     return render_template("sucesso_conclusao.html")
 
+
 # =========================
 # AUTENTICAÇÃO
 # =========================
@@ -318,44 +367,37 @@ def sucesso_conclusao():
 def autenticar():
     email = request.form["email"]
     senha = request.form["senha"]
-    # Pega o valor da caixinha (se marcada, retorna 'on' ou o value dela)
     lembrar = request.form.get("lembrar")
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # Verifica prestador
     cursor.execute("SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s", (email, senha))
     prestador = cursor.fetchone()
 
     if prestador:
-        # ATIVA O LEMBRAR DE MIM
         session.permanent = True if lembrar else False
-
         session["usuario_logado"] = email
         session["tipo_usuario"] = "prestador"
         session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
-        cursor.close()
+        cursor.close();
         conn.close()
         return redirect(url_for("servicos"))
 
-    # Verifica cliente
     cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
     cliente = cursor.fetchone()
-
-    cursor.close()
+    cursor.close();
     conn.close()
 
     if cliente:
-        # ATIVA O LEMBRAR DE MIM
         session.permanent = True if lembrar else False
-
         session["usuario_logado"] = email
         session["tipo_usuario"] = "cliente"
         session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
         return redirect(url_for("avaliar"))
 
     return render_template("login.html", erro="E-mail ou senha inválidos")
+
 
 # =========================
 # CADASTRO CLIENTE
@@ -367,7 +409,7 @@ def salvar():
         request.form["data_nascimento"], request.form["sexo"],
         request.form["email"], request.form["senha"],
     )
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     try:
         cursor.execute(
@@ -379,7 +421,9 @@ def salvar():
     except Exception as e:
         return render_template("cadastro.html", erro=str(e))
     finally:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
+
 
 # =========================
 # CADASTRO PRESTADOR
@@ -392,7 +436,7 @@ def salvar_prestador():
         request.form["email"], request.form["senha"],
         request.form["areas_atuacao"],
     )
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     try:
         cursor.execute(
@@ -404,7 +448,9 @@ def salvar_prestador():
     except Exception as e:
         return render_template("prestador.html", erro=str(e))
     finally:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
+
 
 # =========================
 # AGENDAMENTO
@@ -414,11 +460,11 @@ def salvar_agendamento():
     if "usuario_logado" not in session:
         return jsonify({"erro": "Usuário não logado"}), 401
 
-    dados           = request.get_json()
-    cliente_email   = session["usuario_logado"]
+    dados = request.get_json()
+    cliente_email = session["usuario_logado"]
     prestador_email = dados.get("prestador_email")
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("SELECT nome, sobrenome FROM cadastro_clientes WHERE email = %s", (cliente_email,))
@@ -431,7 +477,7 @@ def salvar_agendamento():
         "SELECT duracao FROM servicos_anunciados WHERE titulo = %s AND prestador_email = %s LIMIT 1",
         (dados.get("servico"), prestador_email)
     )
-    servico_row   = cursor.fetchone()
+    servico_row = cursor.fetchone()
     duracao_horas = servico_row["duracao"] if servico_row else 1
 
     valores = (
@@ -449,17 +495,15 @@ def salvar_agendamento():
         conn.commit()
         agendamento_id = cursor.lastrowid
 
-        nome_cliente   = f"{cliente['nome']} {cliente['sobrenome']}" if cliente else cliente_email
+        nome_cliente = f"{cliente['nome']} {cliente['sobrenome']}" if cliente else cliente_email
         nome_prestador = f"{prestador_row['nome']} {prestador_row['sobrenome']}" if prestador_row else prestador_email
 
-        # Notificação para o prestador
         msg_notif = (
             f"Novo agendamento de {nome_cliente} — "
             f"{dados.get('servico')} em {dados.get('data')} às {dados.get('horario')}"
         )
         criar_notificacao(prestador_email, "novo_agendamento", msg_notif, agendamento_id)
 
-        # Google Calendar
         calendar_url = gerar_url_google_agenda(
             titulo=dados.get("servico", "Serviço"), data_str=dados.get("data"),
             horario=dados.get("horario"), duracao_horas=duracao_horas,
@@ -474,22 +518,20 @@ def salvar_agendamento():
                 cliente_email=cliente_email, prestador_email=prestador_email,
                 obs=dados.get("obs", ""),
             )
-            if not ok:
-                print("[Calendar] Usando URL universal.")
-
         return jsonify({
-            "mensagem":       "Agendamento salvo!",
-            "id":             agendamento_id,
-            "nome_cliente":   nome_cliente,
+            "mensagem": "Agendamento saved!",
+            "id": agendamento_id,
+            "nome_cliente": nome_cliente,
             "nome_prestador": nome_prestador,
-            "email_cliente":  cliente_email,
-            "calendar_url":   calendar_url,
+            "email_cliente": cliente_email,
+            "calendar_url": calendar_url,
         }), 200
-
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     finally:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
+
 
 # =========================
 # SERVIÇOS PRESTADOR
@@ -499,12 +541,12 @@ def salvar_servico_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    dados  = request.get_json()
+    dados = request.get_json()
     valores = (
         session["usuario_logado"], dados.get("titulo"), dados.get("descricao"),
         dados.get("preco"), dados.get("categoria"), dados.get("duracao"),
     )
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     try:
         cursor.execute(
@@ -516,7 +558,9 @@ def salvar_servico_prestador():
     except Exception as e:
         return jsonify({"erro": str(e)})
     finally:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
+
 
 # =========================
 # API SERVIÇOS
@@ -524,10 +568,8 @@ def salvar_servico_prestador():
 @app.route("/api/listar_servicos")
 def listar_servicos():
     try:
-        conn   = connectar()
+        conn = connectar()
         cursor = conn.cursor(dictionary=True)
-
-        # Inclui nome do prestador e média de avaliações (da tabela avaliacoes_prestadores).
         cursor.execute("""
             SELECT
                 s.*, 
@@ -545,53 +587,31 @@ def listar_servicos():
             GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao
             ORDER BY s.id DESC
         """)
-
         dados = cursor.fetchall()
 
-        # Back-compat: aliases usados no front
         for row in dados:
             row["avaliacao_media"] = row.get("media_nota")
-            row["nome_prestador"] = (
-                f"{row.get('prestador_nome','')} {row.get('prestador_sobrenome','')}"
-            ).strip() or "Prestador"
+            row[
+                "nome_prestador"] = f"{row.get('prestador_nome', '')} {row.get('prestador_sobrenome', '')}".strip() or "Prestador"
 
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
         return jsonify(dados)
-
     except Exception as e:
-        # Retorna JSON sempre (evita o front tentar parsear HTML como JSON)
-        try:
-            import traceback
-            tb = traceback.format_exc()
-        except:
-            tb = None
-        print(f"[api/listar_servicos] erro: {e}\n{tb or ''}")
-        try:
-            return jsonify({"erro": "Falha ao listar serviços", "detalhes": str(e)}), 500
-        except:
-            # fallback caso o jsonify falhe
-            return ("Falha ao listar serviços", 500)
-    finally:
-        try:
-            cursor.close()
-        except:
-            pass
-        try:
-            conn.close()
-        except:
-            pass
-
+        print(f"[api/listar_servicos] erro: {e}")
+        return jsonify({"erro": "Falha ao listar serviços", "detalhes": str(e)}), 500
 
 
 @app.route("/api/meus_servicos")
 def meus_servicos():
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM servicos_anunciados WHERE prestador_email=%s", (session["usuario_logado"],))
     dados = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify(dados)
 
 
@@ -599,31 +619,36 @@ def meus_servicos():
 def excluir_servico(id):
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM servicos_anunciados WHERE id=%s AND prestador_email=%s", (id, session["usuario_logado"]))
+    cursor.execute("DELETE FROM servicos_anunciados WHERE id=%s AND prestador_email=%s",
+                   (id, session["usuario_logado"]))
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify({"mensagem": "ok"})
+
 
 # =========================
 # API: HORÁRIOS BLOQUEADOS
 # =========================
 @app.route("/api/horarios_bloqueados")
 def horarios_bloqueados():
-    data            = request.args.get("data")
+    data = request.args.get("data")
     prestador_email = request.args.get("prestador_email")
     if not data or not prestador_email:
         return jsonify([])
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT horario FROM agendamentos WHERE data_servico=%s AND prestador_email=%s AND status NOT IN ('cancelado')",
         (data, prestador_email)
     )
-    rows    = cursor.fetchall()
-    cursor.close(); conn.close()
+    rows = cursor.fetchall()
+    cursor.close();
+    conn.close()
     return jsonify([r["horario"] for r in rows])
+
 
 # =========================
 # API: PRESTADORES POR ÁREA
@@ -633,15 +658,17 @@ def prestadores_por_categoria():
     categoria = request.args.get("categoria", "").lower()
     if not categoria:
         return jsonify([])
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         "SELECT nome, sobrenome, email FROM cadastro_prestadores WHERE LOWER(areas_atuacao) LIKE %s",
         (f"%{categoria}%",)
     )
     dados = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify(dados)
+
 
 # =========================
 # CANCELAR AGENDAMENTO (CLIENTE)
@@ -651,10 +678,8 @@ def cancelar_agendamento(id):
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
-
-    # Busca o agendamento antes de cancelar (para notificar o prestador)
     cursor.execute("SELECT * FROM agendamentos WHERE id=%s AND cliente_email=%s", (id, session["usuario_logado"]))
     ag = cursor.fetchone()
 
@@ -663,17 +688,18 @@ def cancelar_agendamento(id):
         (id, session["usuario_logado"])
     )
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
     if ag:
         criar_notificacao(
             ag["prestador_email"],
             "cancelamento",
-            f"Agendamento #{id} foi cancelado pelo cliente — {ag.get('servico','')} em {ag.get('data_servico','')}",
+            f"Agendamento #{id} foi cancelado pelo cliente — {ag.get('servico', '')} em {ag.get('data_servico', '')}",
             id,
         )
-
     return jsonify({"mensagem": "Agendamento cancelado"})
+
 
 # =========================
 # ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR)
@@ -683,47 +709,43 @@ def atualizar_status(id):
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
 
-    dados      = request.get_json() or {}
+    dados = request.get_json() or {}
     novo_status = dados.get("status")
     STATUS_VALIDOS = ["pendente", "confirmado", "em_andamento", "concluido", "cancelado", "recusado"]
 
     if novo_status not in STATUS_VALIDOS:
         return jsonify({"erro": "Status inválido"}), 400
 
-
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("SELECT * FROM agendamentos WHERE id=%s", (id,))
     ag = cursor.fetchone()
 
     cursor.execute("UPDATE agendamentos SET status=%s WHERE id=%s", (novo_status, id))
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
-    # Notificação quando concluído
     if ag and novo_status == "concluido":
         criar_notificacao(
             ag["prestador_email"],
             "conclusao",
-            f"Serviço #{id} marcado como concluído — {ag.get('servico','')}",
+            f"Serviço #{id} marcado como concluído — {ag.get('servico', '')}",
             id,
         )
+    return jsonify({"mensagem": "Status updated"})
 
-    return jsonify({"mensagem": "Status atualizado"})
 
 # =========================
-# RECUSAR AGENDAMENTO (PRESTADOR → CLIENTE)
+# RECUSAR AGENDAMENTO (PRESTADOR)
 # =========================
 @app.route("/api/recusar_agendamento/<int:id>", methods=["PATCH"])
 def recusar_agendamento(id):
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
-
-    # Garante que o agendamento pertence ao prestador logado
     cursor.execute(
         "SELECT * FROM agendamentos WHERE id=%s AND prestador_email=%s",
         (id, session["usuario_logado"]),
@@ -731,22 +753,20 @@ def recusar_agendamento(id):
     ag = cursor.fetchone()
 
     if not ag:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
         return jsonify({"erro": "Agendamento não encontrado"}), 404
 
-    cursor.execute(
-        "UPDATE agendamentos SET status='recusado' WHERE id=%s",
-        (id,),
-    )
+    cursor.execute("UPDATE agendamentos SET status='recusado' WHERE id=%s", (id,))
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
-    # Notificação para o prestador (mantém consistência com o sistema já existente)
     try:
         criar_notificacao(
             ag["prestador_email"],
             "recusado",
-            f"Agendamento #{id} foi recusado pelo prestador — {ag.get('servico','')}",
+            f"Agendamento #{id} foi recusado pelo prestador — {ag.get('servico', '')}",
             id,
         )
     except Exception:
@@ -758,12 +778,11 @@ def recusar_agendamento(id):
 # =========================
 # AGENDAMENTOS DO CLIENTE
 # =========================
-
 @app.route("/api/meus_agendamentos")
 def meus_agendamentos():
     if "usuario_logado" not in session:
         return jsonify({"erro": "não logado"}), 401
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT a.*, p.nome AS prestador_nome, p.sobrenome AS prestador_sobrenome
@@ -773,8 +792,10 @@ def meus_agendamentos():
         ORDER BY a.data_servico DESC, a.horario DESC
     """, (session["usuario_logado"],))
     dados = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify(dados)
+
 
 # =========================
 # AGENDAMENTOS DO PRESTADOR
@@ -783,7 +804,7 @@ def meus_agendamentos():
 def agendamentos_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT a.*, c.nome AS cliente_nome, c.sobrenome AS cliente_sobrenome
@@ -793,8 +814,10 @@ def agendamentos_prestador():
         ORDER BY a.data_servico DESC, a.horario DESC
     """, (session["usuario_logado"],))
     dados = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify(dados)
+
 
 # =========================
 # NOTIFICAÇÕES DO PRESTADOR
@@ -804,7 +827,7 @@ def listar_notificacoes():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT id, tipo, mensagem, lida, criada_em, agendamento_id
@@ -820,9 +843,9 @@ def listar_notificacoes():
         (session["usuario_logado"],)
     )
     nao_lidas = cursor.fetchone()["total"]
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
-    # Serializar datetime
     for n in notifs:
         if hasattr(n.get("criada_em"), "isoformat"):
             n["criada_em"] = n["criada_em"].isoformat()
@@ -835,14 +858,15 @@ def marcar_notificacao_lida(id):
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     cursor.execute(
         "UPDATE notificacoes SET lida=1 WHERE id=%s AND prestador_email=%s",
         (id, session["usuario_logado"])
     )
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify({"mensagem": "Notificação marcada como lida"})
 
 
@@ -851,22 +875,24 @@ def marcar_todas_lidas():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     cursor.execute(
         "UPDATE notificacoes SET lida=1 WHERE prestador_email=%s AND lida=0",
         (session["usuario_logado"],)
     )
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     return jsonify({"mensagem": "Todas as notificações marcadas como lidas"})
+
 
 # =========================
 # PERFIL DO PRESTADOR
 # =========================
 @app.route("/perfil_prestador/<email>")
 def perfil_prestador(email):
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
@@ -877,7 +903,8 @@ def perfil_prestador(email):
     """, (email,))
     prestador = cursor.fetchone()
     if not prestador:
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
         return "Prestador não encontrado", 404
 
     cursor.execute(
@@ -886,7 +913,6 @@ def perfil_prestador(email):
     )
     servicos = cursor.fetchall()
 
-    # ── NOVO: todos os agendamentos do prestador (para a aba Pedidos) ──
     cursor.execute("""
         SELECT a.*, c.nome AS cliente_nome, c.sobrenome AS cliente_sobrenome
         FROM agendamentos a
@@ -905,7 +931,6 @@ def perfil_prestador(email):
     """, (email,))
     todos_agendamentos = cursor.fetchall()
 
-    # Serializar datas (DATE → string "YYYY-MM-DD")
     for ag in todos_agendamentos:
         if ag.get("data_servico") and hasattr(ag["data_servico"], "strftime"):
             ag["data_servico"] = ag["data_servico"].strftime("%Y-%m-%d")
@@ -917,13 +942,14 @@ def perfil_prestador(email):
     row = cursor.fetchone()
     agendamentos_count = row["total"] if row else 0
 
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
     return render_template(
         "perfil-prestador.html",
         prestador=prestador,
         servicos=servicos,
-        todos_agendamentos=todos_agendamentos,   # ← variável nova
+        todos_agendamentos=todos_agendamentos,
         agendamentos_count=agendamentos_count,
     )
 
@@ -936,7 +962,7 @@ def perfil_cliente():
     if "usuario_logado" not in session:
         return redirect(url_for("login"))
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM cadastro_clientes WHERE email = %s", (session["usuario_logado"],))
     cliente = cursor.fetchone()
@@ -949,7 +975,8 @@ def perfil_cliente():
         ORDER BY a.data_servico DESC
     """, (session["usuario_logado"],))
     agendamentos = cursor.fetchall()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
     return render_template("perfil-cliente.html", cliente=cliente, agendamentos=agendamentos)
 
@@ -962,15 +989,18 @@ def meu_perfil():
         return redirect(url_for("perfil_prestador", email=session["usuario_logado"]))
     return redirect(url_for("perfil_cliente"))
 
+
 # =========================
-# UPLOAD DE FOTO DE PERFIL
+# UPLOAD FOTO DE PERFIL
 # =========================
 UPLOAD_FOLDER = os.path.join("static", "uploads", "fotos")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route("/salvar_foto", methods=["POST"])
 def salvar_foto():
@@ -982,32 +1012,33 @@ def salvar_foto():
         if not file or not allowed_file(file.filename):
             return jsonify({"erro": "Arquivo inválido. Use PNG, JPG ou WEBP."}), 400
 
-        ext        = file.filename.rsplit(".", 1)[1].lower()
+        ext = file.filename.rsplit(".", 1)[1].lower()
         email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
-        filename   = f"{email_safe}.{ext}"
-        filepath   = os.path.join(UPLOAD_FOLDER, filename)
+        filename = f"{email_safe}.{ext}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
-        url  = "/" + filepath.replace("\\", "/")
+        url = "/" + filepath.replace("\\", "/")
 
         tipo = session.get("tipo_usuario", "cliente")
-        conn   = connectar()
+        conn = connectar()
         cursor = conn.cursor()
-        table  = "cadastro_prestadores" if tipo == "prestador" else "cadastro_clientes"
+        table = "cadastro_prestadores" if tipo == "prestador" else "cadastro_clientes"
         cursor.execute(f"UPDATE {table} SET foto=%s WHERE email=%s", (url, session["usuario_logado"]))
         conn.commit()
-        cursor.close(); conn.close()
+        cursor.close();
+        conn.close()
 
         return jsonify({"mensagem": "Foto salva!", "url": url})
-
     except Exception as e:
-        # Garante que o front sempre receba JSON (evita parse de HTML)
         return jsonify({"erro": str(e)}), 500
+
 
 # =========================
 # UPLOAD DE CERTIFICADO
 # =========================
 CERT_FOLDER = os.path.join("static", "uploads", "certificados")
 os.makedirs(CERT_FOLDER, exist_ok=True)
+
 
 @app.route("/salvar_certificado", methods=["POST"])
 def salvar_certificado():
@@ -1022,21 +1053,23 @@ def salvar_certificado():
 
     import time
     email_safe = session["usuario_logado"].replace("@", "_").replace(".", "_")
-    filename   = f"{email_safe}_{int(time.time())}.{ext}"
-    filepath   = os.path.join(CERT_FOLDER, filename)
+    filename = f"{email_safe}_{int(time.time())}.{ext}"
+    filepath = os.path.join(CERT_FOLDER, filename)
     file.save(filepath)
     url = "/" + filepath.replace("\\", "/")
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT certificados FROM cadastro_prestadores WHERE email=%s", (session["usuario_logado"],))
-    row       = cursor.fetchone()
+    row = cursor.fetchone()
     existentes = row["certificados"] or "" if row else ""
-    novos      = (existentes + "," + url).strip(",")
+    novos = (existentes + "," + url).strip(",")
     cursor.execute("UPDATE cadastro_prestadores SET certificados=%s WHERE email=%s", (novos, session["usuario_logado"]))
     conn.commit()
-    cursor.close(); conn.close()
-    return jsonify({"mensagem": "Certificado salvo!", "url": url})
+    cursor.close();
+    conn.close()
+    return jsonify({"mensagem": "Certificado salva!", "url": url})
+
 
 # =========================
 # EDITAR PERFIL
@@ -1046,14 +1079,14 @@ def editar_perfil_cliente():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
         return jsonify({"erro": "Acesso negado"}), 401
 
-    dados     = request.get_json() or {}
-    nome      = (dados.get("nome", "") or "").strip()
+    dados = request.get_json() or {}
+    nome = (dados.get("nome", "") or "").strip()
     sobrenome = (dados.get("sobrenome", "") or "").strip()
 
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
 
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     try:
         cursor.execute(
@@ -1069,7 +1102,6 @@ def editar_perfil_cliente():
         )
         conn.commit()
     except Exception as e:
-        # retorna a causa real para o front-end (evita erro 500 genérico)
         return jsonify({"erro": str(e)}), 500
     finally:
         try:
@@ -1082,12 +1114,7 @@ def editar_perfil_cliente():
             pass
 
     session["usuario_nome"] = f"{nome} {sobrenome}".strip()
-    # Debug/telemetria: garante que o front receba confirmação real
-    try:
-        print(f"[EDITAR PERFIL CLIENTE] email={session.get('usuario_logado')} nome={nome} sobrenome={sobrenome} telefone={(dados.get('telefone','') or '').strip()} cidade={(dados.get('cidade','') or '').strip()} sexo={(dados.get('sexo','') or '').strip()}")
-    except:
-        pass
-    return jsonify({"mensagem": "Perfil atualizado!"})
+    return jsonify({"mensagem": "Perfil updated!"})
 
 
 @app.route("/editar_perfil_prestador", methods=["POST"])
@@ -1095,41 +1122,21 @@ def editar_perfil_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
     dados = request.get_json(silent=True) or {}
-    nome      = (dados.get("nome", "") or "").strip()
+    nome = (dados.get("nome", "") or "").strip()
     sobrenome = (dados.get("sobrenome", "") or "").strip()
     if not nome:
         return jsonify({"erro": "Nome é obrigatório"}), 400
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor()
     cursor.execute(
         "UPDATE cadastro_prestadores SET nome=%s, sobrenome=%s, telefone=%s, sexo=%s WHERE email=%s",
         (nome, sobrenome, dados.get("telefone", "").strip(), dados.get("sexo", "").strip(), session["usuario_logado"])
     )
     conn.commit()
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
     session["usuario_nome"] = f"{nome} {sobrenome}"
-    return jsonify({"mensagem": "Perfil atualizado!"})
-
-# =========================
-# ADMIN — AUTH
-# =========================
-import bcrypt
-from functools import wraps
-
-def is_admin_logged_in():
-    return session.get("tipo_usuario") == "admin" and bool(session.get("usuario_logado"))
-
-def admin_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        if not is_admin_logged_in():
-            return redirect(url_for("admin_login_page"))
-        return fn(*args, **kwargs)
-    return wrapper
-
-@app.route("/admin/login", methods=["GET"])
-def admin_login_page():
-    return render_template("admin/login.html", erro=None)
+    return jsonify({"mensagem": "Perfil updated!"})
 
 
 # =========================
@@ -1154,22 +1161,15 @@ def esqueci_senha():
     conn.close()
 
     if cliente or prestador:
-        # Gera um token criptografado com o e-mail da pessoa
         token = serializer.dumps(email, salt='reset-senha')
-        # Cria o link mágico
         link = url_for('resetar_senha', token=token, _external=True)
 
-        # ⚠️ COMO VOCÊ AINDA NÃO TEM UM SERVIDOR DE E-MAIL (SMTP) CONFIGURADO,
-        # ESTAMOS PRINTANDO O LINK NO TERMINAL DO PYTHON PARA VOCÊ TESTAR!
-        print("\n" + "=" * 50)
-        print("LINK DE RECUPERAÇÃO DE SENHA GERADO:")
-        print(link)
-        print("=" * 50 + "\n")
+        # Dispara o e-mail de redefinição real usando a API da Resend
+        enviar_email_recuperacao(email, link)
 
         return render_template("esqueci_senha.html",
                                sucesso="Se o e-mail estiver cadastrado, as instruções serão enviadas.")
 
-    # Se não existir, dá a mesma mensagem (para evitar invasores descobrindo e-mails válidos)
     return render_template("esqueci_senha.html",
                            sucesso="Se o e-mail estiver cadastrado, as instruções serão enviadas.")
 
@@ -1177,7 +1177,6 @@ def esqueci_senha():
 @app.route("/resetar_senha/<token>", methods=["GET", "POST"])
 def resetar_senha(token):
     try:
-        # O token expira em 1 hora (3600 segundos)
         email = serializer.loads(token, salt='reset-senha', max_age=3600)
     except Exception:
         return "O link de recuperação é inválido ou expirou.", 400
@@ -1189,16 +1188,22 @@ def resetar_senha(token):
 
     conn = connectar()
     cursor = conn.cursor()
-
-    # Atualiza a senha nas duas tabelas (ele só vai atualizar na que a pessoa realmente estiver)
     cursor.execute("UPDATE cadastro_clientes SET senha=%s WHERE email=%s", (nova_senha, email))
     cursor.execute("UPDATE cadastro_prestadores SET senha=%s WHERE email=%s", (nova_senha, email))
-
     conn.commit()
     cursor.close();
     conn.close()
 
     return redirect(url_for("login", mensagem="Senha atualizada com sucesso! Faça seu login."))
+
+
+# =========================
+# ADMIN — AUTH
+# =========================
+@app.route("/admin/login", methods=["GET"])
+def admin_login_page():
+    return render_template("admin/login.html", erro=None)
+
 
 @app.route("/admin/autenticar", methods=["POST"])
 def admin_autenticar():
@@ -1209,54 +1214,41 @@ def admin_autenticar():
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT email, senha_hash, ativo FROM admins WHERE email=%s", (email,))
     admin = cursor.fetchone()
-    cursor.close()
+    cursor.close();
     conn.close()
 
     if not admin or not admin.get("ativo"):
-        return render_template("login.html", erro="Credenciais de admin inválidas")
+        return render_template("login.html", erro="Credenciais inválidas")
 
     senha_hash = admin.get("senha_hash")
-    if not senha_hash:
-        return render_template("login.html", erro="Credenciais de admin inválidas")
-
     try:
-        hash_bytes = senha_hash.encode("utf-8")
-        print(f"[ADMIN LOGIN] email={email} senha_len={len(senha)}")
-        print(f"[ADMIN LOGIN] stored_hash_prefix={senha_hash[:10]}")
-
-        if not bcrypt.checkpw(senha.encode("utf-8"), hash_bytes):
-            return render_template("login.html", erro="Credenciais de admin inválidas")
-
-    except Exception as e:
-        print(f"[ADMIN LOGIN] erro bcrypt: {e}")
-        return render_template("login.html", erro="Credenciais de admin inválidas")
+        if not bcrypt.checkpw(senha.encode("utf-8"), senha_hash.encode("utf-8")):
+            return render_template("login.html", erro="Credenciais inválidas")
+    except Exception:
+        return render_template("login.html", erro="Credenciais inválidas")
 
     session["usuario_logado"] = admin["email"]
-    session["tipo_usuario"]   = "admin"
-    session["usuario_nome"]   = admin["email"]
-
+    session["tipo_usuario"] = "admin"
+    session["usuario_nome"] = admin["email"]
     return redirect(url_for("admin_dashboard"))
+
 
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("index"))
 
-# =========================
-# ADMIN — DASHBOARD
-# =========================
+
 @app.route("/admin", methods=["GET"])
 @admin_required
 def admin_dashboard():
     return render_template("admin/dashboard.html")
 
-# =========================
-# ADMIN — API METRICS
-# =========================
+
 @app.route("/admin/api/metrics", methods=["GET"])
 @admin_required
 def admin_metrics():
-    conn   = connectar()
+    conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("SELECT COUNT(*) AS total FROM cadastro_clientes")
@@ -1269,7 +1261,6 @@ def admin_metrics():
     cursor.execute("SELECT COUNT(*) AS total FROM agendamentos WHERE data_servico=%s", (hoje,))
     services_requested_today = cursor.fetchone()["total"]
 
-    # Status counts
     cursor.execute("SELECT status, COUNT(*) AS total FROM agendamentos GROUP BY status")
     status_counts = {"pendente": 0, "em_andamento": 0, "concluido": 0, "cancelado": 0}
     for r in cursor.fetchall():
@@ -1277,7 +1268,6 @@ def admin_metrics():
         if st in status_counts:
             status_counts[st] = int(r["total"] or 0)
 
-    # Últimos 7 dias
     cursor.execute("""
         SELECT DATE(data_servico) AS dia, COUNT(*) AS total
         FROM agendamentos
@@ -1291,10 +1281,7 @@ def admin_metrics():
         dia = dr["dia"]
         labels.append(dia.strftime("%d/%m") if hasattr(dia, "strftime") else str(dia))
         values.append(int(dr["total"] or 0))
-    while len(labels) < 7:
-        labels.append(""); values.append(0)
 
-    # Top prestadores
     cursor.execute("""
         SELECT
             a.prestador_email AS email,
@@ -1311,52 +1298,54 @@ def admin_metrics():
     """)
     top_prestadores = [
         {
-            "email":             r["email"],
-            "prestador_nome":    f"{r.get('prestador_nome') or ''} {r.get('prestador_sobrenome') or ''}".strip(),
+            "email": r["email"],
+            "prestador_nome": f"{r.get('prestador_nome') or ''} {r.get('prestador_sobrenome') or ''}".strip(),
             "agendamentos_count": int(r["agendamentos_count"] or 0),
-            "concluido_count":   int(r["concluido_count"] or 0),
+            "concluido_count": int(r["concluido_count"] or 0),
         }
         for r in cursor.fetchall()
     ]
 
-    # Total concluídos
     cursor.execute("SELECT COUNT(*) AS total FROM agendamentos WHERE status='concluido'")
     total_concluidos = cursor.fetchone()["total"]
 
-    cursor.close(); conn.close()
+    cursor.close();
+    conn.close()
 
     return jsonify({
-        "total_clients":           total_clients,
-        "total_providers":         total_providers,
+        "total_clients": total_clients,
+        "total_providers": total_providers,
         "services_requested_today": services_requested_today,
-        "status_counts":           status_counts,
-        "solicitations_last_7":    {"labels": labels, "values": values},
-        "top_prestadores":         top_prestadores,
-        "total_concluidos":        total_concluidos,
+        "status_counts": status_counts,
+        "solicitations_last_7": {"labels": labels, "values": values},
+        "top_prestadores": top_prestadores,
+        "total_concluidos": total_concluidos,
     })
 
-# =========================
-# ADMIN — OUTRAS PÁGINAS
-# =========================
+
 @app.route("/admin/solicitacoes")
 @admin_required
 def admin_solicitacoes():
     return render_template("admin/solicitacoes.html")
+
 
 @app.route("/admin/clientes")
 @admin_required
 def admin_clientes():
     return render_template("admin/clientes.html")
 
+
 @app.route("/admin/prestadores")
 @admin_required
 def admin_prestadores():
     return render_template("admin/prestadores.html")
 
+
 @app.route("/admin/notificacoes")
 @admin_required
 def admin_notificacoes():
     return render_template("admin/notificacoes.html")
+
 
 @app.route("/agendamento_confirmado")
 def agendamento_confirmado():
@@ -1367,17 +1356,15 @@ def agendamento_confirmado():
         return redirect(url_for("servicos"))
     return redirect(url_for("sucesso_servico", id=ag_id))
 
+
 # =========================
 # ROTAS DE AVALIAÇÃO — Agenda Fácil
 # ============================================================
-
 @app.route("/avaliar")
 def avaliar():
-    """Exibe a modal/fluxo de avaliação pendente imediatamente após o login (cliente)."""
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
         return redirect(url_for("servicos"))
 
-    # Reaproveita a mesma lógica da API (sem duplicar regras na tela)
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -1409,7 +1396,6 @@ def avaliar():
         if not pendente:
             return redirect(url_for("servicos"))
 
-        # A tela em avaliações pega a pendência via API, mas retornamos template mesmo assim.
         return render_template("avaliar.html", pendente=pendente)
     finally:
         try:
@@ -1422,14 +1408,8 @@ def avaliar():
             pass
 
 
-# ── 1. Verificar avaliações pendentes do cliente ─────────────
 @app.route("/api/avaliacoes_pendentes")
 def avaliacoes_pendentes():
-    """
-    Retorna o primeiro agendamento concluído ainda não avaliado
-    pelo cliente logado. Chamado automaticamente no carregamento
-    da página do cliente.
-    """
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
         return jsonify({"pendente": None})
 
@@ -1458,7 +1438,6 @@ def avaliacoes_pendentes():
         """, (session["usuario_logado"],))
         pendente = cursor.fetchone()
 
-        # Serializar DATE → string para JSON
         if pendente and pendente.get("data_servico"):
             pendente["data_servico"] = str(pendente["data_servico"])
 
@@ -1467,20 +1446,12 @@ def avaliacoes_pendentes():
         print(f"[Avaliação Pendente] Erro: {e}")
         return jsonify({"pendente": None})
     finally:
-        cursor.close()
+        cursor.close();
         conn.close()
 
 
-# ── 2. Salvar avaliação ────────────────────────────────────────
 @app.route("/api/salvar_avaliacao", methods=["POST"])
 def salvar_avaliacao():
-    """
-    Persiste a avaliação do cliente.
-    Regras:
-      - Só o cliente do agendamento pode avaliar
-      - O agendamento deve ter status 'concluido'
-      - Cada agendamento aceita apenas UMA avaliação (idempotente)
-    """
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
         return jsonify({"erro": "Acesso negado"}), 401
 
@@ -1503,7 +1474,6 @@ def salvar_avaliacao():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
     try:
-        # Verifica que o agendamento pertence ao cliente e está concluído
         cursor.execute("""
             SELECT * FROM agendamentos
             WHERE id = %s AND cliente_email = %s AND status = 'concluido'
@@ -1513,42 +1483,29 @@ def salvar_avaliacao():
         if not ag:
             return jsonify({"erro": "Agendamento não encontrado ou não autorizado"}), 403
 
-        # Bloqueia avaliação duplicada
-        cursor.execute(
-            "SELECT id FROM avaliacoes_prestadores WHERE agendamento_id = %s",
-            (agendamento_id,)
-        )
+        cursor.execute("SELECT id FROM avaliacoes_prestadores WHERE agendamento_id = %s", (agendamento_id,))
         if cursor.fetchone():
             return jsonify({"erro": "Este serviço já foi avaliado"}), 409
 
-        # Insere a avaliação
         cursor.execute("""
             INSERT INTO avaliacoes_prestadores
                 (prestador_email, cliente_email, agendamento_id, nota, comentario)
             VALUES (%s, %s, %s, %s, %s)
-        """, (ag["prestador_email"], session["usuario_logado"],
-              agendamento_id, nota, comentario))
+        """, (ag["prestador_email"], session["usuario_logado"], agendamento_id, nota, comentario))
         conn.commit()
-
         return jsonify({"mensagem": "Avaliação salva com sucesso!"})
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     finally:
-        cursor.close()
+        cursor.close();
         conn.close()
 
 
-# ── 3. Estatísticas e avaliações de um prestador ──────────────
 @app.route("/api/stats_prestador/<email>")
 def stats_prestador(email):
-    """
-    Retorna: média, total, distribuição por nota e lista de avaliações.
-    Usado no perfil do prestador (aba Avaliações + hero stats).
-    """
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
     try:
-        # Resumo estatístico
         cursor.execute("""
             SELECT
                 COUNT(*)                                          AS total,
@@ -1563,7 +1520,6 @@ def stats_prestador(email):
         """, (email,))
         stats = cursor.fetchone()
 
-        # Lista de avaliações com nome do cliente
         cursor.execute("""
             SELECT
                 av.nota,
@@ -1579,7 +1535,6 @@ def stats_prestador(email):
         """, (email,))
         avaliacoes = cursor.fetchall()
 
-        # Serializar datetime
         for av in avaliacoes:
             if hasattr(av.get("criado_em"), "isoformat"):
                 av["criado_em"] = av["criado_em"].isoformat()
@@ -1597,15 +1552,11 @@ def stats_prestador(email):
             "avaliacoes": avaliacoes,
         })
     except Exception as e:
-        return jsonify({
-            "total": 0, "media": 0, "distribuicao": {}, "avaliacoes": [],
-            "erro": str(e)
-        })
+        return jsonify({"total": 0, "media": 0, "distribuicao": {}, "avaliacoes": [], "erro": str(e)})
     finally:
-        cursor.close()
+        cursor.close();
         conn.close()
 
 
-# =========================
 if __name__ == "__main__":
     app.run(debug=True)

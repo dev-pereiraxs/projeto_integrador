@@ -92,28 +92,35 @@ body {
   align-items: center;
   font-size: 13px;
   margin-bottom: 22px;
+  padding: 0 2px;
 }
 
 .caixa-lembrar-esqueci label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 6px !important;
   color: var(--on-dark-soft);
   cursor: pointer;
+  user-select: none;
 }
 
 .caixa-lembrar-esqueci input[type="checkbox"] {
   accent-color: var(--primary);
   width: 14px;
   height: 14px;
+  margin: 0 !important;
+  cursor: pointer;
 }
 
 .caixa-lembrar-esqueci a {
   color: var(--on-dark);
   font-weight: 500;
+  text-decoration: none;
   transition: opacity .2s;
 }
-.caixa-lembrar-esqueci a:hover { opacity: .7; }
+.caixa-lembrar-esqueci a:hover {
+  opacity: .7;
+}
 
 /* ─────────────────────────────────────────────────────────────
    BOTÃO DE SUBMIT
