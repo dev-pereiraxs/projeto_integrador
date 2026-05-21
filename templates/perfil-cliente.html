@@ -143,10 +143,13 @@
     }
 
     /* ── PAGE ── */
+    /* ── PAGE ── */
     .page {
+      width: 100%;         /* Essa é a linha mágica que faltava! */
       max-width: 860px;
       margin: -36px auto 0;
       padding: 0 24px 48px;
+      flex-grow: 1;        /* Mantemos isso para empurrar o footer */
     }
 
     .stats-row {
@@ -213,58 +216,71 @@
     .tab-panel.active { display: block; }
 
     /* ── Agendamento item ── */
+   /* ── Agendamento item ── */
     .ag-item {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
+      justify-content: space-between; /* Distribui os itens nas pontas */
+      gap: 16px;
+      padding: 20px 24px; /* Aumentado: padding original mais espaçoso */
       border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 10px;
+      border-radius: 12px; /* Arredondamento um pouco maior */
+      margin-bottom: 16px; /* Mais espaço entre os cards */
+      background: var(--white);
+    }
+
+    .ag-item-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+      min-width: 0;
     }
 
     .ag-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 52px; /* Aumentado o ícone */
+      height: 52px; /* Aumentado o ícone */
+      border-radius: 12px;
       background: #eff6ff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 26px; /* Emoji maior */
       flex-shrink: 0;
     }
 
     .ag-info { flex: 1; min-width: 0; }
 
     .ag-servico {
-      font-size: 14px;
+      font-size: 16px; /* Título maior */
       font-weight: 600;
       color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 4px;
     }
 
-    .ag-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .ag-sub { font-size: 13px; color: var(--muted); line-height: 1.4; }
 
     .ag-right {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      gap: 10px; /* Mais espaço entre os elementos da direita */
       flex-shrink: 0;
+      min-width: 120px;
     }
 
-    .ag-preco { font-size: 13px; font-weight: 700; color: var(--blue); }
+    .ag-preco { font-size: 15px; font-weight: 700; color: var(--blue); }
 
     .status-badge {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 4px 10px;
       border-radius: 99px;
       text-transform: uppercase;
-      letter-spacing: .4px;
+      letter-spacing: .5px;
     }
 
     .status-pendente { background: #fef3c7; color: #92400e; }
@@ -274,19 +290,21 @@
     .status-cancelado { background: #fee2e2; color: #991b1b; }
     .status-recusado { background: #e0f2fe; color: #075985; }
 
-
     .btn-cancelar {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--red);
       background: none;
       border: 1px solid rgba(239, 68, 68, .3);
-      border-radius: 6px;
-      padding: 3px 8px;
+      border-radius: 8px;
+      padding: 6px 12px;
       cursor: pointer;
       transition: all .2s;
+      width: 100%; /* Botões ocupam a largura do bloco direito */
+      text-align: center;
     }
 
     .btn-cancelar:hover { background: rgba(239, 68, 68, .08); }
+
 
     /* ── Dados pessoais ── */
     .info-grid {
@@ -638,6 +656,66 @@
       .av-box { padding: 28px 18px 22px; }
       .av-star { font-size: 30px; }
     }
+
+    /* ── Footer ── */
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .page {
+      flex-grow: 1;
+    }
+
+    .footer {
+      background: #0f172a;
+      color: rgba(255, 255, 255, 0.55);
+      text-align: center;
+      padding: 32px 20px 24px;
+      font-size: 13px;
+      width: 100%;
+      margin-top: auto; /* Empurra para o final da tela */
+    }
+
+    .footer__inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .footer__brand {
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .footer__tagline {
+      margin: 6px 0 16px;
+    }
+
+    .footer__links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer__links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer__links a:hover {
+      color: #fff;
+    }
+
+    .footer__copy {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 14px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
 
@@ -724,22 +802,24 @@
         {% if agendamentos %}
           {% for a in agendamentos %}
           <div class="ag-item" id="ag-{{ a.id }}">
-            <div class="ag-icon">
-              {% set s = a.servico|lower %}
-              {% if 'eletr' in s %}💡
-              {% elif 'hidra' in s %}🔧
-              {% elif 'mec'   in s %}🔩
-              {% elif 'reform' in s %}🏗️
-              {% elif 'limpez' in s %}🧹
-              {% elif 'ti' in s or 'tecnol' in s %}💻
-              {% else %}⚙️{% endif %}
-            </div>
-            <div class="ag-info">
-              <div class="ag-servico">{{ a.servico }}</div>
-              <div class="ag-sub">
-                📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
-                · 🕐 {{ a.horario }}
-                {% if a.prestador_nome %}· 👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
+            <div class="ag-item-left">
+              <div class="ag-icon">
+                {% set s = a.servico|lower %}
+                {% if 'eletr' in s %}💡
+                {% elif 'hidra' in s %}🔧
+                {% elif 'mec'   in s %}🔩
+                {% elif 'reform' in s %}🏗️
+                {% elif 'limpez' in s %}🧹
+                {% elif 'ti' in s or 'tecnol' in s %}💻
+                {% else %}⚙️{% endif %}
+              </div>
+              <div class="ag-info">
+                <div class="ag-servico">{{ a.servico }}</div>
+                <div class="ag-sub">
+                  📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
+                  · 🕐 {{ a.horario }}<br>
+                  {% if a.prestador_nome %}👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
+                </div>
               </div>
             </div>
             <div class="ag-right">
@@ -747,9 +827,8 @@
               <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
               {% if a.status in ['pendente', 'confirmado'] %}
               <button class="btn-cancelar" onclick="cancelar({{ a.id }})">Cancelar</button>
-              <button class="btn-cancelar" style="margin-top:6px;border-color:rgba(2,132,199,.25);color:#075985;" onclick="recusar({{ a.id }})">Recusar</button>
+              <button class="btn-cancelar" style="border-color:rgba(2,132,199,.25);color:#075985;" onclick="recusar({{ a.id }})">Recusar</button>
               {% endif %}
-
             </div>
           </div>
           {% endfor %}
@@ -862,13 +941,23 @@
     </div>
   </div>
 
-  <footer style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
-    <div style="max-width:900px;margin:0 auto;">
-      <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
-      <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
-      <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;font-size:11px;color:rgba(255,255,255,.3);">
-        © 2025 Agenda Fácil. Todos os direitos reservados.
+<footer class="footer">
+    <div class="footer__inner">
+      <strong class="footer__brand"> Agenda Fácil </strong>
+
+      <p class="footer__tagline">
+        Conectando pessoas a profissionais de confiança.
+      </p>
+
+      <div class="footer__links">
+        <a href="#"> Termos </a>
+        <a href="#"> Privacidade </a>
+        <a href="#"> Contato </a>
       </div>
+
+      <p class="footer__copy">
+        © 2026 Agenda Fácil. Todos os direitos reservados.
+      </p>
     </div>
   </footer>
 

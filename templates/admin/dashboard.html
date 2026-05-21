@@ -65,6 +65,8 @@
         inset: 0 auto 0 0;
         z-index: 100;
         padding: 0 0 24px;
+        height: 100vh;
+        overflow-y: auto;
       }
 
       .sidebar__brand {
@@ -142,6 +144,7 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        width: calc(100% - var(--sidebar-w));
       }
 
       /* ── Topbar ── */
@@ -156,6 +159,19 @@
         position: sticky;
         top: 0;
         z-index: 50;
+      }
+      .topbar-left {
+        display: flex;
+        align-items: center;
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--ink);
+        margin-right: 16px;
       }
       .topbar__title {
         font-size: 15px;
@@ -233,11 +249,6 @@
         gap: 14px;
         margin-bottom: 28px;
       }
-      @media (max-width: 1200px) {
-        .metrics-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
 
       .metric-card {
         background: var(--surface);
@@ -285,55 +296,23 @@
       }
 
       /* accents */
-      .ac-blue {
-        background: var(--brand);
-      }
-      .ac-green {
-        background: var(--success);
-      }
-      .ac-warn {
-        background: var(--warn);
-      }
-      .ac-red {
-        background: var(--danger);
-      }
-      .ac-indigo {
-        background: #6366f1;
-      }
-      .ac-sky {
-        background: #0ea5e9;
-      }
-      .ac-teal {
-        background: #14b8a6;
-      }
-      .ac-violet {
-        background: #8b5cf6;
-      }
+      .ac-blue { background: var(--brand); }
+      .ac-green { background: var(--success); }
+      .ac-warn { background: var(--warn); }
+      .ac-red { background: var(--danger); }
+      .ac-indigo { background: #6366f1; }
+      .ac-sky { background: #0ea5e9; }
+      .ac-teal { background: #14b8a6; }
+      .ac-violet { background: #8b5cf6; }
 
-      .ic-blue {
-        background: #eff4ff;
-      }
-      .ic-green {
-        background: #ecfdf5;
-      }
-      .ic-warn {
-        background: #fffbeb;
-      }
-      .ic-red {
-        background: #fef2f2;
-      }
-      .ic-indigo {
-        background: #eef2ff;
-      }
-      .ic-sky {
-        background: #f0f9ff;
-      }
-      .ic-teal {
-        background: #f0fdfa;
-      }
-      .ic-violet {
-        background: #f5f3ff;
-      }
+      .ic-blue { background: #eff4ff; }
+      .ic-green { background: #ecfdf5; }
+      .ic-warn { background: #fffbeb; }
+      .ic-red { background: #fef2f2; }
+      .ic-indigo { background: #eef2ff; }
+      .ic-sky { background: #f0f9ff; }
+      .ic-teal { background: #f0fdfa; }
+      .ic-violet { background: #f5f3ff; }
 
       /* ── Charts grid ── */
       .charts-grid {
@@ -342,15 +321,6 @@
         gap: 14px;
         margin-bottom: 28px;
       }
-      .charts-grid--3 {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-      @media (max-width: 1100px) {
-        .charts-grid,
-        .charts-grid--3 {
-          grid-template-columns: 1fr;
-        }
-      }
 
       .chart-card {
         background: var(--surface);
@@ -358,6 +328,7 @@
         border-radius: var(--radius);
         padding: 22px;
         box-shadow: var(--shadow);
+        overflow: hidden;
       }
       .chart-card__header {
         display: flex;
@@ -376,6 +347,8 @@
       }
       .chart-card__body {
         position: relative;
+        width: 100%;
+        overflow-x: auto;
       }
 
       /* ── Ranking table ── */
@@ -403,40 +376,6 @@
       .rank-table tr:last-child td {
         border-bottom: none;
       }
-      .rank-num {
-        font-family: "DM Mono", monospace;
-        font-size: 12px;
-        color: var(--ink-3);
-        width: 24px;
-      }
-      .rank-bar-wrap {
-        background: var(--bg);
-        border-radius: 4px;
-        height: 6px;
-        flex: 1;
-        overflow: hidden;
-      }
-      .rank-bar {
-        height: 100%;
-        border-radius: 4px;
-        background: var(--brand);
-        transition: width 0.4s ease;
-      }
-      .rank-count {
-        font-family: "DM Mono", monospace;
-        font-size: 12px;
-        color: var(--ink-2);
-        text-align: right;
-        min-width: 28px;
-      }
-      .rank-done-badge {
-        font-size: 11px;
-        padding: 2px 7px;
-        border-radius: 20px;
-        background: #ecfdf5;
-        color: var(--success);
-        font-weight: 500;
-      }
 
       /* ── Footer note ── */
       .footer-note {
@@ -453,59 +392,118 @@
         border-radius: 4px;
         font-size: 11px;
       }
+
+      /* =========================================
+         Responsividade (Tablets e Celulares)
+         ========================================= */
+
+      @media (max-width: 1100px) {
+        .charts-grid,
+        .charts-grid[style] {
+          grid-template-columns: 1fr !important;
+        }
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Menu lateral oculto por padrão */
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          box-shadow: var(--shadow-md);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        /* Ajustes do container principal */
+        .main {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        /* Exibe o botão de hambúrguer */
+        .menu-toggle {
+          display: block;
+        }
+
+        /* Ajuste de espaçamentos */
+        .topbar {
+          padding: 0 16px;
+        }
+        .content {
+          padding: 20px 16px;
+        }
+        .footer-note {
+          padding: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        /* Empilha os cards no celular */
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+        .topbar__right {
+          gap: 8px;
+        }
+        .badge-pill {
+          padding: 4px 10px;
+          font-size: 11px;
+        }
+        .chart-card {
+          padding: 16px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="shell">
-      <!-- ── Sidebar ── -->
       <aside class="sidebar" aria-label="Menu Admin">
         <div class="sidebar__brand">
           <div class="sidebar__logo">Agenda Fácil</div>
           <div class="sidebar__sub">Painel Admin</div>
         </div>
         <nav class="nav">
-          <a href="/admin" class="nav__item active"
-            ><span class="nav__icon">📊</span> Dashboard</a
-          >
-          <a href="/admin/solicitacoes" class="nav__item"
-            ><span class="nav__icon">🧾</span> Solicitações</a
-          >
-          <a href="/admin/clientes" class="nav__item"
-            ><span class="nav__icon">👥</span> Clientes</a
-          >
-          <a href="/admin/prestadores" class="nav__item"
-            ><span class="nav__icon">🛠️</span> Prestadores</a
-          >
-          <a href="/admin/notificacoes" class="nav__item"
-            ><span class="nav__icon">🔔</span> Notificações</a
-          >
+          <a href="/admin" class="nav__item active">
+            <span class="nav__icon">📊</span> Dashboard
+          </a>
+          <a href="/admin/solicitacoes" class="nav__item">
+            <span class="nav__icon">🧾</span> Solicitações
+          </a>
+          <a href="/admin/clientes" class="nav__item">
+            <span class="nav__icon">👥</span> Clientes
+          </a>
+          <a href="/admin/prestadores" class="nav__item">
+            <span class="nav__icon">🛠️</span> Prestadores
+          </a>
           <div class="nav__sep"></div>
-          <a href="/logout" class="nav__item nav__logout"
-            ><span class="nav__icon">🚪</span> Sair</a
-          >
+          <a href="/logout" class="nav__item nav__logout">
+            <span class="nav__icon">🚪</span> Sair
+          </a>
         </nav>
       </aside>
 
-      <!-- ── Main ── -->
       <div class="main">
-        <!-- Topbar -->
         <header class="topbar">
-          <div>
-            <div class="topbar__title">Dashboard</div>
-            <div class="topbar__sub">Métricas em tempo real</div>
+          <div class="topbar-left">
+            <button id="menu-toggle" class="menu-toggle">☰</button>
+            <div>
+              <div class="topbar__title">Dashboard</div>
+              <div class="topbar__sub">Métricas em tempo real</div>
+            </div>
           </div>
           <div class="topbar__right">
             <span class="live-dot">ao vivo</span>
-            <span class="badge-pill"
-              >👤 {{ session.get('usuario_nome',
-              session.get('usuario_logado','admin')) }}</span
-            >
+            <span class="badge-pill">
+              👤 {{ session.get('usuario_nome', session.get('usuario_logado','admin')) }}
+            </span>
           </div>
         </header>
 
-        <!-- Content -->
         <div class="content">
-          <!-- Metric cards -->
           <div class="section-label">Visão geral</div>
           <div class="metrics-grid">
             <div class="metric-card">
@@ -525,26 +523,18 @@
             <div class="metric-card">
               <div class="metric-card__accent ac-sky"></div>
               <div class="metric-card__icon ic-sky">📅</div>
-              <div class="metric-card__value" id="m_services_total_today">
-                0
-              </div>
+              <div class="metric-card__value" id="m_services_total_today">0</div>
               <div class="metric-card__label">Agendamentos hoje</div>
             </div>
 
             <div class="metric-card">
               <div class="metric-card__accent ac-teal"></div>
               <div class="metric-card__icon ic-teal">✅</div>
-              <div
-                class="metric-card__value"
-                id="m_services_providers_total_done"
-              >
-                0
-              </div>
+              <div class="metric-card__value" id="m_services_providers_total_done">0</div>
               <div class="metric-card__label">Total concluídos</div>
             </div>
           </div>
 
-          <!-- Status cards row -->
           <div class="section-label">Status dos agendamentos</div>
           <div class="metrics-grid">
             <div class="metric-card">
@@ -557,9 +547,7 @@
             <div class="metric-card">
               <div class="metric-card__accent ac-blue"></div>
               <div class="metric-card__icon ic-blue">🔄</div>
-              <div class="metric-card__value" id="m_services_in_progress">
-                0
-              </div>
+              <div class="metric-card__value" id="m_services_in_progress">0</div>
               <div class="metric-card__label">Em andamento</div>
             </div>
 
@@ -578,7 +566,6 @@
             </div>
           </div>
 
-          <!-- Charts row 1 -->
           <div class="section-label">Análise de serviços</div>
           <div class="charts-grid" style="margin-bottom: 14px">
             <div class="chart-card">
@@ -593,9 +580,7 @@
 
             <div class="chart-card">
               <div class="chart-card__header">
-                <span class="chart-card__title"
-                  >Solicitações — últimos 7 dias</span
-                >
+                <span class="chart-card__title">Solicitações — últimos 7 dias</span>
                 <span class="chart-card__sub">por data do serviço</span>
               </div>
               <div class="chart-card__body">
@@ -604,13 +589,10 @@
             </div>
           </div>
 
-          <!-- Charts row 2 -->
           <div class="charts-grid" style="grid-template-columns: 2fr 1fr">
             <div class="chart-card">
               <div class="chart-card__header">
-                <span class="chart-card__title"
-                  >Top prestadores por agendamentos</span
-                >
+                <span class="chart-card__title">Top prestadores por agendamentos</span>
                 <span class="chart-card__sub">top 5</span>
               </div>
               <div class="chart-card__body">
@@ -636,11 +618,7 @@
                     <tr>
                       <td
                         colspan="3"
-                        style="
-                          color: var(--ink-3);
-                          font-size: 12px;
-                          padding: 16px 0;
-                        "
+                        style="color: var(--ink-3); font-size: 12px; padding: 16px 0;"
                       >
                         Carregando…
                       </td>
@@ -651,16 +629,32 @@
             </div>
           </div>
         </div>
-        <!-- /content -->
-
         <footer class="footer-note">
           Atualizado automaticamente a cada 10 s via
           <code>/admin/api/metrics</code>
         </footer>
       </div>
-      <!-- /main -->
-    </div>
+      </div>
 
     <script src="/static/js/admin/dashboard.js"></script>
+
+    <script>
+      const menuToggle = document.getElementById('menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+
+      // Abre/fecha o menu ao clicar no botão
+      menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+      });
+
+      // Fecha o menu automaticamente se clicar fora dele na versão mobile
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            sidebar.classList.remove('open');
+          }
+        }
+      });
+    </script>
   </body>
 </html>
