@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Definir Nova Senha – Agenda Fácil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blue-gl: linear-gradient(135deg, #2563eb, #1d4ed8);
+      --text: #1a2340;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --white: #ffffff;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f1f5f9;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    }
+
+    .box {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.24);
+      animation: cardIn 0.5s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(.97); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-bottom: 28px;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .brand-text span {
+      color: #2563eb;
+    }
+
+    .title {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      letter-spacing: -.3px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    .input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: #fafafa;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+
+    .input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      background: #fff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: var(--blue-gl);
+      color: white;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn-submit:hover {
+      opacity: .92;
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+    <div class="box">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='img/agenda-facil.png') }}" alt="Logo">
+        <span class="brand-text">Agenda <span>Fácil</span></span>
+      </div>
+
+      <h2 class="title">Nova senha</h2>
+      <p class="subtitle">Escolha uma senha forte e segura de acesso para a sua conta.</p>
+
+      <form action="/resetar_senha/{{ token }}" method="POST" onsubmit="return validarSenhas()">
+        <div class="form-group">
+          <label class="label" for="nova_senha">Nova Senha</label>
+          <div class="input-wrap">
+            <span>🔒</span>
+            <input type="password" id="nova_senha" name="nova_senha" class="input" placeholder="••••••••" required minlength="6">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label" for="confirma_senha">Confirmar Nova Senha</label>
+          <div class="input-wrap">
+            <span>🛡️</span>
+            <input type="password" id="confirma_senha" class="input" placeholder="••••••••" required minlength="6">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">💾 Salvar Nova Senha</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function validarSenhas() {
+      const senha = document.getElementById('nova_senha').value;
+      const confirma = document.getElementById('confirma_senha').value;
+
+      if (senha !== confirma) {
+        alert('As senhas não coincidem. Digite novamente.');
+        return false;
+      }
+      return true;
+    }
+  </script>
+
+</body>
+
+</html>

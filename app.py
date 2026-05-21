@@ -7,6 +7,31 @@ import pathlib
 import requests as http_requests
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import mysql.connector
+from authlib.integrations.flask_client import OAuth
+import os
+from dotenv import load_dotenv
+import pathlib
+import requests as http_requests
+from datetime import datetime, timedelta
+from urllib.parse import urlencode
+import resend
+
+# IMPORT NOVO PARA O ESQUECI A SENHA
+from itsdangerous import URLSafeTimedSerializer
+resend.api_key = os.getenv("RESEND_API_KEY")
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = "2a962fb071252f38d97cafb2f3a84c80c49568ebb87bc1b1"
+
+# CONFIGURAÇÃO NOVA PARA O "LEMBRAR DE MIM" (Dura 30 dias)
+app.permanent_session_lifetime = timedelta(days=30)
+
+# GERADOR DE TOKENS SEGUROS PARA SENHA
+serializer = URLSafeTimedSerializer(app.secret_key)
+
 
 load_dotenv()
 
@@ -293,39 +318,42 @@ def sucesso_conclusao():
 def autenticar():
     email = request.form["email"]
     senha = request.form["senha"]
+    # Pega o valor da caixinha (se marcada, retorna 'on' ou o value dela)
+    lembrar = request.form.get("lembrar")
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute(
-        "SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s",
-        (email, senha)
-    )
+    # Verifica prestador
+    cursor.execute("SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s", (email, senha))
     prestador = cursor.fetchone()
 
     if prestador:
+        # ATIVA O LEMBRAR DE MIM
+        session.permanent = True if lembrar else False
+
         session["usuario_logado"] = email
-        session["tipo_usuario"]   = "prestador"
-        session["usuario_nome"]   = prestador["nome"] + " " + prestador["sobrenome"]
+        session["tipo_usuario"] = "prestador"
+        session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
         cursor.close()
         conn.close()
         return redirect(url_for("servicos"))
 
-    cursor.execute(
-        "SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s",
-        (email, senha)
-    )
+    # Verifica cliente
+    cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
     cliente = cursor.fetchone()
 
     cursor.close()
     conn.close()
 
     if cliente:
-        session["usuario_logado"] = email
-        session["tipo_usuario"]   = "cliente"
-        session["usuario_nome"]   = cliente["nome"] + " " + cliente["sobrenome"]
-        return redirect(url_for("avaliar"))
+        # ATIVA O LEMBRAR DE MIM
+        session.permanent = True if lembrar else False
 
+        session["usuario_logado"] = email
+        session["tipo_usuario"] = "cliente"
+        session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
+        return redirect(url_for("avaliar"))
 
     return render_template("login.html", erro="E-mail ou senha inválidos")
 
@@ -1102,6 +1130,75 @@ def admin_required(fn):
 @app.route("/admin/login", methods=["GET"])
 def admin_login_page():
     return render_template("admin/login.html", erro=None)
+
+
+# =========================
+# RECUPERAÇÃO DE SENHA
+# =========================
+@app.route("/esqueci_senha", methods=["GET", "POST"])
+def esqueci_senha():
+    if request.method == "GET":
+        return render_template("esqueci_senha.html")
+
+    email = request.form.get("email")
+    conn = connectar()
+    cursor = conn.cursor()
+
+    # Verifica se o e-mail existe no sistema
+    cursor.execute("SELECT email FROM cadastro_clientes WHERE email=%s", (email,))
+    cliente = cursor.fetchone()
+
+    cursor.execute("SELECT email FROM cadastro_prestadores WHERE email=%s", (email,))
+    prestador = cursor.fetchone()
+    cursor.close();
+    conn.close()
+
+    if cliente or prestador:
+        # Gera um token criptografado com o e-mail da pessoa
+        token = serializer.dumps(email, salt='reset-senha')
+        # Cria o link mágico
+        link = url_for('resetar_senha', token=token, _external=True)
+
+        # ⚠️ COMO VOCÊ AINDA NÃO TEM UM SERVIDOR DE E-MAIL (SMTP) CONFIGURADO,
+        # ESTAMOS PRINTANDO O LINK NO TERMINAL DO PYTHON PARA VOCÊ TESTAR!
+        print("\n" + "=" * 50)
+        print("LINK DE RECUPERAÇÃO DE SENHA GERADO:")
+        print(link)
+        print("=" * 50 + "\n")
+
+        return render_template("esqueci_senha.html",
+                               sucesso="Se o e-mail estiver cadastrado, as instruções serão enviadas.")
+
+    # Se não existir, dá a mesma mensagem (para evitar invasores descobrindo e-mails válidos)
+    return render_template("esqueci_senha.html",
+                           sucesso="Se o e-mail estiver cadastrado, as instruções serão enviadas.")
+
+
+@app.route("/resetar_senha/<token>", methods=["GET", "POST"])
+def resetar_senha(token):
+    try:
+        # O token expira em 1 hora (3600 segundos)
+        email = serializer.loads(token, salt='reset-senha', max_age=3600)
+    except Exception:
+        return "O link de recuperação é inválido ou expirou.", 400
+
+    if request.method == "GET":
+        return render_template("resetar_senha.html", token=token)
+
+    nova_senha = request.form.get("nova_senha")
+
+    conn = connectar()
+    cursor = conn.cursor()
+
+    # Atualiza a senha nas duas tabelas (ele só vai atualizar na que a pessoa realmente estiver)
+    cursor.execute("UPDATE cadastro_clientes SET senha=%s WHERE email=%s", (nova_senha, email))
+    cursor.execute("UPDATE cadastro_prestadores SET senha=%s WHERE email=%s", (nova_senha, email))
+
+    conn.commit()
+    cursor.close();
+    conn.close()
+
+    return redirect(url_for("login", mensagem="Senha atualizada com sucesso! Faça seu login."))
 
 @app.route("/admin/autenticar", methods=["POST"])
 def admin_autenticar():
