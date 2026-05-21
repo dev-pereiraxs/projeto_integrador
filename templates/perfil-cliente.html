@@ -272,6 +272,8 @@
     .status-em_andamento { background: #dbeafe; color: #1e40af; }
     .status-concluido { background: #f0fdf4; color: #166534; }
     .status-cancelado { background: #fee2e2; color: #991b1b; }
+    .status-recusado { background: #e0f2fe; color: #075985; }
+
 
     .btn-cancelar {
       font-size: 11px;
@@ -745,7 +747,9 @@
               <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
               {% if a.status in ['pendente', 'confirmado'] %}
               <button class="btn-cancelar" onclick="cancelar({{ a.id }})">Cancelar</button>
+              <button class="btn-cancelar" style="margin-top:6px;border-color:rgba(2,132,199,.25);color:#075985;" onclick="recusar({{ a.id }})">Recusar</button>
               {% endif %}
+
             </div>
           </div>
           {% endfor %}
@@ -911,12 +915,29 @@
         const badge = item.querySelector('.status-badge');
         badge.className = 'status-badge status-cancelado';
         badge.textContent = 'cancelado';
-        const btnCancelar = item.querySelector('.btn-cancelar');
-        if (btnCancelar) btnCancelar.remove();
+        const btns = item.querySelectorAll('.btn-cancelar');
+        btns.forEach(b => b.remove());
       } else {
         alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
       }
     }
+
+    async function recusar(id) {
+      if (!confirm('Recusar este pedido?')) return;
+      const res = await fetch(`/api/recusar_agendamento/${id}`, { method: 'PATCH' });
+      const data = await res.json();
+      if (data.mensagem) {
+        const item = document.getElementById('ag-' + id);
+        const badge = item.querySelector('.status-badge');
+        badge.className = 'status-badge status-recusado';
+        badge.textContent = 'recusado';
+        const btns = item.querySelectorAll('.btn-cancelar');
+        btns.forEach(b => b.remove());
+      } else {
+        alert('Erro ao recusar: ' + (data.erro || 'tente novamente'));
+      }
+    }
+
 
     /* ── Modal editar perfil ── */
     function abrirModalEditar() {

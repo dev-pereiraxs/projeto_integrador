@@ -177,12 +177,14 @@ selectSubcategoria.addEventListener("change", () => {
 
 // Menu mobile
 
- const menuToggle = document.getElementById("menuToggle");
-  const navMenu = document.getElementById("navMenu");
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navMenu");
 
+if (menuToggle && navMenu) {
   menuToggle.addEventListener("click", () => {
     navMenu.classList.toggle("active");
   });
+}
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -206,22 +208,22 @@ form.addEventListener("submit", (e) => {
     },
     body: JSON.stringify(novoServico)
   })
-  .then(response => response.json())
-  .then(data => {
-    btnSubmit.textContent = "+ Cadastrar Serviço";
-    btnSubmit.disabled = false;
+    .then(response => response.json())
+    .then(data => {
+      btnSubmit.textContent = "+ Cadastrar Serviço";
+      btnSubmit.disabled = false;
 
-    if (data.erro) {
-      alert("Erro: " + data.erro);
-    } else {
-      alert("Sucesso! Serviço salvo.");
-      window.location.href = "/servicos";
-    }
-  })
-  .catch(erro => {
-    console.error("Erro:", erro);
-    alert("Erro de conexão.");
-    btnSubmit.textContent = "+ Cadastrar Serviço";
-    btnSubmit.disabled = false;
-  });
+      if (data.erro) {
+        alert("Erro: " + data.erro);
+      } else {
+        alert("Sucesso! Serviço salvo.");
+        window.location.href = "/sucesso-agendamento";
+      }
+    })
+    .catch(erro => {
+      console.error("Erro:", erro);
+      alert("Erro de conexão.");
+      btnSubmit.textContent = "+ Cadastrar Serviço";
+      btnSubmit.disabled = false;
+    });
 });

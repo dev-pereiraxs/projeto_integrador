@@ -97,7 +97,8 @@ CREATE TABLE agendamentos (
         'confirmado',
         'em_andamento',
         'concluido',
-        'cancelado'
+        'cancelado',
+        'recusado'
     ) DEFAULT 'pendente',
 
     observacoes       TEXT,

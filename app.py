@@ -263,6 +263,8 @@ def painel():
 
 @app.route("/formulario")
 def formulario():
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
+        return redirect(url_for("login"))
     return render_template("formulario.html")
 
 @app.route("/agendamentos")
@@ -271,7 +273,7 @@ def agendamentos():
 
 @app.route("/sucesso-agendamento")
 def sucesso_servico():
-    return render_template("sucesso.html")
+    return render_template("sucessoservico.html")
 
 @app.route("/sucesso-orcamento")
 def sucesso_orcamento():
@@ -655,10 +657,11 @@ def atualizar_status(id):
 
     dados      = request.get_json() or {}
     novo_status = dados.get("status")
-    STATUS_VALIDOS = ["pendente", "confirmado", "em_andamento", "concluido", "cancelado"]
+    STATUS_VALIDOS = ["pendente", "confirmado", "em_andamento", "concluido", "cancelado", "recusado"]
 
     if novo_status not in STATUS_VALIDOS:
         return jsonify({"erro": "Status inválido"}), 400
+
 
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
@@ -682,8 +685,52 @@ def atualizar_status(id):
     return jsonify({"mensagem": "Status atualizado"})
 
 # =========================
+# RECUSAR AGENDAMENTO (PRESTADOR → CLIENTE)
+# =========================
+@app.route("/api/recusar_agendamento/<int:id>", methods=["PATCH"])
+def recusar_agendamento(id):
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
+        return jsonify({"erro": "Acesso negado"}), 401
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    # Garante que o agendamento pertence ao prestador logado
+    cursor.execute(
+        "SELECT * FROM agendamentos WHERE id=%s AND prestador_email=%s",
+        (id, session["usuario_logado"]),
+    )
+    ag = cursor.fetchone()
+
+    if not ag:
+        cursor.close(); conn.close()
+        return jsonify({"erro": "Agendamento não encontrado"}), 404
+
+    cursor.execute(
+        "UPDATE agendamentos SET status='recusado' WHERE id=%s",
+        (id,),
+    )
+    conn.commit()
+    cursor.close(); conn.close()
+
+    # Notificação para o prestador (mantém consistência com o sistema já existente)
+    try:
+        criar_notificacao(
+            ag["prestador_email"],
+            "recusado",
+            f"Agendamento #{id} foi recusado pelo prestador — {ag.get('servico','')}",
+            id,
+        )
+    except Exception:
+        pass
+
+    return jsonify({"mensagem": "Agendamento recusado"})
+
+
+# =========================
 # AGENDAMENTOS DO CLIENTE
 # =========================
+
 @app.route("/api/meus_agendamentos")
 def meus_agendamentos():
     if "usuario_logado" not in session:
