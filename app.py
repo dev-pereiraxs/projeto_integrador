@@ -295,18 +295,42 @@ def login():
     return render_template("login.html")
 
 
+# =========================
+# PÁGINAS PÚBLICAS — SERVIÇOS
+# =========================
+@app.route("/servicos")
+# =========================
+# PÁGINAS PÚBLICAS — SERVIÇOS (VERSÃO DEFINITIVA)
+# =========================
 @app.route("/servicos")
 def servicos():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
+
+    # Query otimizada que garante a entrega de todas as colunas do prestador
     cursor.execute("""
-        SELECT s.*, p.nome, p.sobrenome, p.areas_atuacao
+        SELECT 
+            s.*, 
+            p.nome, 
+            p.sobrenome, 
+            p.areas_atuacao, 
+            p.telefone
         FROM servicos_anunciados s
-        JOIN cadastro_prestadores p ON s.prestador_email = p.email
+        INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
         ORDER BY s.id DESC
     """)
     lista = cursor.fetchall()
-    cursor.close();
+
+    # 🔍 TESTE DE SEGURANÇA NO TERMINAL:
+    # Quando você atualizar a página, olhe o terminal do VSCode/Prompt.
+    # Ele vai printar exatamente o que está vindo do banco.
+    print("\n" + "=" * 40)
+    print("DEBUG DE SERVIÇOS NO BANCO DE DADOS:")
+    for item in lista:
+        print(f"Serviço: {item.get('titulo')} | Telefone vindo do Banco: '{item.get('telefone')}'")
+    print("=" * 40 + "\n")
+
+    cursor.close()
     conn.close()
     return render_template("servicos.html", servicos=lista)
 
@@ -428,19 +452,24 @@ def salvar():
 # =========================
 # CADASTRO PRESTADOR
 # =========================
+# =========================
+# CADASTRO PRESTADOR
+# =========================
 @app.route("/salvar_prestador", methods=["POST"])
 def salvar_prestador():
+    # Adicionado o request.form["telefone"] na tupla de dados
     dados = (
         request.form["nome"], request.form["sobrenome"],
         request.form["data_nascimento"], request.form["sexo"],
         request.form["email"], request.form["senha"],
-        request.form["areas_atuacao"],
+        request.form["areas_atuacao"], request.form["telefone"],
     )
-    conn = connectar()
+    conn   = connectar()
     cursor = conn.cursor()
     try:
+        # Atualizado para incluir a coluna 'telefone' no INSERT
         cursor.execute(
-            "INSERT INTO cadastro_prestadores (nome,sobrenome,data_nascimento,sexo,email,senha,areas_atuacao) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+            "INSERT INTO cadastro_prestadores (nome,sobrenome,data_nascimento,sexo,email,senha,areas_atuacao,telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
             dados
         )
         conn.commit()
@@ -448,8 +477,7 @@ def salvar_prestador():
     except Exception as e:
         return render_template("prestador.html", erro=str(e))
     finally:
-        cursor.close();
-        conn.close()
+        cursor.close(); conn.close()
 
 
 # =========================
@@ -566,16 +594,22 @@ def salvar_servico_prestador():
 # API SERVIÇOS
 # =========================
 @app.route("/api/listar_servicos")
+# =========================
+# API SERVIÇOS
+# =========================
+@app.route("/api/listar_servicos")
 def listar_servicos():
     try:
-        conn = connectar()
+        conn   = connectar()
         cursor = conn.cursor(dictionary=True)
+        # Adicionado 'p.telefone' na consulta SQL
         cursor.execute("""
             SELECT
                 s.*, 
                 p.nome AS prestador_nome,
                 p.sobrenome AS prestador_sobrenome,
                 p.areas_atuacao,
+                p.telefone,
                 COALESCE(ROUND(AVG(av.nota), 1), NULL) AS media_nota
             FROM servicos_anunciados s
             JOIN cadastro_prestadores p ON s.prestador_email = p.email
@@ -584,23 +618,21 @@ def listar_servicos():
                   AND a.status = 'concluido'
             LEFT JOIN avaliacoes_prestadores av
                    ON av.agendamento_id = a.id
-            GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao
+            GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao, p.telefone
             ORDER BY s.id DESC
         """)
         dados = cursor.fetchall()
 
         for row in dados:
             row["avaliacao_media"] = row.get("media_nota")
-            row[
-                "nome_prestador"] = f"{row.get('prestador_nome', '')} {row.get('prestador_sobrenome', '')}".strip() or "Prestador"
+            row["nome_prestador"] = f"{row.get('prestador_nome','')} {row.get('prestador_sobrenome','')}".strip() or "Prestador"
+            # O campo row["telefone"] já vai automaticamente para o JSON do front-end
 
-        cursor.close();
-        conn.close()
+        cursor.close(); conn.close()
         return jsonify(dados)
     except Exception as e:
         print(f"[api/listar_servicos] erro: {e}")
         return jsonify({"erro": "Falha ao listar serviços", "detalhes": str(e)}), 500
-
 
 @app.route("/api/meus_servicos")
 def meus_servicos():

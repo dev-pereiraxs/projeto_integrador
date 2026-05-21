@@ -15,6 +15,11 @@ body {
   color: #0f172a;
   font-family: 'Plus Jakarta Sans', var(--font, system-ui), sans-serif;
   overflow-x: hidden;
+
+  /* 🔧 CORREÇÃO DE STICKY FOOTER: Força o corpo a ocupar toda a altura da tela */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* ============================================================
@@ -26,6 +31,9 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 36px 28px 80px;
+
+  /* 🔧 CORREÇÃO: Faz o miolo da página crescer e empurrar o footer para a base */
+  flex: 1;
 }
 
 .painel-main { width: 100%; }
@@ -464,7 +472,7 @@ select.input {
 .footer {
   background: #0f172a;
   padding: 40px 20px 24px;
-  margin-top: 40px;
+  margin-top: auto; /* 🔧 CORREÇÃO: Alinha o footer automaticamente no final do espaço flexível */
 }
 
 .footer__inner {

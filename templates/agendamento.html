@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,7 +35,9 @@
       --header-h: 64px;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'Outfit', sans-serif;
@@ -58,7 +61,11 @@
         radial-gradient(ellipse 40% 40% at 50% 50%, rgba(14, 20, 60, .9) 0%, transparent 100%);
     }
 
-    .page-wrapper { position: relative; z-index: 1; flex: 1; }
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
 
     .body {
       max-width: 960px;
@@ -132,10 +139,29 @@
       text-overflow: ellipsis;
     }
 
-    .stars { display: flex; align-items: center; gap: 2px; }
-    .star { color: var(--gold); font-size: 14px; }
-    .rating-score { font-size: 13px; font-weight: 700; color: var(--gold); margin-left: 5px; }
-    .rating-text { font-size: 12px; color: var(--muted); margin-left: 3px; }
+    .stars {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .star {
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    .rating-score {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-left: 5px;
+    }
+
+    .rating-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 3px;
+    }
 
     .badge-verified {
       display: inline-flex;
@@ -173,8 +199,16 @@
       color: #93c5fd;
     }
 
-    .servico-titulo { font-size: 18px; font-weight: 700; }
-    .servico-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .servico-titulo {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .servico-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
 
     .servico-meta {
       display: flex;
@@ -184,7 +218,14 @@
       margin-top: 4px;
     }
 
-    .servico-meta-item { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .servico-meta-item {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     .servico-preco-badge {
       font-size: 16px;
       font-weight: 700;
@@ -201,7 +242,9 @@
       align-items: start;
     }
 
-    .cal-panel { padding: 22px; }
+    .cal-panel {
+      padding: 22px;
+    }
 
     .cal-header {
       display: flex;
@@ -210,9 +253,15 @@
       margin-bottom: 18px;
     }
 
-    .cal-month { font-size: 15px; font-weight: 700; }
+    .cal-month {
+      font-size: 15px;
+      font-weight: 700;
+    }
 
-    .cal-nav { display: flex; gap: 6px; }
+    .cal-nav {
+      display: flex;
+      gap: 6px;
+    }
 
     .cal-btn {
       width: 28px;
@@ -236,8 +285,19 @@
       border-color: var(--border-h);
     }
 
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .cal-dow { font-size: 11px; font-weight: 600; color: var(--muted); text-align: center; padding: 4px 0; }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-dow {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: center;
+      padding: 4px 0;
+    }
 
     .cal-day {
       aspect-ratio: 1;
@@ -252,8 +312,15 @@
       position: relative;
     }
 
-    .cal-day.available { color: var(--text); cursor: pointer; }
-    .cal-day.available:hover { background: var(--glass-b); }
+    .cal-day.available {
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .cal-day.available:hover {
+      background: var(--glass-b);
+    }
+
     .cal-day.available.has-dot::after {
       content: '';
       position: absolute;
@@ -271,7 +338,9 @@
       cursor: pointer;
     }
 
-    .cal-day.selected::after { display: none; }
+    .cal-day.selected::after {
+      display: none;
+    }
 
     .section-title {
       font-size: 12px;
@@ -282,7 +351,13 @@
       margin: 22px 0 10px;
     }
 
-    .time-slots { display: flex; gap: 8px; flex-wrap: wrap; min-height: 42px; align-items: flex-start; }
+    .time-slots {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 42px;
+      align-items: flex-start;
+    }
 
     .time-btn {
       padding: 8px 16px;
@@ -297,8 +372,16 @@
       transition: all .18s;
     }
 
-    .time-btn:hover { border-color: var(--border-h); background: rgba(255,255,255,.1); }
-    .time-btn.selected { background: var(--blue-g); border-color: transparent; color: white; }
+    .time-btn:hover {
+      border-color: var(--border-h);
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .time-btn.selected {
+      background: var(--blue-g);
+      border-color: transparent;
+      color: white;
+    }
 
     .time-btn.ocupado {
       opacity: .35;
@@ -310,7 +393,14 @@
       color: var(--red);
     }
 
-    .slots-loading { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .slots-loading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
     .slots-loading-spinner {
       width: 14px;
       height: 14px;
@@ -344,8 +434,13 @@
       transition: border-color .2s;
     }
 
-    .obs-input::placeholder { color: var(--muted); }
-    .obs-input:focus { border-color: var(--blue); }
+    .obs-input::placeholder {
+      color: var(--muted);
+    }
+
+    .obs-input:focus {
+      border-color: var(--blue);
+    }
 
     .summary-card {
       background: var(--glass);
@@ -377,7 +472,12 @@
       margin-bottom: 16px;
     }
 
-    .sum-prof { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .sum-prof {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
     .sum-photo {
       width: 42px;
@@ -394,19 +494,56 @@
       flex-shrink: 0;
     }
 
-    .sum-name { font-size: 14px; font-weight: 700; }
-    .sum-sub { font-size: 12px; color: var(--muted); }
+    .sum-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
 
-    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+    .sum-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
 
-    .sum-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-    .sum-row:last-of-type { margin-bottom: 0; }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
 
-    .sum-row-label { font-size: 13px; color: var(--muted); flex-shrink: 0; }
-    .sum-row-value { font-size: 13px; font-weight: 600; text-align: right; }
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-    .sum-total { font-size: 15px; font-weight: 700; }
-    .sum-total-value { font-size: 18px; font-weight: 700; color: #93c5fd; }
+    .sum-row:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .sum-row-label {
+      font-size: 13px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .sum-row-value {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .sum-total {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .sum-total-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #93c5fd;
+    }
 
     .confirm-btn {
       margin-top: 18px;
@@ -424,8 +561,14 @@
       transition: opacity .2s, transform .15s;
     }
 
-    .confirm-btn:hover { opacity: .9; transform: translateY(-1px); }
-    .confirm-btn:active { transform: translateY(0); }
+    .confirm-btn:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    .confirm-btn:active {
+      transform: translateY(0);
+    }
 
     .modal-overlay {
       position: fixed;
@@ -443,7 +586,10 @@
       transition: opacity .25s ease;
     }
 
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
 
     .modal-box {
       width: 100%;
@@ -461,7 +607,9 @@
       transition: transform .28s cubic-bezier(.22, 1, .36, 1);
     }
 
-    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
 
     .modal-icon {
       width: 52px;
@@ -475,7 +623,13 @@
       margin: 0 auto 20px;
     }
 
-    .modal-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 8px; letter-spacing: -.2px; }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -.2px;
+    }
 
     .modal-payment-notice {
       background: rgba(245, 158, 11, .07);
@@ -488,10 +642,25 @@
       gap: 10px;
     }
 
-    .modal-payment-notice .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .modal-payment-notice p { font-size: 13px; color: rgba(253, 230, 138, .90); line-height: 1.6; }
+    .modal-payment-notice .notice-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
-    .modal-question { font-size: 14px; color: var(--muted); text-align: center; line-height: 1.6; margin-bottom: 24px; }
+    .modal-payment-notice p {
+      font-size: 13px;
+      color: rgba(253, 230, 138, .90);
+      line-height: 1.6;
+    }
+
+    .modal-question {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
 
     .modal-summary {
       background: rgba(255, 255, 255, .04);
@@ -504,13 +673,35 @@
       gap: 6px;
     }
 
-    .modal-summary-row { display: flex; justify-content: space-between; font-size: 13px; }
-    .modal-summary-row span:first-child { color: var(--muted); }
-    .modal-summary-row span:last-child { font-weight: 600; }
-    .modal-summary-row.total span:first-child { font-weight: 700; color: var(--text); }
-    .modal-summary-row.total span:last-child { color: #93c5fd; font-size: 15px; }
+    .modal-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
 
-    .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+    .modal-summary-row span:first-child {
+      color: var(--muted);
+    }
+
+    .modal-summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    .modal-summary-row.total span:first-child {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal-summary-row.total span:last-child {
+      color: #93c5fd;
+      font-size: 15px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .btn-agendar {
       width: 100%;
@@ -531,9 +722,20 @@
       gap: 8px;
     }
 
-    .btn-agendar:hover { opacity: .9; transform: translateY(-1px); }
-    .btn-agendar:active { transform: translateY(0); }
-    .btn-agendar.loading { opacity: .7; cursor: not-allowed; pointer-events: none; }
+    .btn-agendar:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+    }
+
+    .btn-agendar:active {
+      transform: translateY(0);
+    }
+
+    .btn-agendar.loading {
+      opacity: .7;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
 
     .btn-cancelar-modal {
       width: 100%;
@@ -549,10 +751,22 @@
       transition: background .2s, color .2s, border-color .2s;
     }
 
-    .btn-cancelar-modal:hover { background: var(--glass-b); color: var(--text); border-color: var(--border-h); }
+    .btn-cancelar-modal:hover {
+      background: var(--glass-b);
+      color: var(--text);
+      border-color: var(--border-h);
+    }
 
-    .modal-success { display: none; flex-direction: column; align-items: center; text-align: center; }
-    .modal-success.visible { display: flex; }
+    .modal-success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .modal-success.visible {
+      display: flex;
+    }
 
     .success-icon {
       width: 64px;
@@ -568,14 +782,36 @@
     }
 
     @keyframes pop {
-      from { transform: scale(.6); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(.6);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-    .success-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.2px; }
-    .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+    .success-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -.2px;
+    }
+
+    .success-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
 
     .btn-google-cal {
       display: flex;
@@ -623,7 +859,10 @@
       margin-bottom: 10px;
     }
 
-    .btn-agendamentos:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-agendamentos:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
 
     .btn-perfil-sec {
       width: 100%;
@@ -644,7 +883,11 @@
       transition: background .2s, color .2s, border-color .2s;
     }
 
-    .btn-perfil-sec:hover { background: var(--glass-b); color: var(--text); border-color: var(--border-h); }
+    .btn-perfil-sec:hover {
+      background: var(--glass-b);
+      color: var(--text);
+      border-color: var(--border-h);
+    }
 
     .spinner {
       width: 16px;
@@ -656,17 +899,42 @@
       display: none;
     }
 
-    .btn-agendar.loading .spinner { display: block; }
-    .btn-agendar.loading .btn-text { display: none; }
+    .btn-agendar.loading .spinner {
+      display: block;
+    }
+
+    .btn-agendar.loading .btn-text {
+      display: none;
+    }
 
     @media (max-width: 720px) {
-      .body { padding: 24px 16px 48px; }
-      .page-title { font-size: 22px; }
-      .two-col { grid-template-columns: 1fr; }
-      .prof-card { padding: 14px 16px; }
-      .servico-info { padding: 14px 16px; }
-      .modal-box { padding: 24px 18px 20px; }
-      .modal-actions { flex-direction: column; }
+      .body {
+        padding: 24px 16px 48px;
+      }
+
+      .page-title {
+        font-size: 22px;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .prof-card {
+        padding: 14px 16px;
+      }
+
+      .servico-info {
+        padding: 14px 16px;
+      }
+
+      .modal-box {
+        padding: 24px 18px 20px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -694,7 +962,8 @@
         </div>
         <div class="badge-verified">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M2.5 6.5l3 3 5-5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
           Verificado
         </div>
@@ -799,7 +1068,8 @@
 
         <div class="modal-payment-notice">
           <span class="notice-icon">💳</span>
-          <p>O pagamento será efetuado <strong>diretamente com o prestador de serviços</strong>, não pela plataforma.</p>
+          <p>O pagamento será efetuado <strong>diretamente com o prestador de serviços</strong>, não pela plataforma.
+          </p>
         </div>
 
         <p class="modal-question">Tem certeza que deseja prosseguir com o agendamento?</p>
@@ -814,7 +1084,8 @@
           <button class="btn-agendar" id="btn-agendar-agora">
             <span class="btn-text">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:4px;vertical-align:-2px">
-                <path d="M3 8l4 4 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M3 8l4 4 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
               Sim, agendar agora
             </span>
@@ -827,11 +1098,13 @@
       <div class="modal-success" id="modal-success-state">
         <div class="success-icon">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M6 14l6 6L22 8" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M6 14l6 6L22 8" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
         </div>
         <div class="success-title">Agendamento confirmado!</div>
-        <p class="success-sub">Seu serviço foi agendado com sucesso.<br>Em breve o prestador entrará em contato via <strong>WhatsApp</strong> ou <strong>SMS</strong>.</p>
+        <p class="success-sub">Seu serviço foi agendado com sucesso.<br>Em breve o prestador entrará em contato via
+          <strong>WhatsApp</strong> ou <strong>SMS</strong>.</p>
 
         <a class="btn-google-cal" id="btn-add-calendar" href="#" target="_blank" rel="noopener">
           <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
@@ -868,7 +1141,8 @@
     </div>
   </div>
 
-  <footer style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
+  <footer
+    style="background:#0f172a;color:rgba(255,255,255,.55);text-align:center;padding:32px 20px 24px;font-size:13px;margin-top:48px;">
     <div style="max-width:900px;margin:0 auto;">
       <strong style="color:#fff;font-size:15px;">Agenda Fácil</strong>
       <p style="margin:6px 0 14px;">Conectando pessoas a profissionais de confiança.</p>
@@ -922,9 +1196,9 @@
 
     preencherServico();
 
-    const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     let selectedDate = null;
     let selectedTime = null;
@@ -932,8 +1206,8 @@
     let calMonth = today.getMonth();
 
     function formatDataLabel(date) {
-      const dd = String(date.getDate()).padStart(2,'0');
-      const mmm = MONTHS[date.getMonth()].slice(0,3);
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mmm = MONTHS[date.getMonth()].slice(0, 3);
       const yyyy = date.getFullYear();
       return `${dd} de ${mmm}. ${yyyy}`;
     }
@@ -944,7 +1218,7 @@
 
       document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
 
-      ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].forEach(d => {
+      ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].forEach(d => {
         const el = document.createElement('div');
         el.className = 'cal-dow';
         el.textContent = d;
@@ -955,13 +1229,13 @@
       const offset = (firstDay + 6) % 7;
       const days = new Date(calYear, calMonth + 1, 0).getDate();
 
-      for (let i=0;i<offset;i++) {
+      for (let i = 0; i < offset; i++) {
         const el = document.createElement('div');
         el.className = 'cal-day';
         grid.appendChild(el);
       }
 
-      for (let d=1; d<=days; d++) {
+      for (let d = 1; d <= days; d++) {
         const el = document.createElement('div');
         const date = new Date(calYear, calMonth, d);
         const isPast = date < today;
@@ -1010,7 +1284,7 @@
 
     buildCalendar();
 
-    const HORARIOS_TODOS = ['09:00','10:00','11:00','14:00','15:00','16:00'];
+    const HORARIOS_TODOS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
 
     async function carregarHorarios(data) {
       const slotsEl = document.getElementById('time-slots');
@@ -1075,8 +1349,8 @@
       if (!selectedDate) { alert('Por favor, selecione uma data no calendário.'); return; }
       if (!selectedTime) { alert('Por favor, selecione um horário disponível.'); return; }
 
-      const dd = String(selectedDate.getDate()).padStart(2,'0');
-      const mm = MONTHS[selectedDate.getMonth()].slice(0,3);
+      const dd = String(selectedDate.getDate()).padStart(2, '0');
+      const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
 
       document.getElementById('modal-sum-titulo').textContent = servico.titulo || '—';
       document.getElementById('modal-sum-datahora').textContent = `${dd} ${mm} às ${selectedTime}`;
@@ -1145,5 +1419,5 @@
     });
   </script>
 </body>
-</html>
 
+</html>
