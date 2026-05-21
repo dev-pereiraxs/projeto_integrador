@@ -1209,9 +1209,11 @@ def esqueci_senha():
 @app.route("/resetar_senha/<token>", methods=["GET", "POST"])
 def resetar_senha(token):
     try:
-        email = serializer.loads(token, salt='reset-senha', max_age=3600)
+        # 🔧 Alterado para 900 segundos = 15 minutos
+        email = serializer.loads(token, salt='reset-senha', max_age=900)
     except Exception:
-        return "O link de recuperação é inválido ou expirou.", 400
+        # Se passar de 15 minutos ou o token for adulterado, cai aqui:
+        return "O link de recuperação é inválido ou expirou.", 4000
 
     if request.method == "GET":
         return render_template("resetar_senha.html", token=token)
