@@ -369,29 +369,21 @@ function carregarServicos() {
       }
       if (data.length === 0) {
         lista.innerHTML = `
-          <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0; box-sizing: border-box;">
-            
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); box-sizing: border-box; animation: fadeIn 0.4s ease-out;">
-              
+          <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); box-sizing: border-box;">
               <div style="width: 56px; height: 56px; background-color: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; color: #64748b;">
                 🛠️
               </div>
-              
               <h3 style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px; margin-top: 0;">
                 Nenhum serviço anunciado
               </h3>
-              
               <p style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0; max-width: 320px; line-height: 1.5;">
                 Clique em "Novo Serviço" no topo para cadastrar os seus anúncios na plataforma.
               </p>
-              
             </div>
-            
           </div>`;
         return;
       }
-
-      lista.innerHTML = "";
 
       // Dicionário de Cores e Ícones Dinâmicos por Categoria
       const categoriasConfig = {
