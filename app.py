@@ -51,13 +51,24 @@ google = oauth.register(
 # BANCO DE DADOS
 # =========================
 def connectar():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "servicos"),
-        port=int(os.getenv("DB_PORT", 3306))
-    )
+    # Se estiver no Render (onde DB_HOST existe), força o uso das variáveis
+    if os.getenv("DB_HOST"):
+        return mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            ssl_disabled=False # Garante que o SSL exigido pelo Aiven funcione
+        )
+    else:
+        # Padrão local para o seu PC
+        return mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="servicos"
+        )
 
 
 # =========================
