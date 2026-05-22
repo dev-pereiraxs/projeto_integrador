@@ -6,7 +6,7 @@ const concluidosEl = document.getElementById("concluidos");
 let pedidos = [];
 
 // ============================================================
-// CARREGA AGENDAMENTOS DO PRESTADOR
+// CARREGA AGENDAMENTOS DO PRESTADOR (Aba Pedidos)
 // ============================================================
 function carregarMeusServicos() {
   fetch("/api/agendamentos_prestador")
@@ -26,7 +26,7 @@ function carregarMeusServicos() {
 }
 
 // ============================================================
-// CONTADORES
+// CONTADORES DO TOPO
 // ============================================================
 function atualizarContadores() {
   let pendentes = 0;
@@ -40,13 +40,13 @@ function atualizarContadores() {
     else if (s === "concluido") concluidos++;
   });
 
-  pendentesEl.textContent = pendentes;
-  andamentoEl.textContent = andamento;
-  concluidosEl.textContent = concluidos;
+  if (pendentesEl) pendentesEl.textContent = pendentes;
+  if (andamentoEl) andamentoEl.textContent = andamento;
+  if (concluidosEl) concluidosEl.textContent = concluidos;
 }
 
 // ============================================================
-// HELPERS DE STATUS
+// HELPERS DE STATUS (Badges)
 // ============================================================
 function statusLabel(s) {
   const mapa = {
@@ -73,16 +73,31 @@ function statusClass(s) {
 }
 
 // ============================================================
-// RENDER (Com Ordenação Automática e Botões Premium)
+// RENDER DA LISTA DE PEDIDOS (Com Estado Vazio Premium)
 // ============================================================
 function render() {
   lista.innerHTML = "";
 
+  // 🎨 ESTADO VAZIO PREMIUM & PROFISSIONAL (Substitui o texto simples antigo)
+  // 🎨 ESTADO VAZIO PREMIUM & CENTRALIZADO NO PC
   if (pedidos.length === 0) {
     lista.innerHTML = `
-      <div class="estado-vazio">
-        <span class="estado-vazio__icon">📭</span>
-        Nenhum agendamento encontrado.
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); animation: fadeIn 0.4s ease-out; box-sizing: border-box;">
+          
+          <div style="width: 56px; height: 56px; background-color: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; color: #64748b;">
+            📅
+          </div>
+          
+          <h3 style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px; margin-top: 0;">
+            Nenhum agendamento por aqui
+          </h3>
+          
+          <p style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0; max-width: 320px; line-height: 1.5;">
+            Os serviços agendados pelos seus clientes aparecerão organizados nesta área.
+          </p>
+          
+        </div>
       </div>
     `;
     atualizarContadores();
@@ -109,7 +124,7 @@ function render() {
     return b.id - a.id;
   });
 
-  // MONTAGEM DOS CARDS
+  // MONTAGEM DOS CARDS DE PEDIDOS
   pedidos.forEach((p) => {
     const card = document.createElement("div");
     card.className = "pedido-card";
@@ -201,7 +216,7 @@ window.alterarStatus = function(id, novoStatus) {
 };
 
 // ============================================================
-// CONTROLE DOS MODAIS (RECUSAR E CONCLUIR)
+// CONTROLE DOS MODAIS (RECUSAR E CONCLUIR NA MESMA TELA)
 // ============================================================
 let idAgendamentoParaRecusar = null;
 let idAgendamentoParaConcluir = null;
@@ -231,13 +246,13 @@ window.fecharModalConcluir = function() {
 };
 
 // ============================================================
-// EVENTOS PRINCIPAIS
+// EVENTOS E INICIALIZAÇÃO DE DA PÁGINA
 // ============================================================
 document.addEventListener("DOMContentLoaded", function () {
   const btnPedidos = document.getElementById("btn-pedidos");
   const btnServicos = document.getElementById("btn-servicos");
 
-  // FECHAR MODAIS CLICANDO FORA
+  // Fechar modais clicando fora da caixa branca
   const modalRec = document.getElementById('modalRecusar');
   if (modalRec) modalRec.addEventListener('click', function(e) { if (e.target === this) fecharModalRecusar(); });
 
@@ -279,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // CONFIRMAR CONCLUSÃO
+  // CONFIRMAR CONCLUSÃO (Fica na mesma tela e atualiza)
   const btnConfirmarConclusao = document.getElementById('btnConfirmarConclusao');
   if (btnConfirmarConclusao) {
     btnConfirmarConclusao.addEventListener('click', async function() {
@@ -301,7 +316,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (data.erro) {
           alert(data.erro);
         } else {
-          window.location.href = "/sucesso-conclusao";
+          fecharModalConcluir();
+          carregarMeusServicos(); // Mantém o usuário na tela e atualiza os dados
         }
       } catch (e) {
         alert('Erro de conexão.');
@@ -309,27 +325,26 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.textContent = textoOriginal;
         btn.disabled = false;
         btn.style.opacity = '1';
-        fecharModalConcluir();
       }
     });
   }
 
-  // ABAS
+  // ALTERNADOR DE ABAS (Pedidos vs Meus Serviços)
   function setAba(aba) {
-    btnPedidos.classList.toggle("btn-aba-ativo", aba === "pedidos");
-    btnServicos.classList.toggle("btn-aba-ativo", aba === "servicos");
+    if (btnPedidos) btnPedidos.classList.toggle("btn-aba-ativo", aba === "pedidos");
+    if (btnServicos) btnServicos.classList.toggle("btn-aba-ativo", aba === "servicos");
     if (aba === "pedidos") carregarMeusServicos();
     else carregarServicos();
   }
 
-  btnPedidos.addEventListener("click", () => setAba("pedidos"));
-  btnServicos.addEventListener("click", () => setAba("servicos"));
+  if (btnPedidos) btnPedidos.addEventListener("click", () => setAba("pedidos"));
+  if (btnServicos) btnServicos.addEventListener("click", () => setAba("servicos"));
 
   setAba("pedidos");
 });
 
 // ============================================================
-// ABA: MEUS SERVIÇOS (Design Premium Automático e Remover)
+// REMOVER SERVIÇO ANUNCIADO (Aba Meus Serviços)
 // ============================================================
 window.remover = function (id) {
   if (!confirm("Tem certeza que deseja excluir este serviço?")) return;
@@ -337,10 +352,13 @@ window.remover = function (id) {
     .then(r => r.json())
     .then(data => {
       if (data.erro) { alert("Erro: " + data.erro); return; }
-      carregarServicos(); // Atualiza a aba serviços após excluir
+      carregarServicos(); // Atualiza a lista da aba de serviços na hora
     }).catch(() => alert("Erro ao excluir."));
 };
 
+// ============================================================
+// ABA: MEUS SERVIÇOS (Design Premium Autônomo e Sem Horas)
+// ============================================================
 function carregarServicos() {
   fetch("/api/meus_servicos")
     .then(r => r.json())
@@ -351,17 +369,32 @@ function carregarServicos() {
       }
       if (data.length === 0) {
         lista.innerHTML = `
-          <div class="estado-vazio">
-            <span class="estado-vazio__icon">🛠️</span>
-            Nenhum serviço cadastrado.
+          <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0; box-sizing: border-box;">
+            
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); box-sizing: border-box; animation: fadeIn 0.4s ease-out;">
+              
+              <div style="width: 56px; height: 56px; background-color: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; color: #64748b;">
+                🛠️
+              </div>
+              
+              <h3 style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px; margin-top: 0;">
+                Nenhum serviço anunciado
+              </h3>
+              
+              <p style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0; max-width: 320px; line-height: 1.5;">
+                Clique em "Novo Serviço" no topo para cadastrar os seus anúncios na plataforma.
+              </p>
+              
+            </div>
+            
           </div>`;
         return;
       }
 
       lista.innerHTML = "";
 
-      // Dicionário de Ícones e Cores por Área de Atuação
-      const categorias = {
+      // Dicionário de Cores e Ícones Dinâmicos por Categoria
+      const categoriasConfig = {
         "tecnologia": { icon: "💻", color: "#3b82f6", bg: "#eff6ff" },
         "mecanica":   { icon: "⚙️", color: "#64748b", bg: "#f8fafc" },
         "eletrica":   { icon: "⚡", color: "#eab308", bg: "#fefce8" },
@@ -374,20 +407,20 @@ function carregarServicos() {
         const card = document.createElement("div");
         card.className = "pedido-card";
 
-        const area = (s.area_atuacao || "").toLowerCase();
-        const config = categorias[area] || { icon: "📌", color: "#8b5cf6", bg: "#f5f3ff" };
+        const area = (s.area_atuacao || "").toLowerCase().trim();
+        const config = categoriasConfig[area] || { icon: "📌", color: "#8b5cf6", bg: "#f5f3ff" };
 
         const precoMoeda = Number(s.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         card.innerHTML = `
-          <div style="display: flex; gap: 20px; align-items: center; width: 100%; flex-wrap: wrap;">
+          <div style="display: flex; gap: 20px; align-items: center; width: 100%; flex-wrap: wrap; box-sizing: border-box;">
             
             <div style="width: 64px; height: 64px; border-radius: 18px; background-color: ${config.bg}; color: ${config.color}; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
               ${config.icon}
             </div>
 
             <div style="flex: 1; min-width: 200px;">
-              <div class="pedido-card__titulo" style="margin-bottom: 8px; font-size: 18px;">${s.titulo}</div>
+              <div class="pedido-card__titulo" style="margin-bottom: 8px; font-size: 18px; font-weight: 700; color: #0f172a;">${s.titulo}</div>
               
               <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <span style="color: #10b981; font-weight: 800; font-size: 15px; background: #ecfdf5; padding: 4px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
@@ -402,7 +435,7 @@ function carregarServicos() {
             </div>
 
             <div style="flex-shrink: 0; margin-left: auto;">
-              <button onclick="remover(${s.id})" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: 1px solid #fecaca; border-radius: 12px; background-color: #fef2f2; color: #ef4444; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fee2e2'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='#fef2f2'; this.style.transform='translateY(0)';">
+              <button onclick="remover(${s.id})" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: 1px solid #fecaca; border-radius: 12px; background-color: #fef2f2; color: #ef4444; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;" onmouseover="this.style.backgroundColor='#fee2e2'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='#fef2f2'; this.style.transform='translateY(0)';">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
