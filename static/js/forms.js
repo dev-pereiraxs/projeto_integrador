@@ -156,20 +156,18 @@ if (descricao) {
 function atualizarFiltroSubcategorias() {
   const inputOculto = document.getElementById("area_prestador_oculto");
 
-  // Pega o valor e limpa espaços extras das pontas
   let valor = (inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value || "").trim();
 
-  // 🧹 TRATAMENTO BLINDADO DE ACENTOS E CARACTERES (Caso venha "Mecânica" ou "Especialidade")
+  // Limpa acentos e espaçamentos
   valor = valor.toLowerCase()
                .normalize("NFD")
-               .replace(/[\u0300-\u036f]/g, ""); // Remove acentos de forma nativa
+               .replace(/[\u0300-\u036f]/g, "");
 
-  // Correções extras de consistência para o dicionário do JS
+  // 🎯 O CORRETOR INTELIGENTE: Se o banco retornar "ti", redireciona para "tecnologia"
+  if (valor === "ti") valor = "tecnologia";
   if (valor === "hydraulica" || valor === "hidratica") valor = "hidraulica";
 
-  console.log("Categoria detectada e tratada no JS:", valor);
-
-  // Força o select visível a espelhar a categoria correspondente limpa
+  // Sincroniza o select visual se a correspondência existir
   if (valor && selectCategoria) {
     selectCategoria.value = valor;
   }
@@ -192,7 +190,6 @@ function atualizarFiltroSubcategorias() {
   }
 }
 
-// Vincula a troca de subcategoria com a exibição de descrições
 if (selectSubcategoria) {
   selectSubcategoria.addEventListener("change", () => {
     const servico = selectSubcategoria.value;
@@ -205,7 +202,6 @@ if (selectSubcategoria) {
   });
 }
 
-// Executa imediatamente quando a página carrega
 document.addEventListener("DOMContentLoaded", () => {
   atualizarFiltroSubcategorias();
 });
@@ -238,8 +234,8 @@ if (form) {
     const inputOculto = document.getElementById("area_prestador_oculto");
     let categoriaFinal = inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value;
 
-    // Tratamento básico antes de enviar ao back
     categoriaFinal = categoriaFinal.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (categoriaFinal === "ti") categoriaFinal = "tecnologia";
     if (categoriaFinal === "hydraulica") categoriaFinal = "hidraulica";
 
     const novoServico = {
@@ -247,7 +243,7 @@ if (form) {
       categoria: categoriaFinal,
       descricao: descricao.value,
       preco: document.getElementById("preco").value,
-      duracao: document.getElementById("duracao").value
+      duracao: null // 🚫 Duração removida do envio conforme solicitado!
     };
 
     fetch('/salvar_servico_prestador', {
@@ -265,7 +261,6 @@ if (form) {
         if (data.erro) {
           alert("Erro: " + data.erro);
         } else {
-          // Abre o modal profissional cadastrado com sucesso
           const modal = document.getElementById("modalSucessoCadastro");
           if (modal) {
             modal.style.display = "flex";
