@@ -316,35 +316,30 @@ def login():
 # =========================
 @app.route("/servicos")
 def servicos():
-    conn = connectar()
-    cursor = conn.cursor(dictionary=True)
+    try:
+        conn = connectar()
+        cursor = conn.cursor(dictionary=True)
 
-    # Query otimizada que garante a entrega de todas as colunas do prestador
-    cursor.execute("""
-        SELECT 
-            s.*, 
-            p.nome, 
-            p.sobrenome, 
-            p.areas_atuacao, 
-            p.telefone
-        FROM servicos_anunciados s
-        INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
-        ORDER BY s.id DESC
-    """)
-    lista = cursor.fetchall()
+        cursor.execute("""
+            SELECT 
+                s.*, 
+                p.nome, 
+                p.sobrenome, 
+                p.areas_atuacao, 
+                p.telefone
+            FROM servicos_anunciados s
+            INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
+            ORDER BY s.id DESC
+        """)
+        lista = cursor.fetchall()
 
-    # 🔍 TESTE DE SEGURANÇA NO TERMINAL:
-    # Quando você atualizar a página, olhe o terminal do VSCode/Prompt.
-    # Ele vai printar exatamente o que está vindo do banco.
-    print("\n" + "=" * 40)
-    print("DEBUG DE SERVIÇOS NO BANCO DE DADOS:")
-    for item in lista:
-        print(f"Serviço: {item.get('titulo')} | Telefone vindo do Banco: '{item.get('telefone')}'")
-    print("=" * 40 + "\n")
+        cursor.close()
+        conn.close()
+        return render_template("servicos.html", servicos=lista)
 
-    cursor.close()
-    conn.close()
-    return render_template("servicos.html", servicos=lista)
+    except Exception as e:
+        # Se der erro, mostra o motivo real na tela do navegador em vez do Erro 500!
+        return f"<h3>Erro de Conexão com o Banco:</h3><p>{str(e)}</p>", 500
 
 
 @app.route("/perfil")
