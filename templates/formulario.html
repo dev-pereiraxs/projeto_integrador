@@ -82,5 +82,30 @@
     </div>
   </footer>
 </body>
+<div id="modalSucessoCadastro" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+  <div style="background: #ffffff; border-radius: 24px; padding: 40px 32px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid #e2e8f0; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
 
+    <div style="width: 64px; height: 64px; background-color: #2563eb; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <h3 style="margin-bottom: 10px; font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px;">Serviço Anunciado!</h3>
+    <p style="color: #64748b; font-family: 'DM Sans', sans-serif; font-size: 14px; margin-bottom: 28px; line-height: 1.6;">
+      Seu novo serviço foi cadastrado com sucesso e já está disponível para agendamentos na página principal.
+    </p>
+
+    <button id="btnIrParaPainel" style="width: 100%; padding: 14px; border: none; border-radius: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; background: #2563eb; color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.2s;">
+      Ir para o Meu Painel
+    </button>
+  </div>
+</div>
+
+<style>
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
 </html>

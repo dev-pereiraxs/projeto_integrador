@@ -366,21 +366,23 @@ def formulario():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # Busca a área de atuação atualizada diretamente do banco de dados
+        # 🔌 CORRIGIDO: "FROM" separado corretamente de "cadastro_prestadores"
         cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
         prestador = cursor.fetchone()
 
-        # Formata o texto removendo acentos e espaços para bater com as chaves do JavaScript
+        # Coleta o valor do banco, limpa espaços e joga para minúsculo
         area_oficial = str(prestador.get("areas_atuacao") or "").strip().lower()
+
+        # Tratamento preventivo de acentuação para conversar com o JS
         if area_oficial == "mecânica": area_oficial = "mecanica"
         if area_oficial == "elétrica": area_oficial = "eletrica"
         if area_oficial == "hidráulica" or area_oficial == "hydraulica": area_oficial = "hidraulica"
 
-        # Garante que a sessão está atualizada com o valor limpo
         session["usuario_area"] = area_oficial
+        print(f"[Agenda Fácil Debug] Área do prestador carregada com sucesso: {area_oficial}")
 
     except Exception as e:
-        print(f"[Erro no formulário]: {e}")
+        print(f"[Agenda Fácil Erro no formulário]: {e}")
         session["usuario_area"] = ""
     finally:
         cursor.close()
@@ -610,8 +612,7 @@ def salvar_servico_prestador():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # 1. Pega a área de atuação oficial do prestador no banco de dados
-        # Mude de FROM_cadastro_prestadores para:
+        # 🔌 CORRIGIDO: "FROM" separado corretamente aqui também
         cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
         prestador_info = cursor.fetchone()
 
@@ -620,13 +621,12 @@ def salvar_servico_prestador():
 
         area_oficial = prestador_info["areas_atuacao"]
 
-        # 2. Ignora o que o usuário tentou burlar e injeta a categoria correta por segurança
         valores = (
             email_prestador,
             dados.get("titulo"),
             dados.get("descricao"),
             dados.get("preco"),
-            area_oficial,  # 🔒 Trava de segurança aplicada no banco
+            area_oficial, # 🔒 Trava de segurança direto no banco
             dados.get("duracao"),
         )
 

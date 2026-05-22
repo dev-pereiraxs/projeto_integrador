@@ -146,7 +146,6 @@ const descricoes = {
   "Higienização de colchão": "Remoção de ácaros e sujeiras."
 };
 
-// Garante o bloqueio de edição manual da descrição automática
 if (descricao) {
   descricao.setAttribute("readonly", true);
 }
@@ -157,43 +156,54 @@ if (descricao) {
 function atualizarFiltroSubcategorias() {
   const inputOculto = document.getElementById("area_prestador_oculto");
 
-  // Captura o valor puro vindo do banco de dados pelo input oculto
-  let valor = (inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value || "").toLowerCase().trim();
+  // Pega o valor e limpa espaços extras das pontas
+  let valor = (inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value || "").trim();
 
-  // Garante mapeamento sem acentos
-  if (valor === "mecânica") valor = "mecanica";
-  if (valor === "elétrica") valor = "eletrica";
-  if (valor === "hidráulica" || valor === "hydraulica") valor = "hidraulica";
+  // 🧹 TRATAMENTO BLINDADO DE ACENTOS E CARACTERES (Caso venha "Mecânica" ou "Especialidade")
+  valor = valor.toLowerCase()
+               .normalize("NFD")
+               .replace(/[\u0300-\u036f]/g, ""); // Remove acentos de forma nativa
 
-  // Força o select visível a marcar a opção correspondente na tela
+  // Correções extras de consistência para o dicionário do JS
+  if (valor === "hydraulica" || valor === "hidratica") valor = "hidraulica";
+
+  console.log("Categoria detectada e tratada no JS:", valor);
+
+  // Força o select visível a espelhar a categoria correspondente limpa
   if (valor && selectCategoria) {
     selectCategoria.value = valor;
   }
 
   const lista = categorias[valor] || [];
 
-  selectSubcategoria.innerHTML = "<option value=''>Selecione um serviço...</option>";
+  if (selectSubcategoria) {
+    selectSubcategoria.innerHTML = "<option value=''>Selecione um serviço...</option>";
 
-  lista.forEach(servico => {
-    const option = document.createElement("option");
-    option.value = servico;
-    option.textContent = servico;
-    selectSubcategoria.appendChild(option);
-  });
+    lista.forEach(servico => {
+      const option = document.createElement("option");
+      option.value = servico;
+      option.textContent = servico;
+      selectSubcategoria.appendChild(option);
+    });
+  }
 
-  descricao.value = "";
+  if (descricao) {
+    descricao.value = "";
+  }
 }
 
 // Vincula a troca de subcategoria com a exibição de descrições
-selectSubcategoria.addEventListener("change", () => {
-  const servico = selectSubcategoria.value;
-  if (!servico) {
-    descricao.value = "";
-    return;
-  }
-  descricao.value = descricoes[servico] ||
-    `Serviço profissional de ${servico.toLowerCase()}, realizado com qualidade, segurança e atenção aos detalhes.`;
-});
+if (selectSubcategoria) {
+  selectSubcategoria.addEventListener("change", () => {
+    const servico = selectSubcategoria.value;
+    if (!servico) {
+      descricao.value = "";
+      return;
+    }
+    descricao.value = descricoes[servico] ||
+      `Serviço profissional de ${servico.toLowerCase()}, realizado com qualidade, segurança e atenção aos detalhes.`;
+  });
+}
 
 // Executa imediatamente quando a página carrega
 document.addEventListener("DOMContentLoaded", () => {
@@ -212,52 +222,68 @@ if (menuToggle && navMenu) {
 // ============================================================
 // ENVIO DO FORMULÁRIO (POST)
 // ============================================================
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  if (!selectSubcategoria.value) {
-    alert("Por favor, selecione um serviço antes de cadastrar.");
-    return;
-  }
+    if (!selectSubcategoria.value) {
+      alert("Por favor, selecione um serviço antes de cadastrar.");
+      return;
+    }
 
-  const btnSubmit = form.querySelector("button");
-  btnSubmit.textContent = "Cadastrando...";
-  btnSubmit.disabled = true;
+    const btnSubmit = form.querySelector("button");
+    btnSubmit.textContent = "Cadastrando...";
+    btnSubmit.disabled = true;
 
-  const inputOculto = document.getElementById("area_prestador_oculto");
-  const categoriaFinal = inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value;
+    const inputOculto = document.getElementById("area_prestador_oculto");
+    let categoriaFinal = inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value;
 
-  const novoServico = {
-    titulo: selectSubcategoria.value,
-    categoria: categoriaFinal.toLowerCase().trim(),
-    descricao: descricao.value,
-    preco: document.getElementById("preco").value,
-    duracao: document.getElementById("duracao").value
-  };
+    // Tratamento básico antes de enviar ao back
+    categoriaFinal = categoriaFinal.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (categoriaFinal === "hydraulica") categoriaFinal = "hidraulica";
 
-  fetch('/salvar_servico_prestador', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(novoServico)
-  })
-    .then(response => response.json())
-    .then(data => {
-      btnSubmit.textContent = "+ Cadastrar Service";
-      btnSubmit.disabled = false;
+    const novoServico = {
+      titulo: selectSubcategoria.value,
+      categoria: categoriaFinal,
+      descricao: descricao.value,
+      preco: document.getElementById("preco").value,
+      duracao: document.getElementById("duracao").value
+    };
 
-      if (data.erro) {
-        alert("Erro: " + data.erro);
-      } else {
-        alert("Sucesso! Serviço anunciado com sucesso.");
-        window.location.href = "/painel";
-      }
+    fetch('/salvar_servico_prestador', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(novoServico)
     })
-    .catch(erro => {
-      console.error("Erro:", erro);
-      alert("Erro de conexão com o servidor.");
-      btnSubmit.textContent = "+ Cadastrar Serviço";
-      btnSubmit.disabled = false;
-    });
-});
+      .then(response => response.json())
+      .then(data => {
+        btnSubmit.textContent = "+ Cadastrar Serviço";
+        btnSubmit.disabled = false;
+
+        if (data.erro) {
+          alert("Erro: " + data.erro);
+        } else {
+          // Abre o modal profissional cadastrado com sucesso
+          const modal = document.getElementById("modalSucessoCadastro");
+          if (modal) {
+            modal.style.display = "flex";
+          }
+
+          const btnIrPainel = document.getElementById("btnIrParaPainel");
+          if (btnIrPainel) {
+            btnIrPainel.addEventListener("click", () => {
+              window.location.href = "/painel";
+            });
+          }
+        }
+      })
+      .catch(erro => {
+        console.error("Erro:", erro);
+        alert("Erro de conexão com o servidor.");
+        btnSubmit.textContent = "+ Cadastrar Serviço";
+        btnSubmit.disabled = false;
+      });
+  });
+}
