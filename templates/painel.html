@@ -127,6 +127,46 @@
           </div>
         </div>
 
+
+        <div id="modalRecusar" class="modal-overlay">
+  <div class="modal-box" style="text-align: center; max-width: 360px;">
+    <div style="font-size: 44px; margin-bottom: 12px; line-height: 1;">⚠️</div>
+    <h3 style="margin-bottom: 10px;">Recusar Agendamento?</h3>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+      Tem certeza que deseja recusar este pedido? O cliente será notificado.
+    </p>
+    <div class="modal-actions" style="margin-top: 0; display: flex; gap: 10px;">
+      <button class="btn-cancel-modal" onclick="fecharModalRecusar()" style="flex: 1; padding: 11px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: #f1f5f9; color: #1a2340;">Não, voltar</button>
+      <button id="btnConfirmarRecusa" style="flex: 1; padding: 11px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: #ef4444; color: #fff;">Sim, recusar</button>
+    </div>
+  </div>
+</div>
+
+        <div id="modalConcluir" class="modal-overlay">
+  <div class="modal-box" style="text-align: center; max-width: 360px;">
+    <div style="font-size: 44px; margin-bottom: 12px; line-height: 1;">✅</div>
+    <h3 style="margin-bottom: 10px;">Concluir Serviço?</h3>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+      Tem certeza que deseja marcar este serviço como concluído? O cliente será notificado para deixar uma avaliação.
+    </p>
+    <div class="modal-actions" style="margin-top: 0; display: flex; gap: 10px;">
+      <button class="btn-cancel-modal" onclick="fecharModalConcluir()" style="flex: 1; padding: 11px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: #f1f5f9; color: #1a2340;">Não, voltar</button>
+      <button id="btnConfirmarConclusao" style="flex: 1; padding: 11px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: #10b981; color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">Sim, concluir</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Adicione esse CSS caso o painel ainda não tenha os estilos do modal-overlay */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, .5);
+  z-index: 9999; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; margin: 16px; }
+</style>
+
+
         <!-- ABAS -->
         <div class="abas-bar">
           <div class="abas-bar__tabs">

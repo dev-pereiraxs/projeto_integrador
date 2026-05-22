@@ -1,4 +1,7 @@
 const form = document.getElementById("form");
+const selectCategoria = document.getElementById("categoria");
+const selectSubcategoria = document.getElementById("subcategoria");
+const descricao = document.getElementById("descricao");
 
 const categorias = {
   mecanica: [
@@ -143,19 +146,33 @@ const descricoes = {
   "Higienização de colchão": "Remoção de ácaros e sujeiras."
 };
 
-const selectCategoria = document.getElementById("categoria");
-const selectSubcategoria = document.getElementById("subcategoria");
-const descricao = document.getElementById("descricao");
+// Garante o bloqueio de edição manual da descrição automática
+if (descricao) {
+  descricao.setAttribute("readonly", true);
+}
 
-//  bloqueia edição manual
-descricao.setAttribute("readonly", true);
+// ============================================================
+// 🚀 FUNÇÃO PRINCIPAL DE ATUALIZAÇÃO DA BANCA DE DADOS
+// ============================================================
+function atualizarFiltroSubcategorias() {
+  const inputOculto = document.getElementById("area_prestador_oculto");
 
-// Atualiza subcategorias
-selectCategoria.addEventListener("change", () => {
-  const valor = selectCategoria.value.toLowerCase();
+  // Captura o valor puro vindo do banco de dados pelo input oculto
+  let valor = (inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value || "").toLowerCase().trim();
+
+  // Garante mapeamento sem acentos
+  if (valor === "mecânica") valor = "mecanica";
+  if (valor === "elétrica") valor = "eletrica";
+  if (valor === "hidráulica" || valor === "hydraulica") valor = "hidraulica";
+
+  // Força o select visível a marcar a opção correspondente na tela
+  if (valor && selectCategoria) {
+    selectCategoria.value = valor;
+  }
+
   const lista = categorias[valor] || [];
 
-  selectSubcategoria.innerHTML = "<option value=''>Selecione um serviço</option>";
+  selectSubcategoria.innerHTML = "<option value=''>Selecione um serviço...</option>";
 
   lista.forEach(servico => {
     const option = document.createElement("option");
@@ -165,37 +182,54 @@ selectCategoria.addEventListener("change", () => {
   });
 
   descricao.value = "";
-});
+}
 
-// Preenche descrição automática
+// Vincula a troca de subcategoria com a exibição de descrições
 selectSubcategoria.addEventListener("change", () => {
   const servico = selectSubcategoria.value;
-
+  if (!servico) {
+    descricao.value = "";
+    return;
+  }
   descricao.value = descricoes[servico] ||
     `Serviço profissional de ${servico.toLowerCase()}, realizado com qualidade, segurança e atenção aos detalhes.`;
 });
 
-// Menu mobile
+// Executa imediatamente quando a página carrega
+document.addEventListener("DOMContentLoaded", () => {
+  atualizarFiltroSubcategorias();
+});
 
+// Menu mobile
 const menuToggle = document.getElementById("menuToggle");
 const navMenu = document.getElementById("navMenu");
-
 if (menuToggle && navMenu) {
   menuToggle.addEventListener("click", () => {
     navMenu.classList.toggle("active");
   });
 }
 
+// ============================================================
+// ENVIO DO FORMULÁRIO (POST)
+// ============================================================
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  if (!selectSubcategoria.value) {
+    alert("Por favor, selecione um serviço antes de cadastrar.");
+    return;
+  }
 
   const btnSubmit = form.querySelector("button");
   btnSubmit.textContent = "Cadastrando...";
   btnSubmit.disabled = true;
 
+  const inputOculto = document.getElementById("area_prestador_oculto");
+  const categoriaFinal = inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value;
+
   const novoServico = {
     titulo: selectSubcategoria.value,
-    categoria: selectCategoria.value.toLowerCase(),
+    categoria: categoriaFinal.toLowerCase().trim(),
     descricao: descricao.value,
     preco: document.getElementById("preco").value,
     duracao: document.getElementById("duracao").value
@@ -210,19 +244,19 @@ form.addEventListener("submit", (e) => {
   })
     .then(response => response.json())
     .then(data => {
-      btnSubmit.textContent = "+ Cadastrar Serviço";
+      btnSubmit.textContent = "+ Cadastrar Service";
       btnSubmit.disabled = false;
 
       if (data.erro) {
         alert("Erro: " + data.erro);
       } else {
-        alert("Sucesso! Serviço salvo.");
-        window.location.href = "/sucesso-agendamento";
+        alert("Sucesso! Serviço anunciado com sucesso.");
+        window.location.href = "/painel";
       }
     })
     .catch(erro => {
       console.error("Erro:", erro);
-      alert("Erro de conexão.");
+      alert("Erro de conexão com o servidor.");
       btnSubmit.textContent = "+ Cadastrar Serviço";
       btnSubmit.disabled = false;
     });

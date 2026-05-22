@@ -4,93 +4,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Novo Serviço</title>
+  <title>Novo Serviço – Agenda Fácil</title>
   <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
 
-
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="../static/global.css">
-  <link rel="stylesheet" href="../static/painel.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='painel.css') }}">
 </head>
 
 <body class="bg-[var(--bg)]">
 
-  <!-- HEADER (padronizado) -->
   {% include 'partials/header.html' %}
-  <div class="form-wrapper">
-    <h1 class="form-title">Cadastrar Novo Serviço</h1>
 
-    <form id="form" class="form-card">
+  <div class="form-wrapper" style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+    <h1 class="form-title" style="font-size: 28px; font-weight: 700; margin-bottom: 24px; text-align: center;">Cadastrar Novo Serviço</h1>
 
-      <div class="form-group">
-        <label class="form-label">Categoria</label>
-        <select id="categoria" class="input">
-          <option>Selecione</option>
-          <option value="mecanica">Mecânica</option>
-          <option value="eletrica">Elétrica</option>
-          <option value="tecnologia">Tecnologia</option>
-          <option value="reformas">Reformas</option>
-          <option value="hidraulica">Hidráulica</option>
-          <option value="limpeza">Limpeza</option>
+    <input type="hidden" id="area_prestador_oculto" value="{{ session.get('usuario_area', '') }}">
+
+    <form id="form" class="form-card" style="background: #fff; padding: 32px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Categoria</label>
+        <select id="categoria" class="input" disabled style="width: 100%; padding: 12px; background-color: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 8px; cursor: not-allowed; opacity: 0.8;">
+          <option value="">Selecione sua área</option>
+          <option value="mecanica" {% if session.get('usuario_area') == 'mecanica' %}selected{% endif %}>Mecânica</option>
+          <option value="eletrica" {% if session.get('usuario_area') == 'eletrica' %}selected{% endif %}>Elétrica</option>
+          <option value="tecnologia" {% if session.get('usuario_area') == 'tecnologia' %}selected{% endif %}>Tecnologia</option>
+          <option value="reformas" {% if session.get('usuario_area') == 'reformas' %}selected{% endif %}>Reformas</option>
+          <option value="hidraulica" {% if session.get('usuario_area') == 'hidraulica' %}selected{% endif %}>Hidráulica</option>
+          <option value="limpeza" {% if session.get('usuario_area') == 'limpeza' %}selected{% endif %}>Limpeza</option>
+        </select>
+        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+          Sua categoria é definida pelo seu cadastro profissional.
+        </small>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Serviço (Subcategoria)</label>
+        <select id="subcategoria" class="input" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;">
+          <option value="">Selecione o serviço...</option>
         </select>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Serviço</label>
-        <select id="subcategoria" class="input">
-          <option>Selecione uma categoria primeiro</option>
-        </select>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Descrição Completa</label>
+        <textarea id="descricao" class="input textarea" placeholder="A descrição detalhada do serviço aparecerá aqui..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; min-height: 120px; resize: vertical; background-color: #f8fafc; color: #475569;" readonly></textarea>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Descrição</label>
-        <textarea id="descricao" class="input textarea"></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Preço Base (R$)</label>
-          <input id="preco" type="number" class="input" />
+      <div class="form-row" style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Preço Base (R$)</label>
+          <input id="preco" type="number" step="0.01" class="input" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;" placeholder="0,00" />
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Duração (Horas)</label>
-          <input id="duracao" type="number" class="input" />
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Duração (Horas)</label>
+          <input id="duracao" type="number" step="0.5" class="input" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;" placeholder="Ex: 1.5" />
         </div>
       </div>
 
-      <button type="submit" class="btn-primary">+ Cadastrar Serviço</button>
+      <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; transition: background 0.2s;">+ Cadastrar Serviço</button>
     </form>
   </div>
 
-  <script src="../static/js/forms.js"></script>
+  <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
 
-<!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer__inner">
-        <strong class="footer__brand">
-          Agenda Fácil
-        </strong>
-
-        <p class="footer__tagline">
-          Conectando pessoas a profissionais de confiança.
-        </p>
-
-        <div class="footer__links">
-          <a href="#">Termos</a>
-          <a href="#">Privacidade</a>
-          <a href="#">Contato</a>
-        </div>
-
-        <p class="footer__copy">
-          © 2025 Agenda Fácil. Todos os direitos reservados.
-        </p>
-
-          <style>
-      .footer__inner {
-        margin-bottom: 20px;
-      }
-    </style>
+  <footer class="footer">
+    <div class="footer__inner" style="margin-bottom: 20px;">
+      <strong class="footer__brand">Agenda Fácil</strong>
+      <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
+      <div class="footer__links">
+        <a href="#">Termos</a>
+        <a href="#">Privacidade</a>
+        <a href="#">Contato</a>
+      </div>
+      <p class="footer__copy">© 2026 Agenda Fácil. Todos os direitos reservados.</p>
+    </div>
+  </footer>
 </body>
 
 </html>

@@ -27,6 +27,8 @@ CREATE TABLE cadastro_clientes (
     criado_em         DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+select * from cadastro_clientes;
+
 -- =====================================================
 -- PRESTADORES
 -- =====================================================
@@ -50,6 +52,7 @@ CREATE TABLE cadastro_prestadores (
 
     criado_em         DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- =====================================================
 -- SERVIÇOS ANUNCIADOS
@@ -97,8 +100,7 @@ CREATE TABLE agendamentos (
         'confirmado',
         'em_andamento',
         'concluido',
-        'cancelado',
-        'recusado'
+        'cancelado'
     ) DEFAULT 'pendente',
 
     observacoes       TEXT,
@@ -225,7 +227,16 @@ SELECT * FROM admins;
 SELECT * FROM agendamentos;
 
 SELECT email, ativo FROM admins;
+select * from cadastro_clientes;
+select * from cadastro_prestadores;
 
 SELECT LENGTH(senha_hash)
 FROM admins
 WHERE email = 'felipe@admin.com.br';
+
+
+-- 1. Altera a coluna status para aceitar qualquer palavra (evita travamentos de ENUM)
+ALTER TABLE agendamentos MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'pendente';
+
+-- 2. Cria a coluna que controla se o cliente já visualizou o pop-up de recusa
+ALTER TABLE agendamentos ADD COLUMN alerta_visto TINYINT DEFAULT 0;

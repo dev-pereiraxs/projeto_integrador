@@ -359,6 +359,33 @@ def painel():
 def formulario():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return redirect(url_for("login"))
+
+    email_prestador = session["usuario_logado"]
+
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Busca a área de atuação atualizada diretamente do banco de dados
+        cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
+        prestador = cursor.fetchone()
+
+        # Formata o texto removendo acentos e espaços para bater com as chaves do JavaScript
+        area_oficial = str(prestador.get("areas_atuacao") or "").strip().lower()
+        if area_oficial == "mecânica": area_oficial = "mecanica"
+        if area_oficial == "elétrica": area_oficial = "eletrica"
+        if area_oficial == "hidráulica" or area_oficial == "hydraulica": area_oficial = "hidraulica"
+
+        # Garante que a sessão está atualizada com o valor limpo
+        session["usuario_area"] = area_oficial
+
+    except Exception as e:
+        print(f"[Erro no formulário]: {e}")
+        session["usuario_area"] = ""
+    finally:
+        cursor.close()
+        conn.close()
+
     return render_template("formulario.html")
 
 
@@ -404,6 +431,10 @@ def autenticar():
         session["usuario_logado"] = email
         session["tipo_usuario"] = "prestador"
         session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
+
+        # 🔑 força a conversão para string limpa e remove espaços
+        session["usuario_area"] = str(prestador.get("areas_atuacao") or "").strip().lower()
+
         cursor.close();
         conn.close()
         return redirect(url_for("servicos"))
@@ -564,31 +595,53 @@ def salvar_agendamento():
 # =========================
 # SERVIÇOS PRESTADOR
 # =========================
+# ============================================================
+# SERVIÇOS PRESTADOR (Mantenha apenas este bloco no seu app.py)
+# ============================================================
 @app.route("/salvar_servico_prestador", methods=["POST"])
 def salvar_servico_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
         return jsonify({"erro": "Acesso negado"}), 401
 
     dados = request.get_json()
-    valores = (
-        session["usuario_logado"], dados.get("titulo"), dados.get("descricao"),
-        dados.get("preco"), dados.get("categoria"), dados.get("duracao"),
-    )
+    email_prestador = session["usuario_logado"]
+
     conn = connectar()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
+
     try:
+        # 1. Pega a área de atuação oficial do prestador no banco de dados
+        # Mude de FROM_cadastro_prestadores para:
+        cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
+        prestador_info = cursor.fetchone()
+
+        if not prestador_info or not prestador_info.get("areas_atuacao"):
+            return jsonify({"erro": "Prestador não tem área de atuação definida."}), 400
+
+        area_oficial = prestador_info["areas_atuacao"]
+
+        # 2. Ignora o que o usuário tentou burlar e injeta a categoria correta por segurança
+        valores = (
+            email_prestador,
+            dados.get("titulo"),
+            dados.get("descricao"),
+            dados.get("preco"),
+            area_oficial,  # 🔒 Trava de segurança aplicada no banco
+            dados.get("duracao"),
+        )
+
         cursor.execute(
             "INSERT INTO servicos_anunciados (prestador_email,titulo,descricao,preco,area_atuacao,duracao) VALUES (%s,%s,%s,%s,%s,%s)",
             valores
         )
         conn.commit()
-        return jsonify({"mensagem": "Serviço criado!"})
+        return jsonify({"mensagem": "Serviço criado com sucesso na sua área!"})
+
     except Exception as e:
         return jsonify({"erro": str(e)})
     finally:
-        cursor.close();
+        cursor.close()
         conn.close()
-
 
 # =========================
 # API SERVIÇOS
@@ -1590,6 +1643,41 @@ def stats_prestador(email):
     finally:
         cursor.close();
         conn.close()
+
+
+@app.route("/api/checar_recusados_cliente")
+def checar_recusados_cliente():
+    if not session.get('usuario_logado'):
+        return jsonify({"recusado": None})
+
+    email_cliente = session.get('usuario_logado')
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    # Busca o primeiro agendamento recusado que o cliente ainda NÃO viu
+    cursor.execute("""
+        SELECT id, servico 
+        FROM agendamentos 
+        WHERE cliente_email = %s AND status = 'recusado' AND alerta_visto = 0
+        LIMIT 1
+    """, (email_cliente,))
+
+    resultado = cursor.fetchone()
+    cursor.close();
+    conn.close()
+
+    return jsonify({"recusado": resultado})
+
+
+@app.route("/api/marcar_alerta_visto/<int:id>", methods=["PATCH"])
+def marcar_alerta_visto(id):
+    conn = connectar()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE agendamentos SET alerta_visto = 1 WHERE id = %s", (id,))
+    conn.commit()
+    cursor.close();
+    conn.close()
+    return jsonify({"mensagem": "Alerta marcado como visto"})
 
 
 if __name__ == "__main__":

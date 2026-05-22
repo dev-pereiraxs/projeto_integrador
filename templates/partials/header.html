@@ -3,8 +3,7 @@
   href="{{ url_for('static', filename='premium-header.css') }}"
 />
 
-{# Wrapper com position:relative para o menu mobile se posicionar corretamente
-#}
+{# Wrapper com position:relative para o menu mobile se posicionar corretamente #}
 <div class="af-header-wrap">
   <header class="af-header">
     <div class="af-header__inner">
@@ -55,9 +54,8 @@
           Serviços
         </a>
 
-        {# Clientes: link para virar prestador #} {% if
-        session.get('usuario_logado') and session.get('tipo_usuario') !=
-        'prestador' %}
+        {# Clientes: link para virar prestador #}
+        {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
         <a class="af-nav__link" href="/prestador">
           <svg
             class="af-nav__icon"
@@ -72,8 +70,10 @@
           </svg>
           Quero ser Prestador
         </a>
-        {% endif %} {# Prestadores: painel #} {% if session.get('tipo_usuario')
-        == 'prestador' %}
+        {% endif %}
+
+        {# Prestadores: painel #}
+        {% if session.get('tipo_usuario') == 'prestador' %}
         <a class="af-nav__link af-nav__link--primary" href="/painel">
           <svg
             class="af-nav__icon"
@@ -93,21 +93,23 @@
         {% endif %}
       </nav>
 
-      {# ── USER PILL (logado) ── #} {% if session.get('usuario_logado') %}
+      {# ── USER PILL (logado) ── #}
+      {% if session.get('usuario_logado') %}
       <a
         class="af-user-pill"
         href="{{ url_for('meu_perfil') }}"
         aria-label="Meu perfil"
       >
         <span class="af-user-pill__avatar">
-          {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
-          '?'))[0] | upper }}
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
         </span>
         <span class="af-user-pill__name">
           {{ session.get('usuario_nome', session.get('usuario_logado', '')) }}
         </span>
       </a>
-      {% endif %} {# ── SAIR / ENTRAR ── #}
+      {% endif %}
+
+      {# ── SAIR / ENTRAR ── #}
       <a
         class="af-nav__link af-nav__link--{% if session.get('usuario_logado') %}danger{% else %}primary{% endif %}"
         href="{% if session.get('usuario_logado') %}/logout{% else %}/login{% endif %}"
@@ -125,7 +127,10 @@
           <polyline points="16 17 21 12 16 7" />
           <line x1="21" y1="12" x2="9" y2="12" />
         </svg>
-        Sair {% else %} Entrar {% endif %}
+        Sair
+        {% else %}
+        Entrar
+        {% endif %}
       </a>
 
       {# ── HAMBURGER ── #}
@@ -151,20 +156,18 @@
     aria-hidden="true"
   >
     <div class="af-mobile__inner">
-      {# Card do usuário logado #} {% if session.get('usuario_logado') %}
+      {# Card do usuário logado #}
+      {% if session.get('usuario_logado') %}
       <a class="af-mobile-user" href="{{ url_for('meu_perfil') }}">
         <span class="af-mobile-user__avatar">
-          {{ (session.get('usuario_nome', '') or session.get('usuario_logado',
-          '?'))[0] | upper }}
+          {{ (session.get('usuario_nome', '') or session.get('usuario_logado', '?'))[0] | upper }}
         </span>
         <div class="af-mobile-user__meta">
-          <span class="af-mobile-user__name"
-            >{{ session.get('usuario_nome', session.get('usuario_logado', ''))
-            }}</span
-          >
+          <span class="af-mobile-user__name">
+            {{ session.get('usuario_nome', session.get('usuario_logado', '')) }}
+          </span>
           <span class="af-mobile-user__role">
-            {% if session.get('tipo_usuario') == 'prestador' %}Prestador{% else
-            %}Cliente{% endif %}
+            {% if session.get('tipo_usuario') == 'prestador' %}Prestador{% else %}Cliente{% endif %}
           </span>
         </div>
       </a>
@@ -174,17 +177,16 @@
       <a class="af-mobile__link" href="/">Home</a>
       <a class="af-mobile__link" href="/servicos">Serviços</a>
 
-      {% if session.get('usuario_logado') and session.get('tipo_usuario') !=
-      'prestador' %}
+      {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
       <a class="af-mobile__link" href="/prestador">Quero ser Prestador</a>
-      {% endif %} {% if session.get('tipo_usuario') == 'prestador' %}
-      <a class="af-mobile__link af-mobile__link--primary" href="/painel"
-        >Meu Painel</a
-      >
-      {% endif %} {% if session.get('usuario_logado') %}
-      <a class="af-mobile__link" href="{{ url_for('meu_perfil') }}"
-        >Meu Perfil</a
-      >
+      {% endif %}
+
+      {% if session.get('tipo_usuario') == 'prestador' %}
+      <a class="af-mobile__link af-mobile__link--primary" href="/painel">Meu Painel</a>
+      {% endif %}
+
+      {% if session.get('usuario_logado') %}
+      <a class="af-mobile__link" href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
       {% endif %}
 
       <div class="af-mobile__divider"></div>
@@ -200,7 +202,112 @@
 </div>
 {# /af-header-wrap #}
 
-<script
-  src="{{ url_for('static', filename='premium-header.js') }}"
-  defer
-></script>
+<script>
+(function () {
+  function iniciarMenuMobile() {
+    const burger = document.getElementById("afHamburger");
+    const mobile = document.getElementById("afMobileMenu");
+
+    if (!burger || !mobile) return;
+
+    function close() {
+      mobile.classList.remove("open");
+      burger.classList.remove("active");
+      mobile.setAttribute("aria-hidden", "true");
+      burger.setAttribute("aria-expanded", "false");
+    }
+
+    function open() {
+      mobile.classList.add("open");
+      burger.classList.add("active");
+      mobile.setAttribute("aria-hidden", "false");
+      burger.setAttribute("aria-expanded", "true");
+    }
+
+    // Gerencia o gatilho de clique no ícone hamburger
+    burger.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      mobile.classList.contains("open") ? close() : open();
+    });
+
+    // Fecha o menu automaticamente ao clicar em qualquer link interno
+    mobile.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", close);
+    });
+
+    // Fecha o menu se o usuário clicar na área vazia/escura fora dele
+    document.addEventListener("click", (e) => {
+      if (!mobile.classList.contains("open")) return;
+      if (!mobile.contains(e.target) && !burger.contains(e.target)) {
+        close();
+      }
+    });
+
+    // Fecha o menu ao pressionar a tecla ESC no teclado
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+  }
+
+  // Executa o script de forma segura conforme o ciclo de vida do DOM
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciarMenuMobile);
+  } else {
+    iniciarMenuMobile();
+  }
+})();
+</script>
+
+<div id="modalAlertaRecusa" style="display:none; position:fixed; inset:0; background:rgba(4, 7, 18, 0.7); z-index:99999; align-items:center; justify-content:center; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);">
+  <div style="background:#fff; border-radius:20px; padding:36px; max-width:420px; width:90%; text-align:center; box-shadow:0 24px 64px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.8);">
+    <div style="width:72px; height:72px; border-radius:50%; background:#fee2e2; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:32px; box-shadow:0 8px 20px rgba(239,68,68,0.15);">❌</div>
+    <h3 style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; color:#1a2340; margin-bottom:10px;">Agendamento Recusado</h3>
+    <p style="color:#64748b; font-size:14px; line-height:1.6; margin-bottom:28px;">
+      O serviço <strong id="nomeServicoRecusado" style="color:#ef4444;">[Serviço]</strong> foi recusado pelo prestador. Agende outro profissional ou horário disponível.
+    </p>
+    <button id="btnAgendarNovoGlobal" style="width:100%; padding:14px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,0.3); transition:all 0.15s;">
+      ✨ Agendar novo serviço
+    </button>
+  </div>
+</div>
+
+<script>
+(function () {
+  async function verificarRecusasDoCliente() {
+    try {
+      const res = await fetch('/api/checar_recusados_cliente');
+      const data = await res.json();
+
+      if (data.recusado) {
+        // Alimenta o nome do serviço recusado no texto
+        document.getElementById('nomeServicoRecusado').textContent = data.recusado.servico;
+
+        // Abre o modal na tela
+        const modal = document.getElementById('modalAlertaRecusa');
+        modal.style.display = 'flex';
+
+        // Configura o clique do botão vermelho/azul de agendar novo
+        document.getElementById('btnAgendarNovoGlobal').addEventListener('click', async () => {
+          // 1. Informa o Python para marcar esse alerta como "visto" (alerta_visto = 1)
+          await fetch(`/api/marcar_alerta_visto/${data.recusado.id}`, { method: 'PATCH' });
+
+          // 2. Redireciona o cliente para a listagem de serviços
+          window.location.href = '/servicos';
+        });
+      }
+    } catch (e) {
+      console.warn('Erro no sistema de notificações:', e);
+    }
+  }
+
+  // Só executa o script se o usuário logado for um CLIENTE (Evita rodar na conta do prestador)
+  {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", verificarRecusasDoCliente);
+    } else {
+      verificarRecusasDoCliente();
+    }
+  {% endif %}
+})();
+</script>
