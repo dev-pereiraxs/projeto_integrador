@@ -3,6 +3,19 @@
   href="{{ url_for('static', filename='premium-header.css') }}"
 />
 
+{# Estilos dinâmicos auxiliares para garantir o comportamento perfeito das abas clicadas #}
+<style>
+  .af-nav__link.active {
+    background-color: var(--blue) !important;
+    color: var(--white) !important;
+  }
+  .af-mobile__link.active {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+</style>
+
 {# Wrapper com position:relative para o menu mobile se posicionar corretamente #}
 <div class="af-header-wrap">
   <header class="af-header">
@@ -23,7 +36,7 @@
 
       {# ── NAV DESKTOP (direita) ── #}
       <nav class="af-nav af-nav--desktop" aria-label="Navegação principal">
-        <a class="af-nav__link" href="/">
+        <a class="af-nav__link {{ 'active' if request.path == '/' }}" href="/">
           <svg
             class="af-nav__icon"
             viewBox="0 0 24 24"
@@ -38,7 +51,7 @@
           Home
         </a>
 
-        <a class="af-nav__link" href="/servicos">
+        <a class="af-nav__link {{ 'active' if request.path == '/servicos' }}" href="/servicos">
           <svg
             class="af-nav__icon"
             viewBox="0 0 24 24"
@@ -56,7 +69,7 @@
 
         {# Clientes: link para virar prestador #}
         {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
-        <a class="af-nav__link" href="/prestador">
+        <a class="af-nav__link {{ 'active' if request.path == '/prestador' }}" href="/prestador">
           <svg
             class="af-nav__icon"
             viewBox="0 0 24 24"
@@ -74,7 +87,7 @@
 
         {# Prestadores: painel #}
         {% if session.get('tipo_usuario') == 'prestador' %}
-        <a class="af-nav__link af-nav__link--primary" href="/painel">
+        <a class="af-nav__link {{ 'active' if request.path == '/painel' or request.path == '/formulario' }}" href="/painel">
           <svg
             class="af-nav__icon"
             viewBox="0 0 24 24"
@@ -147,7 +160,7 @@
     </div>
   </header>
 
-  {# ── MOBILE MENU ── #}
+  {# ── MOBILE MENU (Corrigido para acender apenas a página atual) ── #}
   <div
     class="af-mobile"
     id="afMobileMenu"
@@ -174,19 +187,19 @@
       <div class="af-mobile__divider"></div>
       {% endif %}
 
-      <a class="af-mobile__link" href="/">Home</a>
-      <a class="af-mobile__link" href="/servicos">Serviços</a>
+      <a class="af-mobile__link {{ 'active' if request.path == '/' }}" href="/">Home</a>
+      <a class="af-mobile__link {{ 'active' if request.path == '/servicos' }}" href="/servicos">Serviços</a>
 
       {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
-      <a class="af-mobile__link" href="/prestador">Quero ser Prestador</a>
+      <a class="af-mobile__link {{ 'active' if request.path == '/prestador' }}" href="/prestador">Quero ser Prestador</a>
       {% endif %}
 
       {% if session.get('tipo_usuario') == 'prestador' %}
-      <a class="af-mobile__link af-mobile__link--primary" href="/painel">Meu Painel</a>
+      <a class="af-mobile__link {{ 'active' if request.path == '/painel' or request.path == '/formulario' }}" href="/painel">Meu Painel</a>
       {% endif %}
 
       {% if session.get('usuario_logado') %}
-      <a class="af-mobile__link" href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
+      <a class="af-mobile__link {{ 'active' if request.path == '/meu_perfil' }}" href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
       {% endif %}
 
       <div class="af-mobile__divider"></div>
@@ -224,19 +237,16 @@
       burger.setAttribute("aria-expanded", "true");
     }
 
-    // Gerencia o gatilho de clique no ícone hamburger
     burger.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       mobile.classList.contains("open") ? close() : open();
     });
 
-    // Fecha o menu automaticamente ao clicar em qualquer link interno
     mobile.querySelectorAll("a").forEach((a) => {
       a.addEventListener("click", close);
     });
 
-    // Fecha o menu se o usuário clicar na área vazia/escura fora dele
     document.addEventListener("click", (e) => {
       if (!mobile.classList.contains("open")) return;
       if (!mobile.contains(e.target) && !burger.contains(e.target)) {
@@ -244,13 +254,11 @@
       }
     });
 
-    // Fecha o menu ao pressionar a tecla ESC no teclado
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") close();
     });
   }
 
-  // Executa o script de forma segura conforme o ciclo de vida do DOM
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", iniciarMenuMobile);
   } else {
@@ -280,19 +288,13 @@
       const data = await res.json();
 
       if (data.recusado) {
-        // Alimenta o nome do serviço recusado no texto
         document.getElementById('nomeServicoRecusado').textContent = data.recusado.servico;
 
-        // Abre o modal na tela
         const modal = document.getElementById('modalAlertaRecusa');
         modal.style.display = 'flex';
 
-        // Configura o clique do botão vermelho/azul de agendar novo
         document.getElementById('btnAgendarNovoGlobal').addEventListener('click', async () => {
-          // 1. Informa o Python para marcar esse alerta como "visto" (alerta_visto = 1)
           await fetch(`/api/marcar_alerta_visto/${data.recusado.id}`, { method: 'PATCH' });
-
-          // 2. Redireciona o cliente para a listagem de serviços
           window.location.href = '/servicos';
         });
       }
@@ -301,7 +303,6 @@
     }
   }
 
-  // Só executa o script se o usuário logado for um CLIENTE (Evita rodar na conta do prestador)
   {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", verificarRecusasDoCliente);
