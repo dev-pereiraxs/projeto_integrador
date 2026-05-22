@@ -796,6 +796,9 @@ def cancelar_agendamento(id):
 # =========================
 # ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR)
 # =========================
+# =========================
+# ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR) — CORRIGIDO
+# =========================
 @app.route("/api/atualizar_status/<int:id>", methods=["PATCH"])
 def atualizar_status(id):
     if "usuario_logado" not in session:
@@ -810,21 +813,37 @@ def atualizar_status(id):
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
+
+    # Busca os dados do agendamento antes de atualizar para saber quem é o cliente
     cursor.execute("SELECT * FROM agendamentos WHERE id=%s", (id,))
     ag = cursor.fetchone()
 
+    if not ag:
+        cursor.close()
+        conn.close()
+        return jsonify({"erro": "Agendamento não encontrado"}), 404
+
     cursor.execute("UPDATE agendamentos SET status=%s WHERE id=%s", (novo_status, id))
     conn.commit()
-    cursor.close();
+    cursor.close()
     conn.close()
 
+    # 🎯 GATILHO DA AVALIAÇÃO: Quando o status muda para concluído, avisa o CLIENTE
     if ag and novo_status == "concluido":
+        # Coleta o nome amigável do prestador para colocar na mensagem do cliente
+        nome_prestador = session.get("usuario_nome", "O prestador")
+
+        msg_notif = f"Seu atendimento de '{ag.get('servico')}' foi concluído por {nome_prestador}! Clique aqui para deixar sua avaliação."
+
+        # 🔌 CORREÇÃO CRÍTICA: Vincula o cliente_email no primeiro parâmetro para disparar na conta dele
         criar_notificacao(
-            ag["prestador_email"],
+            ag["cliente_email"],
             "conclusao",
-            f"Serviço #{id} marcado como concluído — {ag.get('servico', '')}",
-            id,
+            msg_notif,
+            id
         )
+        print(f"[Agenda Fácil] Notificação de avaliação gerada com sucesso para o cliente: {ag['cliente_email']}")
+
     return jsonify({"mensagem": "Status updated"})
 
 
