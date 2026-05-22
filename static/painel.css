@@ -1,5 +1,5 @@
 /* ============================================================
-   painel.css — Redesign
+   painel.css — Versão Definitiva Premium
    ============================================================ */
 
 * {
@@ -232,7 +232,7 @@ body {
 }
 
 /* ============================================================
-   LISTA DE PEDIDOS
+   LISTA DE GRID DE CARDS
    ============================================================ */
 
 #lista {
@@ -242,152 +242,160 @@ body {
 }
 
 /* ============================================================
-   PEDIDO CARD (gerado pelo pn.js)
+   CARDS DE PEDIDOS - REDESIGN PREMIUM
    ============================================================ */
 
 .pedido-card {
-  background: #fff;
+  background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  transition: transform .2s, box-shadow .2s;
+  gap: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
 }
 
 .pedido-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 36px rgba(15, 23, 42, .08);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border-color: #cbd5e1;
 }
 
-.pedido-card__info h3 {
-  font-size: 16px;
-  font-weight: 700;
+.pedido-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: #e2e8f0;
+}
+.pedido-card[data-status="pendente"]::before { background: #f59e0b; }
+.pedido-card[data-status="confirmado"]::before,
+.pedido-card[data-status="em_andamento"]::before { background: #3b82f6; }
+.pedido-card[data-status="concluido"]::before { background: #10b981; }
+.pedido-card[data-status="cancelado"]::before,
+.pedido-card[data-status="recusado"]::before { background: #ef4444; }
+
+.pedido-card__titulo {
+  font-size: 18px;
+  font-weight: 800;
   color: #0f172a;
-  margin-bottom: 4px;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  font-family: 'Plus Jakarta Sans', var(--font, system-ui), sans-serif;
 }
 
-.pedido-card__info p {
-  color: #64748b;
-  font-size: 13px;
-  line-height: 1.5;
+.pedido-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.pedido-card__actions {
+.pedido-meta-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: 4px;
-  border-top: 1px solid #f1f5f9;
-}
-
-/* ============================================================
-   BADGE
-   ============================================================ */
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .2px;
-}
-
-.badge-pending,
-.badge-pendente {
-  background: rgba(245, 158, 11, .12);
-  color: #b45309;
-}
-
-.badge-active,
-.badge-andamento,
-.badge-em-andamento {
-  background: rgba(37, 99, 235, .10);
-  color: #1d4ed8;
-}
-
-.badge-done,
-.badge-concluido,
-.badge-concluído {
-  background: rgba(16, 185, 129, .12);
-  color: #047857;
-}
-
-.badge-cancelled,
-.badge-cancelado {
-  background: rgba(239, 68, 68, .10);
-  color: #b91c1c;
-}
-
-/* ============================================================
-   BOTÕES DE AÇÃO
-   ============================================================ */
-
-.btn,
-.btn-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
   color: #475569;
-  font-family: inherit;
-  transition: .15s;
-  text-decoration: none;
+  font-weight: 500;
 }
 
-.btn:hover,
-.btn-action:hover {
-  border-color: #2563eb;
-  color: #2563eb;
-  background: rgba(37, 99, 235, .04);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, .22);
-}
-
-.btn-primary:hover {
-  opacity: .9;
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 6px 18px rgba(37, 99, 235, .32);
+.pedido-card__actions {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 /* ============================================================
-   ESTADO VAZIO
+   BADGES & PILLS
    ============================================================ */
 
-.empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px 20px;
-  color: #94a3b8;
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.empty-state__title {
+.badge-pendente { background: #fef3c7; color: #b45309; }
+.badge-confirmado, .badge-andamento { background: #dbeafe; color: #1d4ed8; }
+.badge-concluido-status, .badge-concluido { background: #d1fae5; color: #047857; }
+.badge-cancelado { background: #fee2e2; color: #b91c1c; }
+
+/* ============================================================
+   ESTADO VAZIO (Empty State Reestilizado)
+   ============================================================ */
+
+.empty-state-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  grid-column: 1 / -1;
+  padding: 40px 0;
+  box-sizing: border-box;
+}
+
+.empty-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  max-width: 580px;
+  width: 100%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 4px 12px -5px rgba(0, 0, 0, 0.01);
+  box-sizing: border-box;
+  animation: afEmptyStateFadeIn 0.4s ease-out;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  background-color: #f1f5f9;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #64748b;
+}
+
+.empty-state-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
-  color: #64748b;
+  color: #0f172a;
+  margin-top: 0;
   margin-bottom: 8px;
 }
 
-.empty-state__desc {
+.empty-state-text {
+  font-family: inherit;
   font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  max-width: 360px;
+  line-height: 1.6;
 }
 
 /* ============================================================
@@ -552,6 +560,25 @@ select.input {
   .form-row { grid-template-columns: 1fr; }
 
   .form-card { padding: 20px; }
+
+  /* 📱 RESPONSIVIDADE DO ESTADO VAZIO MOBILE */
+  .empty-state-container {
+    padding: 20px 0;
+  }
+
+  .empty-state-card {
+    padding: 40px 20px;
+    border-radius: 18px;
+    width: 100%;
+  }
+
+  .empty-state-title {
+    font-size: 16px;
+  }
+
+  .empty-state-text {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -570,120 +597,7 @@ button, a, input, textarea, select {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ============================================================
-   CARDS DE PEDIDOS - REDESIGN PREMIUM
-   ============================================================ */
-.pedido-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  position: relative;
-  overflow: hidden;
+@keyframes afEmptyStateFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-/* Efeito flutuante ao passar o mouse */
-.pedido-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-  border-color: #cbd5e1;
-}
-
-/* Faixa colorida no topo do card baseada no status */
-.pedido-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: #e2e8f0;
-}
-.pedido-card[data-status="pendente"]::before { background: #f59e0b; }
-.pedido-card[data-status="confirmado"]::before,
-.pedido-card[data-status="em_andamento"]::before { background: #3b82f6; }
-.pedido-card[data-status="concluido"]::before { background: #10b981; }
-.pedido-card[data-status="cancelado"]::before,
-.pedido-card[data-status="recusado"]::before { background: #ef4444; }
-
-.pedido-card__titulo {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.3;
-  margin-bottom: 12px;
-  font-family: 'Plus Jakarta Sans', var(--font, system-ui), sans-serif;
-}
-
-.pedido-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pedido-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #475569;
-  font-weight: 500;
-}
-
-/* Separador da área de botões */
-.pedido-card__actions {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* Formatação das Tags (Badges) */
-.badge-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.badge-pendente { background: #fef3c7; color: #b45309; }
-.badge-confirmado, .badge-andamento { background: #dbeafe; color: #1d4ed8; }
-.badge-concluido-status, .badge-concluido { background: #d1fae5; color: #047857; }
-.badge-cancelado { background: #fee2e2; color: #b91c1c; }
-
-/* Formatação dos Botões no Card */
-.btn-action-card {
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1.5px solid transparent;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: inherit;
-}
-
-.btn-action-aceitar { color: #059669; background: #ecfdf5; border-color: #a7f3d0; }
-.btn-action-aceitar:hover { background: #d1fae5; }
-
-.btn-action-recusar { color: #dc2626; background: #fef2f2; border-color: #fecaca; }
-.btn-action-recusar:hover { background: #fee2e2; }
-
-.btn-action-concluir { color: #fff; background: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
-.btn-action-concluir:hover { background: #059669; transform: translateY(-1px); }

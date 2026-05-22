@@ -4,6 +4,7 @@ const andamentoEl = document.getElementById("andamento");
 const concluidosEl = document.getElementById("concluidos");
 
 let pedidos = [];
+let abaAtual = "pedidos"; // 📍 Controla qual aba está ativa na tela para evitar misturar dados
 
 // ============================================================
 // CARREGA AGENDAMENTOS DO PRESTADOR (Aba Pedidos)
@@ -13,15 +14,18 @@ function carregarMeusServicos() {
     .then(response => response.json())
     .then(data => {
       if (data.erro) {
-        lista.innerHTML = `<p class="estado-erro">${data.erro}</p>`;
+        if (abaAtual === "pedidos") lista.innerHTML = `<p class="estado-erro">${data.erro}</p>`;
         return;
       }
       pedidos = data;
-      render();
+      atualizarContadores();
+      if (abaAtual === "pedidos") {
+        render();
+      }
     })
     .catch(erro => {
       console.error("Erro ao buscar os agendamentos:", erro);
-      lista.innerHTML = `<p class="estado-erro">Erro ao carregar agendamentos.</p>`;
+      if (abaAtual === "pedidos") lista.innerHTML = `<p class="estado-erro">Erro ao carregar agendamentos.</p>`;
     });
 }
 
@@ -73,38 +77,31 @@ function statusClass(s) {
 }
 
 // ============================================================
-// RENDER DA LISTA DE PEDIDOS (Com Estado Vazio Premium)
+// RENDER DA LISTA DE PEDIDOS (Exclusivo e Isolado)
 // ============================================================
 function render() {
+  // Garante que só renderiza se o usuário realmente estiver na aba de pedidos
+  if (abaAtual !== "pedidos") return;
+
   lista.innerHTML = "";
 
-  // 🎨 ESTADO VAZIO PREMIUM & PROFISSIONAL (Substitui o texto simples antigo)
-  // 🎨 ESTADO VAZIO PREMIUM & CENTRALIZADO NO PC
+  // 🎨 ESTADO VAZIO EXCLUSIVO DE PEDIDOS
   if (pedidos.length === 0) {
     lista.innerHTML = `
-      <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0;">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); animation: fadeIn 0.4s ease-out; box-sizing: border-box;">
-          
-          <div style="width: 56px; height: 56px; background-color: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; color: #64748b;">
-            📅
-          </div>
-          
-          <h3 style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px; margin-top: 0;">
-            Nenhum agendamento por aqui
-          </h3>
-          
-          <p style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0; max-width: 320px; line-height: 1.5;">
+      <div class="empty-state-container">
+        <div class="empty-state-card">
+          <div class="empty-state-icon">📅</div>
+          <h3 class="empty-state-title">Nenhum agendamento por aqui</h3>
+          <p class="empty-state-text">
             Os serviços agendados pelos seus clientes aparecerão organizados nesta área.
           </p>
-          
         </div>
       </div>
     `;
-    atualizarContadores();
     return;
   }
 
-  // LÓGICA DE ORDENAÇÃO INTELIGENTE DOS CARDS
+  // Ordenação inteligente
   const ordemStatus = {
     "pendente": 1,
     "confirmado": 2,
@@ -124,7 +121,6 @@ function render() {
     return b.id - a.id;
   });
 
-  // MONTAGEM DOS CARDS DE PEDIDOS
   pedidos.forEach((p) => {
     const card = document.createElement("div");
     card.className = "pedido-card";
@@ -191,12 +187,10 @@ function render() {
 
     lista.appendChild(card);
   });
-
-  atualizarContadores();
 }
 
 // ============================================================
-// FUNÇÃO GENÉRICA DE ATUALIZAR STATUS (Aceitar)
+// FUNÇÃO GENÉRICA DE ATUALIZAR STATUS
 // ============================================================
 window.alterarStatus = function(id, novoStatus) {
   fetch(`/api/atualizar_status/${id}`, {
@@ -216,7 +210,7 @@ window.alterarStatus = function(id, novoStatus) {
 };
 
 // ============================================================
-// CONTROLE DOS MODAIS (RECUSAR E CONCLUIR NA MESMA TELA)
+// CONTROLE DOS MODAIS
 // ============================================================
 let idAgendamentoParaRecusar = null;
 let idAgendamentoParaConcluir = null;
@@ -246,13 +240,51 @@ window.fecharModalConcluir = function() {
 };
 
 // ============================================================
-// EVENTOS E INICIALIZAÇÃO DE DA PÁGINA
+// ALTERNADOR DE ABAS PERFEITO e LIMPO
+// ============================================================
+function setAba(aba) {
+  abaAtual = aba; // Atualiza o estado global da aba antes de limpar a tela
+  const btnPedidos = document.getElementById("btn-pedidos");
+  const btnServicos = document.getElementById("btn-servicos");
+
+  if (aba === "pedidos") {
+    if (btnPedidos) {
+      btnPedidos.style.backgroundColor = "#2563eb";
+      btnPedidos.style.color = "#ffffff";
+      btnPedidos.style.fontWeight = "700";
+      btnPedidos.style.boxShadow = "0 4px 12px rgba(37, 99, 235, 0.2)";
+    }
+    if (btnServicos) {
+      btnServicos.style.backgroundColor = "#f1f5f9";
+      btnServicos.style.color = "#64748b";
+      btnServicos.style.fontWeight = "600";
+      btnServicos.style.boxShadow = "none";
+    }
+    carregarMeusServicos();
+  } else if (aba === "servicos") {
+    if (btnServicos) {
+      btnServicos.style.backgroundColor = "#2563eb";
+      btnServicos.style.color = "#ffffff";
+      btnServicos.style.fontWeight = "700";
+      btnServicos.style.boxShadow = "0 4px 12px rgba(37, 99, 235, 0.2)";
+    }
+    if (btnPedidos) {
+      btnPedidos.style.backgroundColor = "#f1f5f9";
+      btnPedidos.style.color = "#64748b";
+      btnPedidos.style.fontWeight = "600";
+      btnPedidos.style.boxShadow = "none";
+    }
+    carregarServicos();
+  }
+}
+
+// ============================================================
+// EVENTOS E INICIALIZAÇÃO DA PÁGINA
 // ============================================================
 document.addEventListener("DOMContentLoaded", function () {
   const btnPedidos = document.getElementById("btn-pedidos");
   const btnServicos = document.getElementById("btn-servicos");
 
-  // Fechar modais clicando fora da caixa branca
   const modalRec = document.getElementById('modalRecusar');
   if (modalRec) modalRec.addEventListener('click', function(e) { if (e.target === this) fecharModalRecusar(); });
 
@@ -294,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // CONFIRMAR CONCLUSÃO (Fica na mesma tela e atualiza)
+  // CONFIRMAR CONCLUSÃO
   const btnConfirmarConclusao = document.getElementById('btnConfirmarConclusao');
   if (btnConfirmarConclusao) {
     btnConfirmarConclusao.addEventListener('click', async function() {
@@ -317,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
           alert(data.erro);
         } else {
           fecharModalConcluir();
-          carregarMeusServicos(); // Mantém o usuário na tela e atualiza os dados
+          carregarMeusServicos();
         }
       } catch (e) {
         alert('Erro de conexão.');
@@ -327,14 +359,6 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.style.opacity = '1';
       }
     });
-  }
-
-  // ALTERNADOR DE ABAS (Pedidos vs Meus Serviços)
-  function setAba(aba) {
-    if (btnPedidos) btnPedidos.classList.toggle("btn-aba-ativo", aba === "pedidos");
-    if (btnServicos) btnServicos.classList.toggle("btn-aba-ativo", aba === "servicos");
-    if (aba === "pedidos") carregarMeusServicos();
-    else carregarServicos();
   }
 
   if (btnPedidos) btnPedidos.addEventListener("click", () => setAba("pedidos"));
@@ -352,32 +376,37 @@ window.remover = function (id) {
     .then(r => r.json())
     .then(data => {
       if (data.erro) { alert("Erro: " + data.erro); return; }
-      carregarServicos(); // Atualiza a lista da aba de serviços na hora
+      carregarServicos();
     }).catch(() => alert("Erro ao excluir."));
 };
 
 // ============================================================
-// ABA: MEUS SERVIÇOS (Design Premium Autônomo e Sem Horas)
+// ABA: MEUS SERVIÇOS (Totalmente Isolada e Limpa)
 // ============================================================
 function carregarServicos() {
+  if (abaAtual !== "servicos") return; // Força parada imediata se o usuário já clicou em outra aba
+
+  lista.innerHTML = "";
+
   fetch("/api/meus_servicos")
     .then(r => r.json())
     .then(data => {
+      // Dupla checagem de segurança para o caso do fetch demorar e o usuário já ter saído da aba
+      if (abaAtual !== "servicos") return;
+
       if (data.erro) {
         lista.innerHTML = `<p class="estado-erro">${data.erro}</p>`;
         return;
       }
+
+      // 🎨 ESTADO VAZIO EXCLUSIVO E INDEPENDENTE DE MEUS SERVIÇOS
       if (data.length === 0) {
         lista.innerHTML = `
-          <div style="display: flex; justify-content: center; align-items: center; width: 100%; grid-column: 1 / -1; padding: 40px 0;">
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; max-width: 520px; width: 100%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); box-sizing: border-box;">
-              <div style="width: 56px; height: 56px; background-color: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; color: #64748b;">
-                🛠️
-              </div>
-              <h3 style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px; margin-top: 0;">
-                Nenhum serviço anunciado
-              </h3>
-              <p style="font-family: 'DM Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0; max-width: 320px; line-height: 1.5;">
+          <div class="empty-state-container">
+            <div class="empty-state-card">
+              <div class="empty-state-icon">🛠️</div>
+              <h3 class="empty-state-title">Nenhum serviço anunciado</h3>
+              <p class="empty-state-text">
                 Clique em "Novo Serviço" no topo para cadastrar os seus anúncios na plataforma.
               </p>
             </div>
@@ -385,7 +414,6 @@ function carregarServicos() {
         return;
       }
 
-      // Dicionário de Cores e Ícones Dinâmicos por Categoria
       const categoriasConfig = {
         "tecnologia": { icon: "💻", color: "#3b82f6", bg: "#eff6ff" },
         "mecanica":   { icon: "⚙️", color: "#64748b", bg: "#f8fafc" },
@@ -442,6 +470,6 @@ function carregarServicos() {
       });
     })
     .catch(() => {
-      lista.innerHTML = `<p class="estado-erro">Erro ao carregar serviços.</p>`;
+      if (abaAtual === "servicos") lista.innerHTML = `<p class="estado-erro">Erro ao carregar serviços.</p>`;
     });
 }
