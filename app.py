@@ -233,9 +233,17 @@ def criar_notificacao(prestador_email, tipo, mensagem, agendamento_id=None):
 # =========================
 # GOOGLE LOGIN
 # =========================
+# =========================
+# GOOGLE LOGIN
+# =========================
 @app.route("/login-google")
 def login_google():
-    redirect_uri = "http://127.0.0.1:5000/callback"
+    # Detecta se está rodando no Render ou no PC local
+    if os.getenv("DB_HOST"):
+        redirect_uri = "https://projeto-integrador-4aw2.onrender.com/callback"
+    else:
+        redirect_uri = "http://127.0.0.1:5000/callback"
+
     return google.authorize_redirect(redirect_uri)
 
 
