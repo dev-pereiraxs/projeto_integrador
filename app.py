@@ -428,6 +428,9 @@ def sucesso_conclusao():
 # =========================
 # AUTENTICAÇÃO
 # =========================
+# =========================
+# AUTENTICAÇÃO
+# =========================
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     email = request.form["email"]
@@ -437,6 +440,7 @@ def autenticar():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
+    # 1. Verifica se é prestador
     cursor.execute("SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s", (email, senha))
     prestador = cursor.fetchone()
 
@@ -448,52 +452,29 @@ def autenticar():
 
         # 🔑 força a conversão para string limpa e remove espaços
         session["usuario_area"] = str(prestador.get("areas_atuacao") or "").strip().lower()
-        session["usuario_foto"] = prestador.get("foto") or ""
 
-        cursor.close();
+        cursor.close()
         conn.close()
         next_url = session.pop('next_url', None)
         return redirect(next_url if next_url else url_for("servicos"))
-# =========================
-# CADASTRO CLIENTE
-# =========================
-@app.route("/salvar", methods=["POST"])
-def salvar():
-    dados = (
-        request.form["nome"], request.form["sobrenome"],
-        request.form["data_nascimento"], request.form["sexo"],
-        request.form["email"], request.form["senha"],
-    )
-    conn = connectar()
-    cursor = conn.cursor()
-    email_cadastro = request.form["email"].strip().lower()
-    nome_cadastro = request.form["nome"].strip()
-    sobrenome_cadastro = request.form["sobrenome"].strip()
-    try:
-        cursor.execute(
-            "INSERT INTO cadastro_clientes (nome,sobrenome,data_nascimento,sexo,email,senha) VALUES (%s,%s,%s,%s,%s,%s)",
-            dados
-        )
-        conn.commit()
 
-        # ✅ após cadastro, já loga o usuário (cliente)
-        session.permanent = True if request.form.get("lembrar") else False
-        session["usuario_logado"] = email_cadastro
+    # 2. Se não for prestador, verifica se é cliente
+    cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
+    cliente = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if cliente:
+        session.permanent = True if lembrar else False
+        session["usuario_logado"] = email
         session["tipo_usuario"] = "cliente"
-        session["usuario_nome"] = f"{nome_cadastro} {sobrenome_cadastro}".strip()
+        session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
+        next_url = session.pop('next_url', None)
+        return redirect(next_url if next_url else url_for("avaliar"))
 
-        # Mensagem para modal pós-cadastro
-        return redirect(url_for("index", cadastro="ok", tipo="cliente"))
-    except Exception as e:
-        return render_template("cadastro.html", erro=str(e))
-    finally:
-        cursor.close();
-        conn.close()
-
-
-# =========================
-# CADASTRO PRESTADOR
-# =========================
+    # 🎯 FIX CRÍTICO: Se não encontrou o usuário (senha ou e-mail errado),
+    # OBRIGATORIAMENTE tem que ter esse return no final para não dar o erro do Flask!
+    return render_template("login.html", erro="E-mail ou senha inválidos")
 @app.route("/salvar_prestador", methods=["POST"])
 def salvar_prestador():
     dados = (
