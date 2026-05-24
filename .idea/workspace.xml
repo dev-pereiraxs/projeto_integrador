@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7f1fb79-e2ff-42e7-bbc9-9d59f0d867c4" name="Changes" comment="" />
+    <list default="true" id="e7f1fb79-e2ff-42e7-bbc9-9d59f0d867c4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/templates/orcamentos.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/orcamentos.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

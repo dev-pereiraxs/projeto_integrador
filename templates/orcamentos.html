@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solicitar Orçamento – Agenda Fácil</title>
 
-    <!-- Design System -->
     <link rel="stylesheet" href="../static/global.css" />
 
     <style>
@@ -317,6 +316,33 @@
         display: none;
       }
 
+      /* 🚨 NOVOS ESTILOS: Mensagens de Erro Profissionais */
+      .input-error-msg {
+        color: #ef4444;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 6px;
+        display: block;
+        animation: fadeUpError 0.2s ease-out;
+      }
+
+      .input-field.field-error {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+      }
+
+      .cat-grid-error {
+        border: 1.5px dashed #ef4444;
+        border-radius: var(--radius);
+        padding: 10px;
+        background: rgba(239, 68, 68, 0.02);
+      }
+
+      @keyframes fadeUpError {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       /* ── Responsivo ── */
       @media (max-width: 640px) {
         .page-content {
@@ -345,10 +371,8 @@
   <body>
     {% include 'partials/header.html' %}
 
-    <!-- ══ CONTEÚDO ══ -->
     <main class="page-content">
       <div class="page-inner">
-        <!-- Cabeçalho -->
         <div class="page-heading">
           <span class="eyebrow eyebrow-light">Orçamento gratuito</span>
           <h1>Solicitar Orçamento</h1>
@@ -358,7 +382,6 @@
           </p>
         </div>
 
-        <!-- Aviso -->
         <div class="notice">
           <span class="notice-icon">📋</span>
           <p>
@@ -368,14 +391,12 @@
           </p>
         </div>
 
-        <!-- Card do formulário -->
         <div class="form-card">
-          <!-- ── Seção 1: Dados Pessoais ── -->
           <div class="form-section">
             <div class="section-title">Dados Pessoais</div>
 
             <div class="field-grid-2" style="margin-bottom: 14px">
-              <div class="input-box">
+              <div class="input-box" id="box-nome">
                 <label class="form-label" for="nome">
                   Nome <span style="color: var(--cancel)">*</span>
                 </label>
@@ -391,7 +412,7 @@
                 </div>
               </div>
 
-              <div class="input-box">
+              <div class="input-box" id="box-telefone">
                 <label class="form-label" for="telefone">
                   Telefone <span style="color: var(--cancel)">*</span>
                 </label>
@@ -433,98 +454,98 @@
             </div>
           </div>
 
-          <!-- ── Seção 2: Categoria ── -->
           <div class="form-section">
-            <div class="section-title">Categoria do Serviço</div>
+            <div class="input-box" id="box-categoria">
+              <div class="section-title">Categoria do Serviço <span style="color: var(--cancel)">*</span></div>
 
-            <div class="cat-grid" id="cat-grid">
-              <label class="cat-option" data-value="Tecnologia">
-                <input type="radio" name="categoria" value="Tecnologia" />
-                <div class="cat-icon">💻</div>
-                <div class="cat-info">
-                  <div class="cat-name">Tecnologia / TI</div>
-                  <div class="cat-desc">
-                    Suporte técnico, redes e computadores
+              <div class="cat-grid" id="cat-grid">
+                <label class="cat-option" data-value="Tecnologia">
+                  <input type="radio" name="categoria" value="Tecnologia" />
+                  <div class="cat-icon">💻</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Tecnologia / TI</div>
+                    <div class="cat-desc">
+                      Suporte técnico, redes e computadores
+                    </div>
                   </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Mecânica">
-                <input type="radio" name="categoria" value="Mecânica" />
-                <div class="cat-icon">🔧</div>
-                <div class="cat-info">
-                  <div class="cat-name">Mecânica</div>
-                  <div class="cat-desc">Manutenção preventiva e corretiva</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Elétrica">
-                <input type="radio" name="categoria" value="Elétrica" />
-                <div class="cat-icon">⚡</div>
-                <div class="cat-info">
-                  <div class="cat-name">Elétrica</div>
-                  <div class="cat-desc">
-                    Instalações e reparos com segurança
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
                   </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
+                </label>
 
-              <label class="cat-option" data-value="Hidráulica">
-                <input type="radio" name="categoria" value="Hidráulica" />
-                <div class="cat-icon">🚿</div>
-                <div class="cat-info">
-                  <div class="cat-name">Hidráulica</div>
-                  <div class="cat-desc">Resolva vazamentos sem complicação</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Reformas">
-                <input type="radio" name="categoria" value="Reformas" />
-                <div class="cat-icon">🏗️</div>
-                <div class="cat-info">
-                  <div class="cat-name">Reformas</div>
-                  <div class="cat-desc">
-                    Pintura e melhorias para seu espaço
+                <label class="cat-option" data-value="Mecânica">
+                  <input type="radio" name="categoria" value="Mecânica" />
+                  <div class="cat-icon">🔧</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Mecânica</div>
+                    <div class="cat-desc">Manutenção preventiva e corretiva</div>
                   </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
+                  </div>
+                </label>
 
-              <label class="cat-option" data-value="Limpeza">
-                <input type="radio" name="categoria" value="Limpeza" />
-                <div class="cat-icon">🧹</div>
-                <div class="cat-info">
-                  <div class="cat-name">Limpeza</div>
-                  <div class="cat-desc">Faxina com profissionais avaliados</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
+                <label class="cat-option" data-value="Elétrica">
+                  <input type="radio" name="categoria" value="Elétrica" />
+                  <div class="cat-icon">⚡</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Elétrica</div>
+                    <div class="cat-desc">
+                      Instalações e reparos com segurança
+                    </div>
+                  </div>
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
+                  </div>
+                </label>
+
+                <label class="cat-option" data-value="Hidráulica">
+                  <input type="radio" name="categoria" value="Hidráulica" />
+                  <div class="cat-icon">🚿</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Hidráulica</div>
+                    <div class="cat-desc">Resolva vazamentos sem complicação</div>
+                  </div>
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
+                  </div>
+                </label>
+
+                <label class="cat-option" data-value="Reformas">
+                  <input type="radio" name="categoria" value="Reformas" />
+                  <div class="cat-icon">🏗️</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Reformas</div>
+                    <div class="cat-desc">
+                      Pintura e melhorias para seu espaço
+                    </div>
+                  </div>
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
+                  </div>
+                </label>
+
+                <label class="cat-option" data-value="Limpeza">
+                  <input type="radio" name="categoria" value="Limpeza" />
+                  <div class="cat-icon">🧹</div>
+                  <div class="cat-info">
+                    <div class="cat-name">Limpeza</div>
+                    <div class="cat-desc">Faxina com profissionais avaliados</div>
+                  </div>
+                  <div class="cat-check">
+                    <div class="cat-check-dot"></div>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
 
-          <!-- ── Seção 3: Descrição ── -->
           <div class="form-section">
             <div class="section-title">Detalhes do Serviço</div>
 
-            <div class="input-box">
+            <div class="input-box" id="box-descricao">
               <label class="form-label" for="descricao"
-                >Descreva o que você precisa</label
+                >Descreva o que você precisa <span style="color: var(--cancel)">*</span></label
               >
               <div class="input-field textarea-field">
                 <textarea
@@ -536,19 +557,9 @@
             </div>
           </div>
 
-          <!-- ── Rodapé com botão ── -->
           <div class="form-footer">
             <button class="btn-submit" id="btnEnviar" type="button">
               <span class="btn-label">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  style="vertical-align: -2px; margin-right: 4px"
-                >
-                  <path d="M2 8l10-6v12L2 8z" fill="white" />
-                </svg>
                 Enviar Solicitação
               </span>
               <div class="btn-spinner"></div>
@@ -567,11 +578,9 @@
             </p>
           </div>
         </div>
-        <!-- /form-card -->
-      </div>
+        </div>
     </main>
 
-    <!-- ══ FOOTER (componente global.css) ══ -->
     <footer class="footer">
       <div class="footer__inner">
         <strong class="footer__brand">Agenda Fácil</strong>
@@ -589,7 +598,6 @@
       </div>
     </footer>
 
-    <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
     <script>
@@ -604,6 +612,10 @@
           opt.classList.add("selected");
           categoriaSelecionada = opt.dataset.value;
           opt.querySelector('input[type="radio"]').checked = true;
+
+          // Limpa erro visual de categoria se selecionado
+          limparErro("box-categoria");
+          document.getElementById("cat-grid").classList.remove("cat-grid-error");
         });
       });
 
@@ -622,6 +634,44 @@
         emailjs.init("uX9VTM1RJGpHB17ex");
       })();
 
+      /* ── 🔧 SISTEMA COESIVO DE ERROS PROFISSIONAIS ── */
+      function aplicarErro(idBox, mensagem, usarBordaNoField = true) {
+        const box = document.getElementById(idBox);
+        if (!box) return;
+
+        // Evita duplicar mensagens de erro caso o usuário clique várias vezes
+        if (box.querySelector(".input-error-msg")) return;
+
+        // Injeta o texto vermelho com transição suave
+        const errorSpan = document.createElement("span");
+        errorSpan.className = "input-error-msg";
+        errorSpan.innerText = mensagem;
+        box.appendChild(errorSpan);
+
+        // Pinta as bordas do input para vermelho
+        if (usarBordaNoField) {
+          const field = box.querySelector(".input-field");
+          if (field) field.classList.add("field-error");
+        }
+      }
+
+      function limparErro(idBox) {
+        const box = document.getElementById(idBox);
+        if (!box) return;
+
+        const errorSpan = box.querySelector(".input-error-msg");
+        if (errorSpan) errorSpan.remove();
+
+        const field = box.querySelector(".input-field");
+        if (field) field.classList.remove("field-error");
+      }
+
+      // Vincula gatilhos de digitação para sumir com o erro no milissegundo em que o usuário corrige
+      document.getElementById("nome").addEventListener("input", () => limparErro("box-nome"));
+      telefoneInput.addEventListener("input", () => { if(telefoneInput.value.length >= 14) limparErro("box-telefone"); });
+      document.getElementById("descricao").addEventListener("input", () => limparErro("box-descricao"));
+
+
       /* ── Envio ── */
       const btn = document.getElementById("btnEnviar");
 
@@ -631,20 +681,37 @@
         const telefone = telefoneInput.value.trim();
         const descricao = document.getElementById("descricao").value.trim();
 
+        // Limpa validações antigas antes de rodar o novo scanner
+        limparErro("box-nome");
+        limparErro("box-telefone");
+        limparErro("box-categoria");
+        limparErro("box-descricao");
+        document.getElementById("cat-grid").classList.remove("cat-grid-error");
+
+        let formValido = true;
+
         if (!nome) {
-          alert("Informe seu nome.");
-          return;
+          aplicarErro("box-nome", "Por favor, informe seu nome completo.");
+          formValido = false;
         }
-        if (!telefone) {
-          alert("Informe seu telefone.");
-          return;
+        if (!telefone || telefone.length < 14) {
+          aplicarErro("box-telefone", "Informe um número de telefone ou celular válido.");
+          formValido = false;
         }
         if (!categoriaSelecionada) {
-          alert("Selecione uma categoria.");
-          return;
+          aplicarErro("box-categoria", "Selecione uma das categorias de serviço abaixo.", false);
+          document.getElementById("cat-grid").classList.add("cat-grid-error");
+          formValido = false;
         }
         if (!descricao) {
-          alert("Descreva o que você precisa (observação é obrigatória).");
+          aplicarErro("box-descricao", "Descreva detalhadamente o serviço para ajudar os prestadores.");
+          formValido = false;
+        }
+
+        // Se falhar em qualquer validação, aborta o envio e foca no primeiro erro
+        if (!formValido) {
+          const primeiroErro = document.querySelector(".input-error-msg");
+          if (primeiroErro) primeiroErro.scrollIntoView({ behavior: "smooth", block: "center" });
           return;
         }
 
@@ -666,7 +733,8 @@
           const prestadores = await res.json();
 
           if (!prestadores.length) {
-            alert("Nenhum prestador disponível para esta categoria.");
+            aplicarErro("box-categoria", "Nenhum prestador disponível nesta categoria no momento.", false);
+            document.getElementById("cat-grid").classList.add("cat-grid-error");
             btn.classList.remove("loading");
             btn.disabled = false;
             return;
@@ -690,7 +758,7 @@
           window.location.href = "/sucesso-agendamento";
         } catch (err) {
           console.error(err);
-          alert("Erro ao enviar. Tente novamente.");
+          alert("Ocorreu uma falha na comunicação com o servidor de e-mails. Por favor, tente novamente.");
           btn.classList.remove("loading");
           btn.disabled = false;
         }
