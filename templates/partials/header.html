@@ -190,7 +190,7 @@
       <a class="af-mobile__link {{ 'active' if request.path == '/' }}" href="/">Home</a>
       <a class="af-mobile__link {{ 'active' if request.path == '/servicos' }}" href="/servicos">Serviços</a>
 
-      {% if session.get('usuario_logado') and session.get('tipo_usuario') != 'prestador' %}
+      {% if session.get('tipo_usuario') != 'prestador' %}
       <a class="af-mobile__link {{ 'active' if request.path == '/prestador' }}" href="/prestador">Quero ser Prestador</a>
       {% endif %}
 

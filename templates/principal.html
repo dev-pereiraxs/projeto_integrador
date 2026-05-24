@@ -31,6 +31,8 @@
     <main>
       <section class="hero container" id="inicio">
 
+        {# fecha o modal-overlay ao fim do layout da home #}
+
         <!-- TEXTO -->
         <article class="hero-copy">
           <span class="eyebrow">Serviços para casa e empresa</span>
@@ -205,6 +207,8 @@
   <section class="cta-band" id="cta">
     <div class="container cta-inner">
 
+    {# (mantido intencionalmente fora do modal) #}
+
       <div class="cta-copy">
         <span class="eyebrow eyebrow-blue">Solução prática para o dia a dia</span>
         <h2>Precisa de ajuda hoje?</h2>
@@ -260,26 +264,69 @@
     ↑
   </button>
 
+  </div>
 
+  {% if cadastro_ok_tipo %}
+  <!-- MODAL: CADASTRO CONCLUÍDO -->
+  <div class="modal-overlay" id="modal-cadastro-ok" role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(5,8,20,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:20px;">
+    <script>
+      (function () {
+        const modal = document.getElementById('modal-cadastro-ok');
+        const cadastroOkTipo = '{{ cadastro_ok_tipo | default("") }}';
+        if (cadastroOkTipo) {
+          modal.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+          setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+          }, 3000);
+        }
+      })();
+    </script>
+
+    <div class="modal-box" style="width:100%;max-width:440px;background:#ffffff;border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:44px 32px 36px;text-align:center;box-shadow:0 0 0 1px rgba(59,130,246,.12),0 24px 60px rgba(0,0,0,.12),0 0 80px rgba(37,99,235,.08);">
+      <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 0 0 14px rgba(16,185,129,.15),0 12px 30px rgba(16,185,129,.35);animation:pop .45s cubic-bezier(.175,.885,.32,1.275) both;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:700;color:#000;margin-bottom:10px;letter-spacing:-.3px;">
+        {% if cadastro_ok_tipo == 'prestador' %}Cadastro concluído com sucesso!!{% else %}Cadastro concluído com sucesso{% endif %}
+      </h2>
+
+      <p style="font-size:14px;color:#000;line-height:1.7;margin-bottom:0;opacity:.85;">
+        {% if cadastro_ok_tipo == 'prestador' %}Seja bem-vindo a nossa equipe{% else %}Bem-vindo ao Agenda Fácil{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pop {
+      from { transform: scale(.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+  {% endif %}
 
   <script>
     const backToTop = document.getElementById("backToTop");
-
-
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 300) {
-        backToTop.classList.add("show");
-      } else {
-        backToTop.classList.remove("show");
-      }
-    });
-
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+    if (backToTop) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) {
+          backToTop.classList.add("show");
+        } else {
+          backToTop.classList.remove("show");
+        }
       });
-    });
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      });
+    }
   </script>
 
 

@@ -51,7 +51,6 @@ google = oauth.register(
 # BANCO DE DADOS
 # =========================
 def connectar():
-    # Se estiver no Render (onde DB_HOST existe), força o uso das variáveis
     if os.getenv("DB_HOST"):
         return mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -59,10 +58,9 @@ def connectar():
             password=os.getenv("DB_PASSWORD"),
             database=os.getenv("DB_NAME"),
             port=int(os.getenv("DB_PORT", 3306)),
-            ssl_disabled=False # Garante que o SSL exigido pelo Aiven funcione
+            ssl_disabled=False
         )
     else:
-        # Padrão local para o seu PC
         return mysql.connector.connect(
             host="localhost",
             user="root",
@@ -233,12 +231,8 @@ def criar_notificacao(prestador_email, tipo, mensagem, agendamento_id=None):
 # =========================
 # GOOGLE LOGIN
 # =========================
-# =========================
-# GOOGLE LOGIN
-# =========================
 @app.route("/login-google")
 def login_google():
-    # Detecta se está rodando no Render ou no PC local
     if os.getenv("DB_HOST"):
         redirect_uri = "https://projeto-integrador-4aw2.onrender.com/callback"
     else:
@@ -302,7 +296,10 @@ def callback():
 # =========================
 @app.route("/")
 def index():
-    return render_template("principal.html")
+    cadastro_ok = request.args.get("cadastro", "")
+    tipo = request.args.get("tipo", "")
+    cadastro_ok_tipo = "" if cadastro_ok != "ok" else tipo
+    return render_template("principal.html", cadastro_ok_tipo=cadastro_ok_tipo)
 
 
 @app.route("/cadastro")
@@ -312,6 +309,9 @@ def cadastro():
 
 @app.route("/login")
 def login():
+    next_url = request.args.get('next', '')
+    if next_url:
+        session['next_url'] = next_url
     return render_template("login.html")
 
 
@@ -346,7 +346,6 @@ def servicos():
         return render_template("servicos.html", servicos=lista)
 
     except Exception as e:
-        # Se der erro, mostra o motivo real na tela do navegador em vez do Erro 500!
         return f"<h3>Erro de Conexão com o Banco:</h3><p>{str(e)}</p>", 500
 
 
@@ -381,14 +380,11 @@ def formulario():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # 🔌 CORRIGIDO: "FROM" separado corretamente de "cadastro_prestadores"
         cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
         prestador = cursor.fetchone()
 
-        # Coleta o valor do banco, limpa espaços e joga para minúsculo
         area_oficial = str(prestador.get("areas_atuacao") or "").strip().lower()
 
-        # Tratamento preventivo de acentuação para conversar com o JS
         if area_oficial == "mecânica": area_oficial = "mecanica"
         if area_oficial == "elétrica": area_oficial = "eletrica"
         if area_oficial == "hidráulica" or area_oficial == "hydraulica": area_oficial = "hidraulica"
@@ -454,7 +450,8 @@ def autenticar():
 
         cursor.close();
         conn.close()
-        return redirect(url_for("servicos"))
+        next_url = session.pop('next_url', None)
+        return redirect(next_url if next_url else url_for("servicos"))
 
     cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
     cliente = cursor.fetchone()
@@ -466,7 +463,8 @@ def autenticar():
         session["usuario_logado"] = email
         session["tipo_usuario"] = "cliente"
         session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
-        return redirect(url_for("avaliar"))
+        next_url = session.pop('next_url', None)
+        return redirect(next_url if next_url else url_for("avaliar"))
 
     return render_template("login.html", erro="E-mail ou senha inválidos")
 
@@ -483,13 +481,24 @@ def salvar():
     )
     conn = connectar()
     cursor = conn.cursor()
+    email_cadastro = request.form["email"].strip().lower()
+    nome_cadastro = request.form["nome"].strip()
+    sobrenome_cadastro = request.form["sobrenome"].strip()
     try:
         cursor.execute(
             "INSERT INTO cadastro_clientes (nome,sobrenome,data_nascimento,sexo,email,senha) VALUES (%s,%s,%s,%s,%s,%s)",
             dados
         )
         conn.commit()
-        return redirect(url_for("index"))
+
+        # ✅ após cadastro, já loga o usuário (cliente)
+        session.permanent = True if request.form.get("lembrar") else False
+        session["usuario_logado"] = email_cadastro
+        session["tipo_usuario"] = "cliente"
+        session["usuario_nome"] = f"{nome_cadastro} {sobrenome_cadastro}".strip()
+
+        # Mensagem para modal pós-cadastro
+        return redirect(url_for("index", cadastro="ok", tipo="cliente"))
     except Exception as e:
         return render_template("cadastro.html", erro=str(e))
     finally:
@@ -500,12 +509,8 @@ def salvar():
 # =========================
 # CADASTRO PRESTADOR
 # =========================
-# =========================
-# CADASTRO PRESTADOR
-# =========================
 @app.route("/salvar_prestador", methods=["POST"])
 def salvar_prestador():
-    # Adicionado o request.form["telefone"] na tupla de dados
     dados = (
         request.form["nome"], request.form["sobrenome"],
         request.form["data_nascimento"], request.form["sexo"],
@@ -514,14 +519,23 @@ def salvar_prestador():
     )
     conn   = connectar()
     cursor = conn.cursor()
+    email_cadastro = request.form["email"].strip().lower()
+    nome_cadastro = request.form["nome"].strip()
+    sobrenome_cadastro = request.form["sobrenome"].strip()
     try:
-        # Atualizado para incluir a coluna 'telefone' no INSERT
         cursor.execute(
             "INSERT INTO cadastro_prestadores (nome,sobrenome,data_nascimento,sexo,email,senha,areas_atuacao,telefone) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
             dados
         )
         conn.commit()
-        return redirect(url_for("index"))
+
+        # ✅ após cadastro, já loga o usuário (prestador)
+        session.permanent = True if request.form.get("lembrar") else False
+        session["usuario_logado"] = email_cadastro
+        session["tipo_usuario"] = "prestador"
+        session["usuario_nome"] = f"{nome_cadastro} {sobrenome_cadastro}".strip()
+
+        return redirect(url_for("index", cadastro="ok", tipo="prestador"))
     except Exception as e:
         return render_template("prestador.html", erro=str(e))
     finally:
@@ -612,9 +626,6 @@ def salvar_agendamento():
 # =========================
 # SERVIÇOS PRESTADOR
 # =========================
-# ============================================================
-# SERVIÇOS PRESTADOR (Mantenha apenas este bloco no seu app.py)
-# ============================================================
 @app.route("/salvar_servico_prestador", methods=["POST"])
 def salvar_servico_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
@@ -627,7 +638,6 @@ def salvar_servico_prestador():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # 🔌 CORRIGIDO: "FROM" separado corretamente aqui também
         cursor.execute("SELECT areas_atuacao FROM cadastro_prestadores WHERE email = %s", (email_prestador,))
         prestador_info = cursor.fetchone()
 
@@ -641,7 +651,7 @@ def salvar_servico_prestador():
             dados.get("titulo"),
             dados.get("descricao"),
             dados.get("preco"),
-            area_oficial, # 🔒 Trava de segurança direto no banco
+            area_oficial,
             dados.get("duracao"),
         )
 
@@ -658,10 +668,7 @@ def salvar_servico_prestador():
         cursor.close()
         conn.close()
 
-# =========================
-# API SERVIÇOS
-# =========================
-@app.route("/api/listar_servicos")
+
 # =========================
 # API SERVIÇOS
 # =========================
@@ -670,7 +677,6 @@ def listar_servicos():
     try:
         conn   = connectar()
         cursor = conn.cursor(dictionary=True)
-        # Adicionado 'p.telefone' na consulta SQL
         cursor.execute("""
             SELECT
                 s.*, 
@@ -694,13 +700,13 @@ def listar_servicos():
         for row in dados:
             row["avaliacao_media"] = row.get("media_nota")
             row["nome_prestador"] = f"{row.get('prestador_nome','')} {row.get('prestador_sobrenome','')}".strip() or "Prestador"
-            # O campo row["telefone"] já vai automaticamente para o JSON do front-end
 
         cursor.close(); conn.close()
         return jsonify(dados)
     except Exception as e:
         print(f"[api/listar_servicos] erro: {e}")
         return jsonify({"erro": "Falha ao listar serviços", "detalhes": str(e)}), 500
+
 
 @app.route("/api/meus_servicos")
 def meus_servicos():
@@ -802,9 +808,6 @@ def cancelar_agendamento(id):
 
 
 # =========================
-# ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR)
-# =========================
-# =========================
 # ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR) — CORRIGIDO
 # =========================
 @app.route("/api/atualizar_status/<int:id>", methods=["PATCH"])
@@ -822,7 +825,6 @@ def atualizar_status(id):
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # Busca os dados do agendamento antes de atualizar para saber quem é o cliente
     cursor.execute("SELECT * FROM agendamentos WHERE id=%s", (id,))
     ag = cursor.fetchone()
 
@@ -836,14 +838,9 @@ def atualizar_status(id):
     cursor.close()
     conn.close()
 
-    # 🎯 GATILHO DA AVALIAÇÃO: Quando o status muda para concluído, avisa o CLIENTE
     if ag and novo_status == "concluido":
-        # Coleta o nome amigável do prestador para colocar na mensagem do cliente
         nome_prestador = session.get("usuario_nome", "O prestador")
-
         msg_notif = f"Seu atendimento de '{ag.get('servico')}' foi concluído por {nome_prestador}! Clique aqui para deixar sua avaliação."
-
-        # 🔌 CORREÇÃO CRÍTICA: Vincula o cliente_email no primeiro parâmetro para disparar na conta dele
         criar_notificacao(
             ag["cliente_email"],
             "conclusao",
@@ -1270,7 +1267,6 @@ def esqueci_senha():
     conn = connectar()
     cursor = conn.cursor()
 
-    # Verifica se o e-mail existe no sistema
     cursor.execute("SELECT email FROM cadastro_clientes WHERE email=%s", (email,))
     cliente = cursor.fetchone()
 
@@ -1282,10 +1278,7 @@ def esqueci_senha():
     if cliente or prestador:
         token = serializer.dumps(email, salt='reset-senha')
         link = url_for('resetar_senha', token=token, _external=True)
-
-        # Dispara o e-mail de redefinição real usando a API da Resend
         enviar_email_recuperacao(email, link)
-
         return render_template("esqueci_senha.html",
                                sucesso="Se o e-mail estiver cadastrado, as instruções serão enviadas.")
 
@@ -1296,10 +1289,8 @@ def esqueci_senha():
 @app.route("/resetar_senha/<token>", methods=["GET", "POST"])
 def resetar_senha(token):
     try:
-        # 🔧 Alterado para 900 segundos = 15 minutos
         email = serializer.loads(token, salt='reset-senha', max_age=900)
     except Exception:
-        # Se passar de 15 minutos ou o token for adulterado, cai aqui:
         return "O link de recuperação é inválido ou expirou.", 4000
 
     if request.method == "GET":
@@ -1480,7 +1471,7 @@ def agendamento_confirmado():
 
 # =========================
 # ROTAS DE AVALIAÇÃO — Agenda Fácil
-# ============================================================
+# =========================
 @app.route("/avaliar")
 def avaliar():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
@@ -1688,7 +1679,6 @@ def checar_recusados_cliente():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # Busca o primeiro agendamento recusado que o cliente ainda NÃO viu
     cursor.execute("""
         SELECT id, servico 
         FROM agendamentos 

@@ -24,7 +24,8 @@
         </div>
 
         {% if erro %}
-        <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold;">
+        <div
+            style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold;">
             <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
         </div>
         {% endif %}
@@ -66,8 +67,11 @@
 
                 <div class="input-box">
                     <label class="form-label">Telefone / WhatsApp</label>
+
                     <div class="input-field">
-                        <input type="tel" name="telefone" id="telefone" class="form-control" required placeholder="(11) 99999-9999">
+                        <input type="tel" name="telefone" id="telefone" class="form-control" required
+                            placeholder="(11) 99999-9999" maxlength="15">
+
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
                 </div>
@@ -89,7 +93,8 @@
                 <div class="input-box">
                     <label class="form-label">Confirmar senha</label>
                     <div class="input-field">
-                        <input type="password" name="confirmar_senha" id="confirm_password" class="form-control" required>
+                        <input type="password" name="confirmar_senha" id="confirm_password" class="form-control"
+                            required>
                         <i class="fa-regular fa-eye-slash password-icon"></i>
                     </div>
                 </div>
@@ -108,12 +113,24 @@
             <div class="services-container">
                 <label class="form-label">Área de atuação</label>
                 <div class="services-grid">
-                    <div class="card" data-value="ti"><img src="../static/img/ti.png"><h4>TI</h4></div>
-                    <div class="card" data-value="mecanica"><img src="../static/img/mecanica.png"><h4>Mecânica</h4></div>
-                    <div class="card" data-value="eletrica"><img src="../static/img/eletrica.png"><h4>Elétrica</h4></div>
-                    <div class="card" data-value="hidraulica"><img src="../static/img/hidraulica.png"><h4>Hidráulica</h4></div>
-                    <div class="card" data-value="reformas"><img src="../static/img/reformas.png"><h4>Reformas</h4></div>
-                    <div class="card" data-value="limpeza"><img src="../static/img/limpeza.png"><h4>Limpeza</h4></div>
+                    <div class="card" data-value="ti"><img src="../static/img/ti.png">
+                        <h4>TI</h4>
+                    </div>
+                    <div class="card" data-value="mecanica"><img src="../static/img/mecanica.png">
+                        <h4>Mecânica</h4>
+                    </div>
+                    <div class="card" data-value="eletrica"><img src="../static/img/eletrica.png">
+                        <h4>Elétrica</h4>
+                    </div>
+                    <div class="card" data-value="hidraulica"><img src="../static/img/hidraulica.png">
+                        <h4>Hidráulica</h4>
+                    </div>
+                    <div class="card" data-value="reformas"><img src="../static/img/reformas.png">
+                        <h4>Reformas</h4>
+                    </div>
+                    <div class="card" data-value="limpeza"><img src="../static/img/limpeza.png">
+                        <h4>Limpeza</h4>
+                    </div>
                 </div>
             </div>
 
@@ -141,6 +158,41 @@
     </main>
 
     <script>
+        // mascara de telefone
+        const telefoneInput = document.getElementById('telefone');
+
+        telefoneInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+
+            if (value.length > 10) {
+                value = value.replace(
+                    /^(\d{2})(\d{5})(\d{4}).*/,
+                    '($1) $2-$3'
+                );
+            } else if (value.length > 6) {
+                value = value.replace(
+                    /^(\d{2})(\d{4})(\d{0,4}).*/,
+                    '($1) $2-$3'
+                );
+            } else if (value.length > 2) {
+                value = value.replace(
+                    /^(\d{2})(\d{0,5})/,
+                    '($1) $2'
+                );
+            } else {
+                value = value.replace(
+                    /^(\d*)/,
+                    '($1'
+                );
+            }
+
+            e.target.value = value;
+        });
+
         // Mostrar/Ocultar Senha
         document.querySelectorAll('.password-icon').forEach(icon => {
             icon.addEventListener('click', function () {
@@ -218,4 +270,5 @@
         });
     </script>
 </body>
+
 </html>

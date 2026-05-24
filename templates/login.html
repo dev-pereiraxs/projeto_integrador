@@ -5,20 +5,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Ícones -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-  <!-- CSS -->
   <link rel="stylesheet" href="../static/global.css">
   <link rel="stylesheet" href="../static/logincss.css">
 
   <title>Login - Agenda Fácil</title>
   <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
-
 </head>
 
 <body>
- 
+
   <div class="formulario" style="padding-top:90px;">
     <h1>Acessar conta</h1>
 
@@ -32,7 +29,6 @@
     <form action="{{ url_for('autenticar') }}" method="POST" id="form">
 
       <!-- USUÁRIO -->
-
       <div class="caixa-formulario">
         <input type="email" name="email" id="email" class="form-control" required placeholder="Email">
         <i class='bx bxs-user'></i>
@@ -46,19 +42,15 @@
 
       <!-- OPÇÕES -->
       <div class="caixa-lembrar-esqueci">
-
-          <label for="lembrar">
-  <input type="checkbox" name="lembrar" id="lembrar">
-  Lembrar de mim
-</label>
-
-        <!-- 🔧 CORRIGIDO (antes não era clicável) -->
+        <label for="lembrar">
+          <input type="checkbox" name="lembrar" id="lembrar">
+          Lembrar de mim
+        </label>
         <a href="/esqueci_senha">Esqueci minha senha</a>
       </div>
 
       <!-- BOTÃO -->
       <button type="submit" class="btn-default">Entrar</button>
-
 
       <!-- DIVISOR -->
       <div style="display:flex;align-items:center;gap:10px;margin:6px 0 2px;">
@@ -81,9 +73,12 @@
       <div class="link-registro">
         <p>
           Não tem conta?
-          <a href=" {{ url_for('cadastro')}} ">Registrar</a>
+          <a href="{{ url_for('cadastro') }}">Registrar</a>
         </p>
       </div>
+
+      <!-- REDIRECT PÓS-LOGIN -->
+      <input type="hidden" name="next" value="{{ session.get('next_url', '') }}">
 
     </form>
   </div>

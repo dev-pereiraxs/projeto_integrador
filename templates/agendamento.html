@@ -1104,7 +1104,8 @@
         </div>
         <div class="success-title">Agendamento confirmado!</div>
         <p class="success-sub">Seu serviço foi agendado com sucesso.<br>Em breve o prestador entrará em contato via
-          <strong>WhatsApp</strong> ou <strong>SMS</strong>.</p>
+          <strong>WhatsApp</strong> ou <strong>SMS</strong>.
+        </p>
 
         <a class="btn-google-cal" id="btn-add-calendar" href="#" target="_blank" rel="noopener">
           <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
@@ -1392,11 +1393,19 @@
         });
 
         const data = await res.json();
+        btnAgendar.classList.remove('loading');
+
+        if (res.status === 401 || (data.erro && data.erro.toLowerCase().includes('logado'))) {
+          // Salva a URL atual para voltar depois do login
+          sessionStorage.setItem('redirect_apos_login', window.location.href);
+          fecharModal();
+          document.getElementById('modal-nao-logado').classList.add('open');
+          document.body.style.overflow = 'hidden';
+          return;
+        }
 
         if (data.erro) {
-          btnAgendar.classList.remove('loading');
-          fecharModal();
-          alert(data.erro);
+          alert('Erro: ' + data.erro);
           return;
         }
 
@@ -1407,9 +1416,9 @@
           btnAddCalendar.style.display = 'none';
         }
 
-        btnAgendar.classList.remove('loading');
         confirmState.style.display = 'none';
         successState.classList.add('visible');
+
       } catch (err) {
         console.error(err);
         btnAgendar.classList.remove('loading');
@@ -1417,7 +1426,91 @@
         alert('Erro de conexão com o servidor. Tente novamente.');
       }
     });
+
+    // Controles do modal "não logado"
+    document.getElementById('btn-ir-login').addEventListener('click', () => {
+      window.location.href = '/login?next=' + encodeURIComponent(window.location.href);
+    });
+
+    document.getElementById('btn-fechar-nao-logado').addEventListener('click', () => {
+      document.getElementById('modal-nao-logado').classList.remove('open');
+      document.body.style.overflow = '';
+    });
   </script>
+
+  <!-- MODAL: USUÁRIO NÃO LOGADO -->
+  <div class="modal-overlay" id="modal-nao-logado" role="dialog" aria-modal="true">
+    <div class="modal-box" style="max-width:420px;text-align:center;padding:44px 32px 36px;">
+
+      <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);
+              display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+              box-shadow:0 0 0 14px rgba(37,99,235,.15),0 12px 30px rgba(37,99,235,.35);
+              animation:pop .45s cubic-bezier(.175,.885,.32,1.275) both;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-.3px;">
+        Faça login para continuar
+      </h2>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">
+        Para confirmar seu agendamento você precisa estar logado.<br>
+        Não se preocupe — <strong style="color:var(--text);">voltaremos para esta tela</strong> após o login.
+      </p>
+
+      <div style="background:rgba(37,99,235,.10);border:1px solid rgba(37,99,235,.25);
+              border-radius:10px;padding:12px 16px;margin-bottom:26px;
+              display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+          <path d="M8 14h.01M12 14h.01M16 14h.01" />
+        </svg>
+        <span style="font-size:13px;color:rgba(200,210,255,.85);">Seu agendamento será mantido após o login</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <!-- FAZER LOGIN -->
+        <button type="button" class="btn-agendar" style="font-size:15px;"
+          onclick="window.location.href='/login?next=' + encodeURIComponent(window.location.href)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+          Fazer Login
+        </button>
+
+        <!-- CRIAR CONTA -->
+        <button type="button" class="btn-cancelar-modal" style="border-color:rgba(59,130,246,.35);color:#93c5fd;"
+          onclick="window.location.href='/cadastro'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="19" y1="8" x2="19" y2="14" />
+            <line x1="22" y1="11" x2="16" y2="11" />
+          </svg>
+          Criar uma conta
+        </button>
+
+        <!-- CANCELAR -->
+        <button type="button" class="btn-cancelar-modal"
+          onclick="document.getElementById('modal-nao-logado').classList.remove('open'); document.body.style.overflow='';">
+          Cancelar
+        </button>
+
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
 </body>
 
 </html>
