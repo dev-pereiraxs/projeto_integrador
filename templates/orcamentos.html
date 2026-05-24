@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solicitar Orçamento – Agenda Fácil</title>
 
-    <!-- Design System -->
-    <link rel="stylesheet" href="../static/global.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
 
     <style>
-      /* ── Página: Solicitar Orçamento ── */
-
       body {
         background: var(--bg-gradient);
         min-height: 100vh;
@@ -19,10 +16,9 @@
         overflow-x: hidden;
       }
 
-      /* ── Wrapper de conteúdo ── */
       .page-content {
         flex: 1;
-        padding: 40px 16px 60px;
+        padding: 60px 16px 60px !important;
       }
 
       .page-inner {
@@ -30,36 +26,36 @@
         margin: 0 auto;
       }
 
-      /* ── Cabeçalho da página ── */
       .page-heading {
         margin-bottom: 28px;
+        margin-top: 20px;
       }
 
+      /* Título e Subtítulo Forçados */
       .page-heading h1 {
-        font-family: var(--font-display);
-        font-size: 26px;
-        font-weight: 700;
-        color: var(--on-dark);
-        letter-spacing: -0.3px;
-        margin-bottom: 6px;
+        font-family: var(--font-display) !important;
+        font-size: 32px !important;
+        font-weight: 850 !important;
+        color: #ffffff !important;
+        letter-spacing: -0.5px !important;
+        margin-bottom: 8px !important;
       }
 
       .page-heading p {
-        font-size: 14px;
-        color: var(--on-dark-soft);
-        line-height: 1.6;
+        font-size: 14.5px !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+        line-height: 1.6 !important;
       }
 
-      /* ── Aviso informativo ── */
       .notice {
         display: flex;
         align-items: flex-start;
         gap: 12px;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: var(--radius);
         padding: 14px 16px;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .notice-icon {
@@ -69,12 +65,11 @@
       }
 
       .notice p {
-        font-size: 13px;
-        color: var(--on-dark-soft);
-        line-height: 1.6;
+        font-size: 13.5px !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+        line-height: 1.6 !important;
       }
 
-      /* ── Card do formulário ── */
       .form-card {
         background: var(--card);
         border-radius: var(--radius-lg);
@@ -83,531 +78,228 @@
         width: 100%;
       }
 
-      /* ── Seções dentro do card ── */
-      .form-section {
-        padding: 24px 28px;
-      }
-
-      .form-section + .form-section {
-        border-top: 1px solid var(--border);
-      }
+      .form-section { padding: 24px 28px; }
+      .form-section + .form-section { border-top: 1px solid var(--border); }
 
       .section-title {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.9px;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.9px;
+        text-transform: uppercase; color: var(--text-muted);
+        margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
       }
+      .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
-      .section-title::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: var(--border);
-      }
-
-      /* ── Grade de campos ── */
-      .field-grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-
-      /* ── Categoria cards ── */
-      .cat-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
+      .field-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .cat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 
       .cat-option {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 13px 14px;
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius);
-        cursor: pointer;
-        transition:
-          border-color 0.2s,
-          background 0.2s,
-          box-shadow 0.2s;
-        background: var(--card-alt);
-        user-select: none;
+        display: flex; align-items: center; gap: 12px; padding: 13px 14px;
+        border: 1.5px solid var(--border); border-radius: var(--radius);
+        cursor: pointer; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        background: var(--card-alt); user-select: none;
       }
-
-      .cat-option:hover {
-        border-color: var(--primary-light);
-        background: var(--primary-soft);
-      }
-
-      .cat-option.selected {
-        border-color: var(--primary);
-        background: var(--primary-soft);
-        box-shadow: 0 0 0 3px rgba(43, 115, 255, 0.1);
-      }
-
-      .cat-option input[type="radio"] {
-        display: none;
-      }
+      .cat-option:hover { border-color: var(--primary-light); background: var(--primary-soft); }
+      .cat-option.selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 3px rgba(43, 115, 255, 0.1); }
+      .cat-option input[type="radio"] { display: none; }
 
       .cat-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: var(--radius-sm);
-        background: #fff;
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 19px;
-        flex-shrink: 0;
-        transition:
-          background 0.2s,
-          border-color 0.2s;
+        width: 38px; height: 38px; border-radius: var(--radius-sm);
+        background: #fff; border: 1px solid var(--border); display: flex;
+        align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;
+        transition: background 0.2s, border-color 0.2s;
       }
+      .cat-option.selected .cat-icon { background: var(--primary-soft); border-color: rgba(43, 115, 255, 0.25); }
 
-      .cat-option.selected .cat-icon {
-        background: var(--primary-soft);
-        border-color: rgba(43, 115, 255, 0.25);
-      }
-
-      .cat-info {
-        min-width: 0;
-        flex: 1;
-      }
-
-      .cat-name {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--text);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .cat-desc {
-        font-size: 11px;
-        color: var(--text-muted);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+      .cat-info { min-width: 0; flex: 1; }
+      .cat-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .cat-desc { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
       .cat-check {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        border: 1.5px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition:
-          border-color 0.2s,
-          background 0.2s;
+        width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        transition: border-color 0.2s, background 0.2s;
       }
+      .cat-option.selected .cat-check { border-color: var(--primary); background: var(--primary); }
+      .cat-check-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; display: none; }
+      .cat-option.selected .cat-check-dot { display: block; }
 
-      .cat-option.selected .cat-check {
-        border-color: var(--primary);
-        background: var(--primary);
-      }
+      .input-field.textarea-field { height: auto; align-items: flex-start; padding: 12px; }
+      .input-field.textarea-field .form-control { min-height: 110px; resize: vertical; }
 
-      .cat-check-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #fff;
-        display: none;
-      }
-
-      .cat-option.selected .cat-check-dot {
-        display: block;
-      }
-
-      /* ── Textarea ── */
-      .input-field.textarea-field {
-        height: auto;
-        align-items: flex-start;
-        padding: 12px;
-      }
-
-      .input-field.textarea-field .form-control {
-        min-height: 110px;
-        resize: vertical;
-      }
-
-      /* ── Footer do form (botão) ── */
-      .form-footer {
-        padding: 20px 28px 28px;
-        border-top: 1px solid var(--border);
-        background: var(--card-alt);
-      }
-
+      .form-footer { padding: 20px 28px 28px; border-top: 1px solid var(--border); background: var(--card-alt); }
       .btn-submit {
-        width: 100%;
-        padding: 14px;
-        border: none;
-        border-radius: var(--radius);
-        background: linear-gradient(
-          135deg,
-          var(--primary),
-          var(--primary-dark)
-        );
-        color: #fff;
-        font-family: var(--font);
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        letter-spacing: 0.2px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 8px 24px rgba(43, 115, 255, 0.28);
-        transition:
-          opacity 0.2s,
-          transform 0.15s,
-          box-shadow 0.2s;
+        width: 100%; padding: 14px; border: none; border-radius: var(--radius);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff; font-family: var(--font); font-size: 15px; font-weight: 700;
+        cursor: pointer; letter-spacing: 0.2px; display: flex; align-items: center; justify-content: center; gap: 8px;
+        box-shadow: 0 8px 24px rgba(43, 115, 255, 0.28); transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
       }
+      .btn-submit:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 12px 32px rgba(43, 115, 255, 0.36); }
+      .btn-submit:active { transform: translateY(0); }
+      .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-      .btn-submit:hover {
-        opacity: 0.92;
-        transform: translateY(-1px);
-        box-shadow: 0 12px 28px rgba(43, 115, 255, 0.36);
-      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+      .btn-submit.loading .btn-spinner { display: block; }
+      .btn-submit.loading .btn-label { display: none; }
 
-      .btn-submit:active {
-        transform: translateY(0);
-      }
+      /* 🚨 MENSAGENS DE ERRO PROFISSIONAIS */
+      .input-error-msg { color: #ef4444; font-size: 12px; font-weight: 600; margin-top: 6px; display: block; animation: fadeUpError 0.2s ease-out; }
+      .input-field.field-error { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important; }
+      .cat-grid-error { border: 1.5px dashed #ef4444; border-radius: var(--radius); padding: 10px; background: rgba(239, 68, 68, 0.02); }
+      @keyframes fadeUpError { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-      .btn-submit:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      /* Spinner */
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .btn-spinner {
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.35);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.7s linear infinite;
-        display: none;
-      }
-
-      .btn-submit.loading .btn-spinner {
-        display: block;
-      }
-
-      .btn-submit.loading .btn-label {
-        display: none;
-      }
-
-      /* ── Responsivo ── */
       @media (max-width: 640px) {
-        .page-content {
-          padding: 24px 16px 48px;
-        }
-
-        .form-section {
-          padding: 20px 18px;
-        }
-
-        .form-footer {
-          padding: 18px 18px 24px;
-        }
-
-        .field-grid-2 {
-          grid-template-columns: 1fr;
-        }
-
-        .cat-grid {
-          grid-template-columns: 1fr;
-        }
+        .page-content { padding: 40px 16px 48px !important; }
+        .form-section { padding: 20px 18px; }
+        .form-footer { padding: 18px 18px 24px; }
+        .field-grid-2 { grid-template-columns: 1fr; }
+        .cat-grid { grid-template-columns: 1fr; }
       }
     </style>
   </head>
 
-  <body>
-    {% include 'partials/header.html' %}
+ <body class="pg-dark">
+    <div class="page-shell">
 
-    <!-- ══ CONTEÚDO ══ -->
-    <main class="page-content">
-      <div class="page-inner">
-        <!-- Cabeçalho -->
-        <div class="page-heading">
-          <span class="eyebrow eyebrow-light">Orçamento gratuito</span>
-          <h1>Solicitar Orçamento</h1>
-          <p>
-            Preencha os dados abaixo e conectaremos você aos melhores
-            profissionais disponíveis.
-          </p>
-        </div>
+      {% include 'partials/header.html' %}
 
-        <!-- Aviso -->
-        <div class="notice">
-          <span class="notice-icon">📋</span>
-          <p>
-            Seu orçamento será enviado aos prestadores cadastrados na categoria
-            selecionada. Eles entrarão em contato diretamente pelo
-            <strong>telefone</strong> ou <strong>e-mail</strong> informado.
-          </p>
-        </div>
+      <main class="page-content">
+        <div class="page-inner">
 
-        <!-- Card do formulário -->
-        <div class="form-card">
-          <!-- ── Seção 1: Dados Pessoais ── -->
-          <div class="form-section">
-            <div class="section-title">Dados Pessoais</div>
-
-            <div class="field-grid-2" style="margin-bottom: 14px">
-              <div class="input-box">
-                <label class="form-label" for="nome">
-                  Nome <span style="color: var(--cancel)">*</span>
-                </label>
-                <div class="input-field">
-                  <i>👤</i>
-                  <input
-                    class="form-control"
-                    type="text"
-                    id="nome"
-                    placeholder="Seu nome completo"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="input-box">
-                <label class="form-label" for="telefone">
-                  Telefone <span style="color: var(--cancel)">*</span>
-                </label>
-                <div class="input-field">
-                  <i>📱</i>
-                  <input
-                    class="form-control"
-                    type="tel"
-                    id="telefone"
-                    placeholder="(00) 00000-0000"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="input-box">
-              <label class="form-label" for="email">
-                E-mail
-                <span
-                  style="
-                    font-size: 11px;
-                    color: var(--text-muted);
-                    font-weight: 400;
-                    margin-left: 4px;
-                  "
-                  >(opcional — receba cópia da solicitação)</span
-                >
-              </label>
-              <div class="input-field">
-                <i>✉️</i>
-                <input
-                  class="form-control"
-                  type="email"
-                  id="email"
-                  placeholder="seu@email.com"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- ── Seção 2: Categoria ── -->
-          <div class="form-section">
-            <div class="section-title">Categoria do Serviço</div>
-
-            <div class="cat-grid" id="cat-grid">
-              <label class="cat-option" data-value="Tecnologia">
-                <input type="radio" name="categoria" value="Tecnologia" />
-                <div class="cat-icon">💻</div>
-                <div class="cat-info">
-                  <div class="cat-name">Tecnologia / TI</div>
-                  <div class="cat-desc">
-                    Suporte técnico, redes e computadores
-                  </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Mecânica">
-                <input type="radio" name="categoria" value="Mecânica" />
-                <div class="cat-icon">🔧</div>
-                <div class="cat-info">
-                  <div class="cat-name">Mecânica</div>
-                  <div class="cat-desc">Manutenção preventiva e corretiva</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Elétrica">
-                <input type="radio" name="categoria" value="Elétrica" />
-                <div class="cat-icon">⚡</div>
-                <div class="cat-info">
-                  <div class="cat-name">Elétrica</div>
-                  <div class="cat-desc">
-                    Instalações e reparos com segurança
-                  </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Hidráulica">
-                <input type="radio" name="categoria" value="Hidráulica" />
-                <div class="cat-icon">🚿</div>
-                <div class="cat-info">
-                  <div class="cat-name">Hidráulica</div>
-                  <div class="cat-desc">Resolva vazamentos sem complicação</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Reformas">
-                <input type="radio" name="categoria" value="Reformas" />
-                <div class="cat-icon">🏗️</div>
-                <div class="cat-info">
-                  <div class="cat-name">Reformas</div>
-                  <div class="cat-desc">
-                    Pintura e melhorias para seu espaço
-                  </div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-
-              <label class="cat-option" data-value="Limpeza">
-                <input type="radio" name="categoria" value="Limpeza" />
-                <div class="cat-icon">🧹</div>
-                <div class="cat-info">
-                  <div class="cat-name">Limpeza</div>
-                  <div class="cat-desc">Faxina com profissionais avaliados</div>
-                </div>
-                <div class="cat-check">
-                  <div class="cat-check-dot"></div>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- ── Seção 3: Descrição ── -->
-          <div class="form-section">
-            <div class="section-title">Detalhes do Serviço</div>
-
-            <div class="input-box">
-              <label class="form-label" for="descricao"
-                >Descreva o que você precisa</label
-              >
-              <div class="input-field textarea-field">
-                <textarea
-                  class="form-control"
-                  id="descricao"
-                  placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── Rodapé com botão ── -->
-          <div class="form-footer">
-            <button class="btn-submit" id="btnEnviar" type="button">
-              <span class="btn-label">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  style="vertical-align: -2px; margin-right: 4px"
-                >
-                  <path d="M2 8l10-6v12L2 8z" fill="white" />
-                </svg>
-                Enviar Solicitação
-              </span>
-              <div class="btn-spinner"></div>
-            </button>
-
-            <p
-              style="
-                text-align: center;
-                font-size: 12px;
-                color: var(--text-muted);
-                margin-top: 12px;
-              "
-            >
-              🔒 Seus dados são protegidos e usados apenas para contato dos
-              prestadores.
+          <div class="page-heading">
+            <span class="eyebrow eyebrow-light" style="color: rgba(255, 255, 255, 0.7) !important;">Orçamento gratuito</span>
+            <h1 style="color: #ffffff !important;">Solicitar Orçamento</h1>
+            <p style="color: rgba(255, 255, 255, 0.85) !important;">
+              Preencha os dados abaixo e conectaremos você aos melhores profissionais disponíveis.
             </p>
           </div>
-        </div>
-        <!-- /form-card -->
-      </div>
-    </main>
 
-    <!-- ══ FOOTER (componente global.css) ══ -->
-    <footer class="footer">
-      <div class="footer__inner">
-        <strong class="footer__brand">Agenda Fácil</strong>
-        <p class="footer__tagline">
-          Conectando pessoas a profissionais de confiança.
-        </p>
-        <div class="footer__links">
-          <a href="#">Termos de Uso</a>
-          <a href="#">Privacidade</a>
-          <a href="#">Contato</a>
-        </div>
-        <p class="footer__copy">
-          &copy; 2026 Agenda Fácil. Todos os direitos reservados.
-        </p>
-      </div>
-    </footer>
+          <div class="notice">
+            <span class="notice-icon">📋</span>
+            <p style="color: rgba(255, 255, 255, 0.85) !important;">
+              Seu orçamento será enviado aos prestadores cadastrados na categoria
+              selecionada. Eles entrarão em contato diretamente pelo
+              <strong>telefone</strong> ou <strong>e-mail</strong> informado.
+            </p>
+          </div>
 
-    <!-- EmailJS -->
+          <div class="form-card">
+            <div class="form-section">
+              <div class="section-title">Dados Pessoais</div>
+              <div class="field-grid-2" style="margin-bottom: 14px">
+                <div class="input-box" id="box-nome">
+                  <label class="form-label" for="nome">Nome <span style="color: var(--cancel)">*</span></label>
+                  <div class="input-field"><i>👤</i><input class="form-control" type="text" id="nome" placeholder="Seu nome completo" required /></div>
+                </div>
+                <div class="input-box" id="box-telefone">
+                  <label class="form-label" for="telefone">Telefone <span style="color: var(--cancel)">*</span></label>
+                  <div class="input-field"><i>📱</i><input class="form-control" type="tel" id="telefone" placeholder="(00) 00000-0000" required /></div>
+                </div>
+              </div>
+              <div class="input-box">
+                <label class="form-label" for="email">E-mail <span style="font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 4px;">(opcional — receba cópia da solicitação)</span></label>
+                <div class="input-field"><i>✉️</i><input class="form-control" type="email" id="email" placeholder="seu@email.com" /></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="input-box" id="box-categoria">
+                <div class="section-title">Categoria do Serviço <span style="color: var(--cancel)">*</span></div>
+                <div class="cat-grid" id="cat-grid">
+                  <label class="cat-option" data-value="Tecnologia">
+                    <input type="radio" name="categoria" value="Tecnologia" />
+                    <div class="cat-icon">💻</div>
+                    <div class="cat-info"><div class="cat-name">Tecnologia / TI</div><div class="cat-desc">Suporte técnico, redes e computadores</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                  <label class="cat-option" data-value="Mecânica">
+                    <input type="radio" name="categoria" value="Mecânica" />
+                    <div class="cat-icon">🔧</div>
+                    <div class="cat-info"><div class="cat-name">Mecânica</div><div class="cat-desc">Manutenção preventiva e corretiva</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                  <label class="cat-option" data-value="Elétrica">
+                    <input type="radio" name="categoria" value="Elétrica" />
+                    <div class="cat-icon">⚡</div>
+                    <div class="cat-info"><div class="cat-name">Elétrica</div><div class="cat-desc">Instalações e reparos com segurança</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                  <label class="cat-option" data-value="Hidráulica">
+                    <input type="radio" name="categoria" value="Hidráulica" />
+                    <div class="cat-icon">🚿</div>
+                    <div class="cat-info"><div class="cat-name">Hidráulica</div><div class="cat-desc">Resolva vazamentos sem complicação</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                  <label class="cat-option" data-value="Reformas">
+                    <input type="radio" name="categoria" value="Reformas" />
+                    <div class="cat-icon">🏗️</div>
+                    <div class="cat-info"><div class="cat-name">Reformas</div><div class="cat-desc">Pintura e melhorias para seu espaço</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                  <label class="cat-option" data-value="Limpeza">
+                    <input type="radio" name="categoria" value="Limpeza" />
+                    <div class="cat-icon">🧹</div>
+                    <div class="cat-info"><div class="cat-name">Limpeza</div><div class="cat-desc">Faxina com profissionais avaliados</div></div>
+                    <div class="cat-check"><div class="cat-check-dot"></div></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="section-title">Detalhes do Serviço</div>
+              <div class="input-box" id="box-descricao">
+                <label class="form-label" for="descricao">Descreva o que você precisa <span style="color: var(--cancel)">*</span></label>
+                <div class="input-field textarea-field">
+                  <textarea class="form-control" id="descricao" placeholder="Ex: Preciso trocar a fiação da sala e instalar dois novos pontos de tomada..."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button class="btn-submit" id="btnEnviar" type="button">
+                <span class="btn-label">Enviar Solicitação</span>
+                <div class="btn-spinner"></div>
+              </button>
+              <p style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+                🔒 Seus dados são protegidos e usados apenas para contato dos prestadores.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <div class="footer__inner">
+          <strong class="footer__brand">Agenda Fácil</strong>
+          <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
+          <div class="footer__links">
+            <a href="#">Termos de Uso</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Contato</a>
+          </div>
+          <p class="footer__copy">&copy; 2026 Agenda Fácil. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
     <script>
-      /* ── Categoria cards ── */
       let categoriaSelecionada = "";
 
       document.querySelectorAll(".cat-option").forEach((opt) => {
         opt.addEventListener("click", () => {
-          document
-            .querySelectorAll(".cat-option")
-            .forEach((o) => o.classList.remove("selected"));
+          document.querySelectorAll(".cat-option").forEach((o) => o.classList.remove("selected"));
           opt.classList.add("selected");
           categoriaSelecionada = opt.dataset.value;
           opt.querySelector('input[type="radio"]').checked = true;
+
+          limparErro("box-categoria");
+          document.getElementById("cat-grid").classList.remove("cat-grid-error");
         });
       });
 
-      /* ── Máscara de telefone ── */
       const telefoneInput = document.getElementById("telefone");
       telefoneInput.addEventListener("input", () => {
         let v = telefoneInput.value.replace(/\D/g, "");
@@ -617,12 +309,35 @@
         telefoneInput.value = v;
       });
 
-      /* ── EmailJS ── */
-      (function () {
-        emailjs.init("uX9VTM1RJGpHB17ex");
-      })();
+      (function () { emailjs.init("uX9VTM1RJGpHB17ex"); })();
 
-      /* ── Envio ── */
+      function aplicarErro(idBox, message, usarBordaNoField = true) {
+        const box = document.getElementById(idBox);
+        if (!box) return;
+        if (box.querySelector(".input-error-msg")) return;
+        const errorSpan = document.createElement("span");
+        errorSpan.className = "input-error-msg";
+        errorSpan.innerText = message;
+        box.appendChild(errorSpan);
+        if (usarBordaNoField) {
+          const field = box.querySelector(".input-field");
+          if (field) field.classList.add("field-error");
+        }
+      }
+
+      document.getElementById("nome").addEventListener("input", () => limparErro("box-nome"));
+      telefoneInput.addEventListener("input", () => { if(telefoneInput.value.length >= 14) limparErro("box-telefone"); });
+      document.getElementById("descricao").addEventListener("input", () => limparErro("box-descricao"));
+
+      function limparErro(idBox) {
+        const box = document.getElementById(idBox);
+        if (!box) return;
+        const errorSpan = box.querySelector(".input-error-msg");
+        if (errorSpan) errorSpan.remove();
+        const field = box.querySelector(".input-field");
+        if (field) field.classList.remove("field-error");
+      }
+
       const btn = document.getElementById("btnEnviar");
 
       btn.addEventListener("click", async () => {
@@ -631,66 +346,52 @@
         const telefone = telefoneInput.value.trim();
         const descricao = document.getElementById("descricao").value.trim();
 
-        if (!nome) {
-          alert("Informe seu nome.");
-          return;
-        }
-        if (!telefone) {
-          alert("Informe seu telefone.");
-          return;
-        }
-        if (!categoriaSelecionada) {
-          alert("Selecione uma categoria.");
-          return;
-        }
-        if (!descricao) {
-          alert("Descreva o que você precisa (observação é obrigatória).");
+        limparErro("box-nome");
+        limparErro("box-telefone");
+        limparErro("box-categoria");
+        limparErro("box-descricao");
+        document.getElementById("cat-grid").classList.remove("cat-grid-error");
+
+        let formValido = true;
+
+        if (!nome) { aplicarErro("box-nome", "Por favor, informe seu nome completo."); formValido = false; }
+        if (!telefone || telefone.length < 14) { aplicarErro("box-telefone", "Informe um número de telefone ou celular válido."); formValido = false; }
+        if (!categoriaSelecionada) { aplicarErro("box-categoria", "Selecione uma das categorias de serviço abaixo.", false); document.getElementById("cat-grid").classList.add("cat-grid-error"); formValido = false; }
+        if (!descricao) { aplicarErro("box-descricao", "Descreva detalhadamente o serviço para ajudar os prestadores."); formValido = false; }
+
+        if (!formValido) {
+          const primeiroErro = document.querySelector(".input-error-msg");
+          if (primeiroErro) primeiroErro.scrollIntoView({ behavior: "smooth", block: "center" });
           return;
         }
 
         btn.classList.add("loading");
         btn.disabled = true;
 
-        const dadosBase = {
-          nome,
-          email: email || "Não informado",
-          telefone,
-          categoria: categoriaSelecionada,
-          descricao,
-        };
+        const dadosBase = { nome, email: email || "Não informado", telefone, categoria: categoriaSelecionada, descricao };
 
         try {
-          const res = await fetch(
-            `/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoriaSelecionada)}`,
-          );
+          const res = await fetch(`/api/prestadores_por_categoria?categoria=${encodeURIComponent(categoriaSelecionada)}`);
           const prestadores = await res.json();
 
           if (!prestadores.length) {
-            alert("Nenhum prestador disponível para esta categoria.");
+            aplicarErro("box-categoria", "Nenhum prestador disponível nesta categoria no momento.", false);
+            document.getElementById("cat-grid").classList.add("cat-grid-error");
             btn.classList.remove("loading");
             btn.disabled = false;
             return;
           }
 
           const promessas = prestadores.map((p) =>
-            emailjs.send("service_b6ejlqp", "template_ju6fbyc", {
-              ...dadosBase,
-              email_prestador: p.email,
-              nome_prestador: `${p.nome} ${p.sobrenome}`,
-            }),
+            emailjs.send("service_b6ejlqp", "template_ju6fbyc", { ...dadosBase, email_prestador: p.email, nome_prestador: `${p.nome} ${p.sobrenome}` })
           );
-
-          if (email) {
-            promessas.push(
-              emailjs.send("service_b6ejlqp", "template_a9a80tv", dadosBase),
-            );
-          }
+          if (email) promessas.push(emailjs.send("service_b6ejlqp", "template_a9a80tv", dadosBase));
 
           await Promise.all(promessas);
           window.location.href = "/sucesso-agendamento";
         } catch (err) {
           console.error(err);
-          alert("Erro ao enviar. Tente novamente.");
+          alert("Ocorreu uma falha na comunicação. Por favor, tente novamente.");
           btn.classList.remove("loading");
           btn.disabled = false;
         }

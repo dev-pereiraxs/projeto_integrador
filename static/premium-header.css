@@ -30,6 +30,17 @@ body.pg-home {
   --af-border: rgba(255, 255, 255, 0.09);
   --af-border2: rgba(59, 130, 246, 0.22);
 }
+<<<<<<< HEAD
+=======
+body.pg-dark {
+  --af-text:    rgba(255, 255, 255, 0.92);
+  --af-text2:   rgba(255, 255, 255, 0.58);
+  --af-glass:   rgba(255, 255, 255, 0.05);
+  --af-glass2:  rgba(255, 255, 255, 0.08);
+  --af-border:  rgba(255, 255, 255, 0.09);
+  --af-border2: rgba(59, 130, 246, 0.22);
+}
+>>>>>>> 1ce0ecaf50f6d8aa12a4bff2cf67b3404cede6c7
 
 /* =========================================================
    RESET (scoped)
@@ -511,6 +522,14 @@ body.pg-home {
   color: var(--af-text2);
 }
 
+body.pg-dark .af-header {
+  background: linear-gradient(
+    180deg,
+    rgba(11, 17, 32, 0.85) 0%,
+    rgba(11, 17, 32, 0.75) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
 /* =========================================================
    RESPONSIVE
 ========================================================= */

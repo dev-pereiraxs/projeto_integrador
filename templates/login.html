@@ -16,11 +16,20 @@
 
 <body>
 
+<<<<<<< HEAD
   {% include 'partials/header.html' %}
 
   <div class="formulario login-shell">
 
     <h1>Acessar conta</h1>
+=======
+  <div class="formulario" style="padding-top: 50px;">
+
+    <img src="{{ url_for('static', filename='img/agenda-facil.png') }}" alt="Agenda Fácil"
+         style="display: block; margin: 0 auto 20px auto; width: 76px; height: 76px; border-radius: 18px; object-fit: cover; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25); border: 1px solid rgba(255,255,255,0.1);">
+
+    <h1 style="text-align: center; margin-bottom: 24px;">Acessar conta</h1>
+>>>>>>> 1ce0ecaf50f6d8aa12a4bff2cf67b3404cede6c7
 
     {% if erro %}
     <div
@@ -31,19 +40,16 @@
 
     <form action="{{ url_for('autenticar') }}" method="POST" id="form">
 
-      <!-- USUÁRIO -->
       <div class="caixa-formulario">
         <input type="email" name="email" id="email" class="form-control" required placeholder="Email">
         <i class='bx bxs-user'></i>
       </div>
 
-      <!-- SENHA -->
       <div class="caixa-formulario">
         <input type="password" name="senha" id="password" class="form-control" required placeholder="Senha">
         <i class="bx bxs-lock-alt"></i>
       </div>
 
-      <!-- OPÇÕES -->
       <div class="caixa-lembrar-esqueci">
         <label for="lembrar">
           <input type="checkbox" name="lembrar" id="lembrar">
@@ -52,17 +58,14 @@
         <a href="/esqueci_senha">Esqueci minha senha</a>
       </div>
 
-      <!-- BOTÃO -->
       <button type="submit" class="btn-default">Entrar</button>
 
-      <!-- DIVISOR -->
       <div style="display:flex;align-items:center;gap:10px;margin:6px 0 2px;">
         <hr style="flex:1;border:none;border-top:1px solid rgba(255,255,255,.15);">
         <span style="font-size:12px;color:#aaa;letter-spacing:.5px;">ou</span>
         <hr style="flex:1;border:none;border-top:1px solid rgba(255,255,255,.15);">
       </div>
 
-      <!-- BOTÃO GOOGLE -->
       <a href="/login-google"
         style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px 16px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.06);color:#eee;font-size:14px;font-weight:500;text-decoration:none;transition:background .2s;"
         onmouseover="this.style.background='rgba(255,255,255,.12)'"
@@ -72,7 +75,6 @@
         Continuar com Google
       </a>
 
-      <!-- REGISTRO -->
       <div class="link-registro">
         <p>
           Não tem conta?
@@ -80,7 +82,6 @@
         </p>
       </div>
 
-      <!-- REDIRECT PÓS-LOGIN -->
       <input type="hidden" name="next" value="{{ session.get('next_url', '') }}">
 
     </form>
