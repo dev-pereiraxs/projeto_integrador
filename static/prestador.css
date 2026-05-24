@@ -7,27 +7,20 @@
    RESET DA PÁGINA
 ───────────────────────────────────────────────────────────── */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  display: block;
   min-height: 100vh;
-  padding: 40px 16px;
+  padding: 0;              /* ← remova o padding do body */
   background: var(--bg-gradient);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   CONTAINER PRINCIPAL
-───────────────────────────────────────────────────────────── */
 #form_container {
   width: 100%;
   max-width: 480px;
-
+  margin: 40px auto;       /* ← padding vira margin no container */
   padding: 32px 28px;
-
   display: flex;
   flex-direction: column;
   gap: 26px;
-
   background: var(--card-alt);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -324,19 +317,20 @@ body {
 /* ─────────────────────────────────────────────────────────────
    MOBILE
 ───────────────────────────────────────────────────────────── */
-@media (max-width: 520px) {
-
+/* ─────────────────────────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 540px) {
   body {
     padding: 0;
-    align-items: stretch;
   }
 
   #form_container {
-    min-height: 100vh;
-
-    padding: 28px 20px;
-
+    margin: 0;
     border-radius: 0;
+    min-height: calc(100vh - var(--af-h, 76px));
+    padding: 24px 16px 60px;
+    max-width: 100%;
   }
 
   #input_container {
@@ -356,12 +350,23 @@ body {
   }
 
   .card {
-    min-height: 100px;
+    min-height: 90px;
   }
 
   #gender_inputs {
     flex-direction: column;
     gap: 10px;
+  }
+
+  #form_title {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 541px) {
+  #form_container {
+    margin: 24px auto;
+    max-width: calc(100% - 32px);
   }
 }
 
