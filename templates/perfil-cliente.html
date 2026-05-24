@@ -1168,10 +1168,9 @@
   {# ── Hero ── #}
   <section class="hero">
     <div class="hero-inner">
-      <div class="hero-avatar" id="fotoPreview" onclick="document.getElementById('fotoInput').click()"
-        title="Clique para trocar a foto">
-        {% if cliente.foto_url %}
-        <img src="{{ cliente.foto_url }}" alt="Foto de perfil">
+      <div class="hero-avatar" id="fotoPreview" onclick="abrirModalEditar()" title="Clique para editar perfil">
+        {% if cliente.foto %}
+        <img src="{{ cliente.foto }}" alt="Foto de perfil">
         {% else %}
         {{ (cliente.nome[0] | upper) if cliente.nome else '?' }}
         {% endif %}
@@ -1190,6 +1189,16 @@
     <div class="modal-box">
       <h3>Editar Perfil</h3>
       <div class="modal-fields">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0 4px;">
+          <div id="modalFotoPreview" onclick="document.getElementById('fotoInput').click()"
+            style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;flex-shrink:0;border:2px solid var(--border);">
+            {% if cliente.foto %}<img src="{{ cliente.foto }}" style="width:100%;height:100%;object-fit:cover;">{% else
+            %}{{ (cliente.nome[0]|upper) if cliente.nome else '?' }}{% endif %}
+          </div>
+          <button type="button" onclick="document.getElementById('fotoInput').click()"
+            style="font-size:12.5px;font-weight:600;color:var(--blue);background:var(--blue-muted);border:1px solid #bfdbfe;border-radius:var(--r);padding:7px 13px;cursor:pointer;">📷
+            Trocar foto</button>
+        </div>
         <input id="editNome" placeholder="Primeiro nome">
         <input id="editSobrenome" placeholder="Último nome">
         <input id="editTelefone" placeholder="Telefone">
@@ -1417,295 +1426,299 @@
   </footer>
 
   <script>
-    /* ── Tabs ── */
-    function switchTab(name, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('tab-' + name).classList.add('active');
-    }
+  /* ── Tabs ── */
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
 
-    function abrirTabPeloQuery() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const tab = params.get('tab');
-        const btnAg = document.querySelector(".tab-btn[onclick*=\"switchTab('agendamentos'\"]") || null;
-        const btnDados = document.querySelector(".tab-btn[onclick*=\"switchTab('dados'\"]") || null;
-        if (tab === 'agendamentos') { switchTab('agendamentos', btnAg); return; }
-        if (tab === 'dados') { switchTab('dados', btnDados); }
-      } catch (e) { /* noop */ }
-    }
-    abrirTabPeloQuery();
+  function abrirTabPeloQuery() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      const btnAg = document.querySelector(".tab-btn[onclick*=\"switchTab('agendamentos'\"]") || null;
+      const btnDados = document.querySelector(".tab-btn[onclick*=\"switchTab('dados'\"]") || null;
+      if (tab === 'agendamentos') { switchTab('agendamentos', btnAg); return; }
+      if (tab === 'dados') { switchTab('dados', btnDados); }
+    } catch (e) { /* noop */ }
+  }
+  abrirTabPeloQuery();
 
-    /* ── Cancelar agendamento ── */
-    let idAgendamentoParaCancelar = null;
+  /* ── Cancelar agendamento ── */
+  let idAgendamentoParaCancelar = null;
 
-    function abrirModalCancelar(id) {
-      idAgendamentoParaCancelar = id;
-      document.getElementById('modalCancelar').classList.add('open');
-    }
+  function abrirModalCancelar(id) {
+    idAgendamentoParaCancelar = id;
+    document.getElementById('modalCancelar').classList.add('open');
+  }
 
-    function fecharModalCancelar() {
-      idAgendamentoParaCancelar = null;
-      document.getElementById('modalCancelar').classList.remove('open');
-    }
+  function fecharModalCancelar() {
+    idAgendamentoParaCancelar = null;
+    document.getElementById('modalCancelar').classList.remove('open');
+  }
 
-    document.getElementById('modalCancelar').addEventListener('click', function (e) {
-      if (e.target === this) fecharModalCancelar();
-    });
+  document.getElementById('modalCancelar').addEventListener('click', function (e) {
+    if (e.target === this) fecharModalCancelar();
+  });
 
-    document.getElementById('btnConfirmarCancelamento').addEventListener('click', async function () {
-      if (!idAgendamentoParaCancelar) return;
-      const btn = this;
-      const textoOriginal = btn.textContent;
-      btn.textContent = 'Cancelando...';
-      btn.disabled = true;
-      btn.style.opacity = '.7';
+  document.getElementById('btnConfirmarCancelamento').addEventListener('click', async function () {
+    if (!idAgendamentoParaCancelar) return;
+    const btn = this;
+    const textoOriginal = btn.textContent;
+    btn.textContent = 'Cancelando...';
+    btn.disabled = true;
+    btn.style.opacity = '.7';
 
-      try {
-        const res = await fetch(`/api/cancelar_agendamento/${idAgendamentoParaCancelar}`, { method: 'PATCH' });
-        const data = await res.json();
-
-        if (data.mensagem) {
-          const item = document.getElementById('ag-' + idAgendamentoParaCancelar);
-          const badge = item.querySelector('.status-badge');
-          badge.className = 'status-badge status-cancelado';
-          badge.textContent = 'cancelado';
-          item.querySelectorAll('.btn-cancelar').forEach(b => b.remove());
-          fecharModalCancelar();
-        } else {
-          alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
-        }
-      } catch (e) {
-        alert('Erro de conexão. Tente novamente.');
-      } finally {
-        btn.textContent = textoOriginal;
-        btn.disabled = false;
-        btn.style.opacity = '1';
-      }
-    });
-
-    /* ── Modal editar perfil ── */
-    function abrirModalEditar() {
-      document.getElementById('editNome').value = "{{ cliente.nome or '' }}";
-      document.getElementById('editSobrenome').value = "{{ cliente.sobrenome or '' }}";
-      document.getElementById('editTelefone').value = "{{ cliente.telefone or '' }}";
-      document.getElementById('editCidade').value = "{{ cliente.cidade or '' }}";
-      document.getElementById('editSexo').value = "{{ cliente.sexo or '' }}";
-      document.getElementById('modalEditar').classList.add('open');
-    }
-
-    function fecharModal() {
-      document.getElementById('modalEditar').classList.remove('open');
-    }
-
-    async function salvarPerfil() {
-      const dados = {
-        nome: document.getElementById('editNome').value.trim(),
-        sobrenome: document.getElementById('editSobrenome').value.trim(),
-        telefone: document.getElementById('editTelefone').value.trim(),
-        cidade: document.getElementById('editCidade').value.trim(),
-        sexo: document.getElementById('editSexo').value,
-      };
-
-      if (!dados.nome) { alert('Nome é obrigatório'); return; }
-
-      try {
-        const res = await fetch('/editar_perfil_cliente', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
-        });
-
-        let data = null;
-        try { data = await res.json(); } catch (e) {
-          if (!res.ok) throw new Error(`Falha ao salvar (HTTP ${res.status}).`);
-          throw new Error('Resposta não-JSON');
-        }
-
-        if (!res.ok || data?.erro) { alert('Erro: ' + (data?.erro || `HTTP ${res.status}`)); return; }
-
-        document.getElementById('heroNome').textContent = dados.nome + ' ' + dados.sobrenome;
-        fecharModal();
-
-        const overlay = document.getElementById('overlaySuccesso');
-        overlay.style.display = 'flex';
-
-        const path = document.getElementById('checkSvg').querySelector('path');
-        path.style.animation = 'none';
-        void path.offsetWidth;
-        path.style.animation = '';
-
-        setTimeout(() => { overlay.style.display = 'none'; location.reload(); }, 2500);
-      } catch (err) {
-        alert('Falha ao salvar: ' + err.message);
-      }
-    }
-
-    document.getElementById('modalEditar').addEventListener('click', function (e) {
-      if (e.target === this) fecharModal();
-    });
-
-    /* ── Upload foto ── */
-    async function uploadFoto(input) {
-      const file = input.files[0];
-      if (!file) return;
-
-      const form = new FormData();
-      form.append('foto', file);
-
-      const res = await fetch('/salvar_foto', { method: 'POST', body: form });
+    try {
+      const res = await fetch(`/api/cancelar_agendamento/${idAgendamentoParaCancelar}`, { method: 'PATCH' });
       const data = await res.json();
 
-      if (data.erro) {
-        alert('Erro: ' + data.erro);
+      if (data.mensagem) {
+        const item = document.getElementById('ag-' + idAgendamentoParaCancelar);
+        const badge = item.querySelector('.status-badge');
+        badge.className = 'status-badge status-cancelado';
+        badge.textContent = 'cancelado';
+        item.querySelectorAll('.btn-cancelar').forEach(b => b.remove());
+        fecharModalCancelar();
       } else {
-        const preview = document.getElementById('fotoPreview');
-        let img = preview.querySelector('img');
-        if (!img) {
-          img = document.createElement('img');
-          img.alt = 'Foto de perfil';
-          preview.textContent = '';
-          preview.appendChild(img);
+        alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
+      }
+    } catch (e) {
+      alert('Erro de conexão. Tente novamente.');
+    } finally {
+      btn.textContent = textoOriginal;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }
+  });
+
+  /* ── Modal editar perfil ── */
+  function abrirModalEditar() {
+    document.getElementById('editNome').value = "{{ cliente.nome or '' }}";
+    document.getElementById('editSobrenome').value = "{{ cliente.sobrenome or '' }}";
+    document.getElementById('editTelefone').value = "{{ cliente.telefone or '' }}";
+    document.getElementById('editCidade').value = "{{ cliente.cidade or '' }}";
+    document.getElementById('editSexo').value = "{{ cliente.sexo or '' }}";
+    document.getElementById('modalEditar').classList.add('open');
+  }
+
+  function fecharModal() {
+    document.getElementById('modalEditar').classList.remove('open');
+  }
+
+  async function salvarPerfil() {
+    const dados = {
+      nome: document.getElementById('editNome').value.trim(),
+      sobrenome: document.getElementById('editSobrenome').value.trim(),
+      telefone: document.getElementById('editTelefone').value.trim(),
+      cidade: document.getElementById('editCidade').value.trim(),
+      sexo: document.getElementById('editSexo').value,
+    };
+
+    if (!dados.nome) { alert('Nome é obrigatório'); return; }
+
+    try {
+      const res = await fetch('/editar_perfil_cliente', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+
+      let data = null;
+      try { data = await res.json(); } catch (e) {
+        if (!res.ok) throw new Error(`Falha ao salvar (HTTP ${res.status}).`);
+        throw new Error('Resposta não-JSON');
+      }
+
+      if (!res.ok || data?.erro) { alert('Erro: ' + (data?.erro || `HTTP ${res.status}`)); return; }
+
+      document.getElementById('heroNome').textContent = dados.nome + ' ' + dados.sobrenome;
+      fecharModal();
+
+      const overlay = document.getElementById('overlaySuccesso');
+      overlay.style.display = 'flex';
+
+      const path = document.getElementById('checkSvg').querySelector('path');
+      path.style.animation = 'none';
+      void path.offsetWidth;
+      path.style.animation = '';
+
+      setTimeout(() => { overlay.style.display = 'none'; location.reload(); }, 2500);
+    } catch (err) {
+      alert('Falha ao salvar: ' + err.message);
+    }
+  }
+
+  document.getElementById('modalEditar').addEventListener('click', function (e) {
+    if (e.target === this) fecharModal();
+  });
+
+  /* ── Upload foto ── */
+  async function uploadFoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const form = new FormData();
+    form.append('foto', file);
+
+    const res = await fetch('/salvar_foto', { method: 'POST', body: form });
+    const data = await res.json();
+
+    if (data.erro) {
+      alert('Erro: ' + data.erro);
+    } else {
+      const preview = document.getElementById('fotoPreview');
+      let img = preview.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = 'Foto de perfil';
+        preview.textContent = '';
+        preview.appendChild(img);
+      }
+      img.src = data.url + '?t=' + Date.now();
+      const modalPreview = document.getElementById('modalFotoPreview');
+      if (modalPreview) {
+        modalPreview.innerHTML = `<img src="${data.url}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover;">`;
+      }
+    }
+  }
+
+  /* ── Modal de avaliação ── */
+  (function () {
+    let _notaSelecionada = 0;
+    let _agendamentoId = null;
+    const TEXTOS_NOTA = ['', 'Péssimo 😞', 'Ruim 😕', 'Regular 😐', 'Bom 😊', 'Excelente! 🤩'];
+
+    const overlay = document.getElementById('overlayAvaliacao');
+    const form = document.getElementById('avFormulario');
+    const sucesso = document.getElementById('avSucesso');
+    const stars = document.querySelectorAll('.av-star');
+    const notaTexto = document.getElementById('avNotaTexto');
+    const btnEnviar = document.getElementById('avBtnEnviar');
+    const btnPular = document.getElementById('avBtnPular');
+    const btnPular2 = document.getElementById('avBtnPular2');
+    const comentario = document.getElementById('avComentario');
+
+    function abrirModal(dados) {
+      _agendamentoId = dados.id;
+      document.getElementById('avNomeServico').textContent = dados.servico || 'Serviço';
+
+      const prestador = [(dados.prestador_nome || ''), (dados.prestador_sobrenome || '')].join(' ').trim();
+      const data = dados.data_servico
+        ? new Date(dados.data_servico + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+        : '';
+      document.getElementById('avMetaServico').textContent = [prestador, data, dados.horario].filter(Boolean).join(' · ');
+
+      const s = (dados.servico || '').toLowerCase();
+      const emojiMap = { 'eletr': '💡', 'hidra': '🔧', 'mec': '🔩', 'reform': '🏗️', 'limpez': '🧹', 'ti': '💻', 'tecnol': '💻', 'jardim': '🌿', 'pintur': '🎨', 'segur': '🔒' };
+      const iconeKey = Object.keys(emojiMap).find(k => s.includes(k));
+      document.querySelector('.av-service-icon').textContent = iconeKey ? emojiMap[iconeKey] : '⚙️';
+
+      resetForm();
+      overlay.classList.add('aberto');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModalAv() {
+      overlay.classList.remove('aberto');
+      document.body.style.overflow = '';
+      setTimeout(resetForm, 350);
+    }
+
+    function resetForm() {
+      _notaSelecionada = 0;
+      comentario.value = '';
+      notaTexto.textContent = '';
+      btnEnviar.disabled = true;
+      btnEnviar.classList.remove('loading');
+      stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
+      form.style.display = '';
+      sucesso.style.display = 'none';
+    }
+
+    stars.forEach(star => {
+      star.addEventListener('mouseover', () => {
+        const v = parseInt(star.dataset.v);
+        stars.forEach(s => { s.classList.toggle('ativo', parseInt(s.dataset.v) <= v); s.classList.remove('selecionado'); });
+        notaTexto.textContent = TEXTOS_NOTA[v];
+      });
+
+      star.addEventListener('mouseleave', () => {
+        if (_notaSelecionada === 0) {
+          stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
+          notaTexto.textContent = '';
+        } else {
+          stars.forEach(s => { s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); s.classList.remove('ativo'); });
+          notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
         }
-        img.src = data.url + '?t=' + Date.now();
+      });
+
+      star.addEventListener('click', () => {
+        _notaSelecionada = parseInt(star.dataset.v);
+        stars.forEach(s => { s.classList.remove('ativo'); s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); });
+        notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+        btnEnviar.disabled = false;
+      });
+
+      star.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); star.click(); }
+      });
+    });
+
+    btnEnviar.addEventListener('click', async () => {
+      if (!_notaSelecionada || !_agendamentoId) return;
+      btnEnviar.classList.add('loading');
+      btnEnviar.disabled = true;
+
+      try {
+        const res = await fetch('/api/salvar_avaliacao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agendamento_id: _agendamentoId, nota: _notaSelecionada, comentario: comentario.value.trim() })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.erro) {
+          alert(data.erro || 'Erro ao salvar avaliação. Tente novamente.');
+          btnEnviar.classList.remove('loading');
+          btnEnviar.disabled = false;
+          return;
+        }
+
+        form.style.display = 'none';
+        sucesso.style.display = 'flex';
+        setTimeout(fecharModalAv, 2800);
+      } catch {
+        alert('Erro de conexão. Tente novamente.');
+        btnEnviar.classList.remove('loading');
+        btnEnviar.disabled = false;
+      }
+    });
+
+    btnPular.addEventListener('click', fecharModalAv);
+    btnPular2.addEventListener('click', fecharModalAv);
+    overlay.addEventListener('click', e => { if (e.target === overlay) fecharModalAv(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModalAv(); });
+
+    async function verificarAvaliacoesPendentes() {
+      try {
+        const res = await fetch('/api/avaliacoes_pendentes');
+        const data = await res.json();
+        if (data.pendente) setTimeout(() => abrirModal(data.pendente), 600);
+      } catch (e) {
+        console.warn('[Avaliação] Erro ao verificar pendências:', e);
       }
     }
 
-    /* ── Modal de avaliação ── */
-    (function () {
-      let _notaSelecionada = 0;
-      let _agendamentoId = null;
-      const TEXTOS_NOTA = ['', 'Péssimo 😞', 'Ruim 😕', 'Regular 😐', 'Bom 😊', 'Excelente! 🤩'];
-
-      const overlay = document.getElementById('overlayAvaliacao');
-      const form = document.getElementById('avFormulario');
-      const sucesso = document.getElementById('avSucesso');
-      const stars = document.querySelectorAll('.av-star');
-      const notaTexto = document.getElementById('avNotaTexto');
-      const btnEnviar = document.getElementById('avBtnEnviar');
-      const btnPular = document.getElementById('avBtnPular');
-      const btnPular2 = document.getElementById('avBtnPular2');
-      const comentario = document.getElementById('avComentario');
-
-      function abrirModal(dados) {
-        _agendamentoId = dados.id;
-        document.getElementById('avNomeServico').textContent = dados.servico || 'Serviço';
-
-        const prestador = [(dados.prestador_nome || ''), (dados.prestador_sobrenome || '')].join(' ').trim();
-        const data = dados.data_servico
-          ? new Date(dados.data_servico + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
-          : '';
-        document.getElementById('avMetaServico').textContent = [prestador, data, dados.horario].filter(Boolean).join(' · ');
-
-        const s = (dados.servico || '').toLowerCase();
-        const emojiMap = { 'eletr': '💡', 'hidra': '🔧', 'mec': '🔩', 'reform': '🏗️', 'limpez': '🧹', 'ti': '💻', 'tecnol': '💻', 'jardim': '🌿', 'pintur': '🎨', 'segur': '🔒' };
-        const iconeKey = Object.keys(emojiMap).find(k => s.includes(k));
-        document.querySelector('.av-service-icon').textContent = iconeKey ? emojiMap[iconeKey] : '⚙️';
-
-        resetForm();
-        overlay.classList.add('aberto');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function fecharModalAv() {
-        overlay.classList.remove('aberto');
-        document.body.style.overflow = '';
-        setTimeout(resetForm, 350);
-      }
-
-      function resetForm() {
-        _notaSelecionada = 0;
-        comentario.value = '';
-        notaTexto.textContent = '';
-        btnEnviar.disabled = true;
-        btnEnviar.classList.remove('loading');
-        stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
-        form.style.display = '';
-        sucesso.style.display = 'none';
-      }
-
-      stars.forEach(star => {
-        star.addEventListener('mouseover', () => {
-          const v = parseInt(star.dataset.v);
-          stars.forEach(s => { s.classList.toggle('ativo', parseInt(s.dataset.v) <= v); s.classList.remove('selecionado'); });
-          notaTexto.textContent = TEXTOS_NOTA[v];
-        });
-
-        star.addEventListener('mouseleave', () => {
-          if (_notaSelecionada === 0) {
-            stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
-            notaTexto.textContent = '';
-          } else {
-            stars.forEach(s => { s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); s.classList.remove('ativo'); });
-            notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
-          }
-        });
-
-        star.addEventListener('click', () => {
-          _notaSelecionada = parseInt(star.dataset.v);
-          stars.forEach(s => { s.classList.remove('ativo'); s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); });
-          notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
-          btnEnviar.disabled = false;
-        });
-
-        star.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); star.click(); }
-        });
-      });
-
-      btnEnviar.addEventListener('click', async () => {
-        if (!_notaSelecionada || !_agendamentoId) return;
-        btnEnviar.classList.add('loading');
-        btnEnviar.disabled = true;
-
-        try {
-          const res = await fetch('/api/salvar_avaliacao', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ agendamento_id: _agendamentoId, nota: _notaSelecionada, comentario: comentario.value.trim() })
-          });
-          const data = await res.json();
-
-          if (!res.ok || data.erro) {
-            alert(data.erro || 'Erro ao salvar avaliação. Tente novamente.');
-            btnEnviar.classList.remove('loading');
-            btnEnviar.disabled = false;
-            return;
-          }
-
-          form.style.display = 'none';
-          sucesso.style.display = 'flex';
-          setTimeout(fecharModalAv, 2800);
-        } catch {
-          alert('Erro de conexão. Tente novamente.');
-          btnEnviar.classList.remove('loading');
-          btnEnviar.disabled = false;
-        }
-      });
-
-      btnPular.addEventListener('click', fecharModalAv);
-      btnPular2.addEventListener('click', fecharModalAv);
-      overlay.addEventListener('click', e => { if (e.target === overlay) fecharModalAv(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModalAv(); });
-
-      async function verificarAvaliacoesPendentes() {
-        try {
-          const res = await fetch('/api/avaliacoes_pendentes');
-          const data = await res.json();
-          if (data.pendente) setTimeout(() => abrirModal(data.pendente), 600);
-        } catch (e) {
-          console.warn('[Avaliação] Erro ao verificar pendências:', e);
-        }
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', verificarAvaliacoesPendentes);
-      } else {
-        verificarAvaliacoesPendentes();
-      }
-    })();
-  </script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', verificarAvaliacoesPendentes);
+    } else {
+      verificarAvaliacoesPendentes();
+    }
+  })();
+</script>
 </body>
 
 </html>
