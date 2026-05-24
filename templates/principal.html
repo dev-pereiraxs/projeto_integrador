@@ -7,33 +7,41 @@
   <title>Agenda Fácil</title>
   <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
 
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='princss.css') }}" />
-  
+
+  <style>
+    .benefit-card {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+
+    .benefit-icon {
+      margin: 0 auto 16px auto !important; /* Centraliza o ícone e dá um respiro embaixo */
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  </style>
+
 </head>
 
 <body class="pg-home">
 
-
-
   <div class="page-shell">
 
-    <!-- HEADER / NAVBAR (padronizado) -->
     {% include 'partials/header.html' %}
-
-    <!-- HERO -->
 
     <main>
       <section class="hero container" id="inicio">
 
-        {# fecha o modal-overlay ao fim do layout da home #}
-
-        <!-- TEXTO -->
         <article class="hero-copy">
           <span class="eyebrow">Serviços para casa e empresa</span>
 
@@ -50,13 +58,11 @@
           </div>
         </article>
 
-        <!-- VISUAL -->
         <figure class="hero-visual">
 
           <div class="hero-visual-inner">
             <img src="../static/img/profissional.png" class="hero-img" alt="Profissional de serviços verificado">
 
-            <!-- CARD 1 -->
             <div class="floating-card check-card">
               <span class="check-icon">✔</span>
               <div>
@@ -65,7 +71,6 @@
               </div>
             </div>
 
-            <!-- CARD 2 -->
             <div class="floating-card schedule-card">
               <div class="schedule-top">
                 <span></span><span></span><span></span>
@@ -77,7 +82,6 @@
 
       </section>
 
-      <!-- COMO FUNCIONA -->
       <section class="steps-section container">
         <h2>Como funciona</h2>
 
@@ -97,8 +101,6 @@
         </div>
       </section>
 
-      <!-- CATEGORIAS -->
-      <!-- CATEGORIAS -->
       <section class="categories-section" id="categorias">
         <div class="container">
           <span class="eyebrow">Encontre o profissional certo</span>
@@ -108,7 +110,6 @@
         <div class="marquee-outer">
           <div class="marquee-track">
 
-            <!-- Bloco original -->
             <article class="service-card">
               <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
               <div>
@@ -152,7 +153,6 @@
               </div>
             </article>
 
-            <!-- Bloco duplicado (necessário pro loop ser contínuo) -->
             <article class="service-card">
               <img src="../static/img/ti.png" alt="Tecnologia" class="service-icon">
               <div>
@@ -203,11 +203,8 @@
     </main>
   </div>
 
-  <!-- CTA -->
   <section class="cta-band" id="cta">
     <div class="container cta-inner">
-
-    {# (mantido intencionalmente fora do modal) #}
 
       <div class="cta-copy">
         <span class="eyebrow eyebrow-blue">Solução prática para o dia a dia</span>
@@ -257,17 +254,11 @@
     </div>
   </footer>
 
-
-
-  <!-- BOTÃO VOLTAR AO TOPO -->
   <button id="backToTop" aria-label="Voltar ao topo">
     ↑
   </button>
 
-  </div>
-
   {% if cadastro_ok_tipo %}
-  <!-- MODAL: CADASTRO CONCLUÍDO -->
   <div class="modal-overlay" id="modal-cadastro-ok" role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(5,8,20,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:20px;">
     <script>
       (function () {
@@ -329,7 +320,6 @@
     }
   </script>
 
-
   <script>
     /* ── CARROSSEL DE CATEGORIAS ── */
     (function () {
@@ -355,6 +345,7 @@
       }
 
       function buildDots() {
+        if (!dotsEl) return;
         dotsEl.innerHTML = '';
         for (let i = 0; i < totalSteps(); i++) {
           const dot = document.createElement('button');
@@ -376,18 +367,20 @@
 
         track.style.transform = `translateX(-${offset}px)`;
 
-        // Atualiza dots
-        document.querySelectorAll('.carousel-dot').forEach((d, i) => {
-          d.classList.toggle('active', i === current);
-        });
+        if(dotsEl) {
+            document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === current);
+            });
+        }
 
-        // Atualiza botões
-        btnPrev.disabled = current === 0;
-        btnNext.disabled = current >= steps - 1;
+        if(btnPrev && btnNext) {
+            btnPrev.disabled = current === 0;
+            btnNext.disabled = current >= steps - 1;
+        }
       }
 
-      btnPrev.addEventListener('click', () => goTo(current - 1));
-      btnNext.addEventListener('click', () => goTo(current + 1));
+      if(btnPrev) btnPrev.addEventListener('click', () => goTo(current - 1));
+      if(btnNext) btnNext.addEventListener('click', () => goTo(current + 1));
 
       // Swipe no mobile
       let startX = 0;
@@ -397,10 +390,8 @@
         if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
       }, { passive: true });
 
-      // Recalcula ao redimensionar
       window.addEventListener('resize', () => { buildDots(); goTo(0); });
 
-      // Init
       buildDots();
       goTo(0);
     })();
