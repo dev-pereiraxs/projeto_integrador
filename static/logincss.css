@@ -8,16 +8,20 @@
 ───────────────────────────────────────────────────────────── */
 body {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;   /* ← adicione */
+  justify-content: flex-start; /* ← mude de center para flex-start */
   min-height: 100vh;
   background: var(--bg-gradient);
 }
 
-/* Ajuste para não depender de padding inline no HTML (header ocupa altura variável) */
+/* ─── CARD ─── */
 .login-shell {
-  /* garante que o card não ultrapasse a tela e fique centralizado visualmente */
-  margin-top: calc(var(--navbar-h, 58px) * -0.25); /* ← REMOVA ISTO */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  margin-top: 0; /* ← remove o margin-top negativo */
 }
 
 /* ─────────────────────────────────────────────────────────────
