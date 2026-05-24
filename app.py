@@ -265,6 +265,7 @@ def callback():
         session["usuario_logado"] = email
         session["tipo_usuario"] = "prestador"
         session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
+        session["usuario_foto"] = prestador.get("foto") or ""
         cursor.close();
         conn.close()
         return redirect(url_for("servicos"))
@@ -288,8 +289,8 @@ def callback():
     session["usuario_logado"] = email
     session["tipo_usuario"] = "cliente"
     session["usuario_nome"] = nome + " " + sobrenome
+    session["usuario_foto"] = (cliente or {}).get("foto") or ""
     return redirect(url_for("servicos"))
-
 
 # =========================
 # PÁGINAS PÚBLICAS
@@ -447,28 +448,12 @@ def autenticar():
 
         # 🔑 força a conversão para string limpa e remove espaços
         session["usuario_area"] = str(prestador.get("areas_atuacao") or "").strip().lower()
+        session["usuario_foto"] = prestador.get("foto") or ""
 
         cursor.close();
         conn.close()
         next_url = session.pop('next_url', None)
         return redirect(next_url if next_url else url_for("servicos"))
-
-    cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
-    cliente = cursor.fetchone()
-    cursor.close();
-    conn.close()
-
-    if cliente:
-        session.permanent = True if lembrar else False
-        session["usuario_logado"] = email
-        session["tipo_usuario"] = "cliente"
-        session["usuario_nome"] = cliente["nome"] + " " + cliente["sobrenome"]
-        next_url = session.pop('next_url', None)
-        return redirect(next_url if next_url else url_for("avaliar"))
-
-    return render_template("login.html", erro="E-mail ou senha inválidos")
-
-
 # =========================
 # CADASTRO CLIENTE
 # =========================
@@ -1144,10 +1129,11 @@ def salvar_foto():
         cursor.close();
         conn.close()
 
+        session["usuario_foto"] = url
         return jsonify({"mensagem": "Foto salva!", "url": url})
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-
+    
 
 # =========================
 # UPLOAD DE CERTIFICADO
