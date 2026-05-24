@@ -14,6 +14,12 @@ body {
   background: var(--bg-gradient);
 }
 
+/* Ajuste para não depender de padding inline no HTML (header ocupa altura variável) */
+.login-shell {
+  /* garante que o card não ultrapasse a tela e fique centralizado visualmente */
+  margin-top: calc(var(--navbar-h, 58px) * -0.25); /* ← REMOVA ISTO */
+}
+
 /* ─────────────────────────────────────────────────────────────
    CARD DE LOGIN  (glassmorphism)
 ───────────────────────────────────────────────────────────── */
@@ -59,7 +65,10 @@ body {
   font-family: var(--font);
   font-size: 14px;
   outline: none;
-  transition: border-color .2s, box-shadow .2s, background .2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
 }
 
 .caixa-formulario input::placeholder {
@@ -68,8 +77,8 @@ body {
 
 .caixa-formulario input:focus {
   border-color: var(--primary-light);
-  background: rgba(255, 255, 255, 0.10);
-  box-shadow: 0 0 0 3px rgba(43, 115, 255, .18);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(43, 115, 255, 0.18);
 }
 
 /* Ícone dentro do input */
@@ -116,10 +125,10 @@ body {
   color: var(--on-dark);
   font-weight: 500;
   text-decoration: none;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 .caixa-lembrar-esqueci a:hover {
-  opacity: .7;
+  opacity: 0.7;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -137,13 +146,16 @@ body {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity .2s, transform .2s, box-shadow .2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
   margin-bottom: 4px;
 }
 
 .formulario button[type="submit"]:hover,
 .formulario .btn-default:hover {
-  opacity: .92;
+  opacity: 0.92;
   transform: translateY(-1px);
   box-shadow: var(--shadow);
 }
@@ -161,9 +173,11 @@ body {
 .link-registro a {
   color: var(--on-dark);
   font-weight: 600;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
-.link-registro a:hover { opacity: .7; }
+.link-registro a:hover {
+  opacity: 0.7;
+}
 
 /* ─────────────────────────────────────────────────────────────
    MOBILE
