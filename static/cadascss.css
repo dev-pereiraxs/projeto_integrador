@@ -7,20 +7,126 @@
    PÁGINA
 ───────────────────────────────────────────────────────────── */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  display: block;
   min-height: 100vh;
-  padding: 40px 16px;
+  padding: 0;
+  margin: 0;               /* ← adicione */
   background: var(--bg-gradient);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   CONTAINER PRINCIPAL
-───────────────────────────────────────────────────────────── */
+html {
+  margin: 0;
+  padding: 0;
+}
+
 #form_container {
   width: 100%;
   max-width: 520px;
+  margin: 40px auto;        /* ← centraliza */
+  background: var(--card-alt);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CABEÇALHO DO FORM
+───────────────────────────────────────────────────────────── */
+#form_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#form_title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  position: relative;
+  padding-bottom: 10px;
+}
+
+#form_title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 48px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FORMULÁRIO
+───────────────────────────────────────────────────────────── */
+#form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Grid de inputs — 2 colunas em telas maiores */
+#input_container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+/* Input de data ocupa coluna inteira */
+.input-box:has(input[type="date"]) {
+  grid-column: span 2;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RÁDIOS (gênero)
+───────────────────────────────────────────────────────────── */
+.radio-container {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#gender_inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.radio-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────────────────────────── */
+/* ============================================================
+   cadascss.css  —  Tela de Cadastro de Cliente
+   Depende de: global.css
+   ============================================================ */
+
+/* ─────────────────────────────────────────────────────────────
+   PÁGINA
+───────────────────────────────────────────────────────────── */
+body {
+  display: block;           /* ← era flex */
+  min-height: 100vh;
+  padding: 0;               /* ← remova o padding do body */
+  background: var(--bg-gradient);
+}
+
+#form_container {
+  width: 100%;
+  max-width: 520px;
+  margin: 40px auto;        /* ← centraliza */
   background: var(--card-alt);
   border-radius: var(--radius-lg);
   padding: 32px 28px;
@@ -107,12 +213,12 @@ body {
    MOBILE
 ───────────────────────────────────────────────────────────── */
 @media (max-width: 520px) {
-  body { padding: 0; align-items: stretch; }
-
   #form_container {
-    min-height: 100vh;
+    margin: 0;
+    min-height: calc(100vh - var(--af-h, 76px));
     border-radius: 0;
-    padding: 28px 20px;
+    padding: 24px 16px 60px;
+    max-width: 100%;
   }
 
   #input_container {
@@ -122,9 +228,5 @@ body {
   .radio-container,
   .input-box:has(input[type="date"]) {
     grid-column: span 1;
-  }
-
-  .form-control[type="date"] {
-    background-color: var(--card);
   }
 }
