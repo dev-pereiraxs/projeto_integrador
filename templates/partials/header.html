@@ -17,7 +17,7 @@
 </style>
 {# Wrapper com position:relative para o menu mobile se posicionar corretamente #}
 <div class="af-header-wrap">
-  <header class="af-header" style="position:sticky; top:0; z-index:9999;"> 
+  <header class="af-header" style="position:sticky; top:0; z-index:9999;">
 
     <div class="af-header__inner">
       {# ── LOGO (esquerda) ── #}
@@ -122,15 +122,13 @@
       </a>
       {% endif %}
 
-      {# ── SAIR / ENTRAR (DESKTOP ONLY) ── #}
-      {# No mobile geral, o acesso deve ficar apenas dentro do menu do hambúrguer #}
+      {# ── SAIR / ENTRAR (Desktop) ── #}
       <a
         class="af-nav__link af-nav__link--{% if session.get('usuario_logado') %}danger{% else %}primary{% endif %}"
         href="{% if session.get('usuario_logado') %}/logout{% else %}/login{% endif %}"
-        style="display: none;"
       >
-        {% if session.get('usuario_logado') %}
 
+        {% if session.get('usuario_logado') %}
         <svg
           class="af-nav__icon"
           viewBox="0 0 24 24"
