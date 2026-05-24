@@ -3,6 +3,10 @@ DROP DATABASE IF EXISTS servicos;
 CREATE DATABASE servicos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE servicos;
 
+select *  from cadastro_clientes;
+select *  from cadastro_prestadores;
+select *  from admins;
+
 -- =============================================
 -- 1. CLIENTES
 -- =============================================
