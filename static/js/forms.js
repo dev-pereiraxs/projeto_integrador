@@ -163,13 +163,21 @@ function atualizarFiltroSubcategorias() {
                .normalize("NFD")
                .replace(/[\u0300-\u036f]/g, "");
 
-  // 🎯 O CORRETOR INTELIGENTE: Se o banco retornar "ti", redireciona para "tecnologia"
-  if (valor === "ti") valor = "tecnologia";
-  if (valor === "hydraulica" || valor === "hidratica") valor = "hidraulica";
+  // 🎯 O CORRETOR INTELIGENTE: Abrange mais variações que possam vir do banco
+  if (valor === "ti" || valor.includes("tecnologia")) valor = "tecnologia";
+  if (valor === "hidraulica" || valor === "hidratica" || valor === "hydraulica") valor = "hidraulica";
+  if (valor === "mecanica") valor = "mecanica";
+  if (valor === "eletrica") valor = "eletrica";
 
   // Sincroniza o select visual se a correspondência existir
   if (valor && selectCategoria) {
-    selectCategoria.value = valor;
+    // Procura a option cujo valor (limpo) corresponda ao valor final
+    Array.from(selectCategoria.options).forEach(opt => {
+        const optVal = opt.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (optVal === valor || (valor === "tecnologia" && optVal === "tecnologia")) {
+            selectCategoria.value = opt.value; // Mantém o valor original da option
+        }
+    });
   }
 
   const lista = categorias[valor] || [];
@@ -235,12 +243,17 @@ if (form) {
     let categoriaFinal = inputOculto && inputOculto.value ? inputOculto.value : selectCategoria.value;
 
     categoriaFinal = categoriaFinal.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (categoriaFinal === "ti") categoriaFinal = "tecnologia";
-    if (categoriaFinal === "hydraulica") categoriaFinal = "hidraulica";
+
+    // 🎯 O CORRETOR INTELIGENTE TAMBÉM NO ENVIO
+    if (categoriaFinal === "ti" || categoriaFinal.includes("tecnologia")) categoriaFinal = "tecnologia";
+    if (categoriaFinal === "hydraulica" || categoriaFinal === "hidraulica") categoriaFinal = "hidraulica";
+    if (categoriaFinal === "mecanica") categoriaFinal = "mecanica";
+    if (categoriaFinal === "eletrica") categoriaFinal = "eletrica";
+
 
     const novoServico = {
       titulo: selectSubcategoria.value,
-      categoria: categoriaFinal,
+      categoria: categoriaFinal, // Garante que envie "tecnologia" ou "hidraulica" limpo
       descricao: descricao.value,
       preco: document.getElementById("preco").value,
       duracao: null // 🚫 Duração removida do envio conforme solicitado!
