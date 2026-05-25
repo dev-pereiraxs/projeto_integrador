@@ -16,38 +16,37 @@ document.addEventListener("DOMContentLoaded", () => {
       const titulo = tituloEl ? tituloEl.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
       const descricao = descEl ? descEl.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
-      // 2. Descobre a categoria lendo o JSON que já existe no botão "Agendar"
       let categoriaCard = "";
       const btnAgendar = card.querySelector(".btn-agendar");
 
       if (btnAgendar) {
-        try {
-          const servicoData = JSON.parse(btnAgendar.getAttribute("data-servico"));
+        // 2. A "Marretada": Escaneia o código HTML bruto do botão para achar a categoria
+        // Isso ignora qualquer erro de aspas ou JSON quebrado vindo do Flask!
+        const btnHtmlStr = btnAgendar.outerHTML.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-          // Pega a área do banco de dados e limpa os acentos
-          let area = servicoData.area_atuacao || servicoData.areas_atuacao || "";
-          area = area.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-          // 🎯 CORRETOR INTELIGENTE: Transforma as variações para bater com o filtro
-          if (area.includes("ti") || area.includes("tecnologia")) {
-            categoriaCard = "tecnologia";
-          } else if (area.includes("hidraulica") || area.includes("hydraulica")) {
-            categoriaCard = "hidraulica";
-          } else {
-            categoriaCard = area;
-          }
-        } catch (e) {
-          console.error("Erro ao ler dados do serviço para o filtro", e);
+        // 3. Corretor Inteligente e Mapeamento Direto
+        if (btnHtmlStr.includes("tecnologia") || btnHtmlStr.includes("ti")) {
+          categoriaCard = "tecnologia";
+        } else if (btnHtmlStr.includes("hidraulica") || btnHtmlStr.includes("hydraulica")) {
+          categoriaCard = "hidraulica";
+        } else if (btnHtmlStr.includes("mecanica")) {
+          categoriaCard = "mecanica";
+        } else if (btnHtmlStr.includes("eletrica")) {
+          categoriaCard = "eletrica";
+        } else if (btnHtmlStr.includes("reformas")) {
+          categoriaCard = "reformas";
+        } else if (btnHtmlStr.includes("limpeza")) {
+          categoriaCard = "limpeza";
         }
       }
 
-      // 3. Verifica se o card atende às condições do filtro e da busca
+      // 4. Verifica se o card atende às condições do filtro e da busca
       const matchBusca = titulo.includes(termoBusca) || descricao.includes(termoBusca);
       const matchCategoria = (categoriaFiltro === "todas") || (categoriaCard === categoriaFiltro);
 
-      // 4. Mostra ou esconde o card
+      // 5. Mostra ou esconde o card (usando "flex" para preservar o alinhamento dos botões)
       if (matchBusca && matchCategoria) {
-        card.style.display = "block";
+        card.style.display = "flex";
       } else {
         card.style.display = "none";
       }
@@ -57,4 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Aciona o filtro toda vez que o usuário digitar ou mudar a categoria
   if (inputBusca) inputBusca.addEventListener("input", filtrarServicos);
   if (selectCategoria) selectCategoria.addEventListener("change", filtrarServicos);
+
+  // Força o filtro a rodar uma vez assim que a página carregar
+  filtrarServicos();
 });

@@ -10,6 +10,20 @@
 
     <title>Agenda Fácil</title>
     <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
+
+    <style>
+      /* 🎨 ALINHAMENTO PERFEITO: Deixa todos do mesmo tamanho e joga o botão pra baixo */
+      .servicos-grid .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .servicos-grid .card .btn-agendar {
+        margin-top: auto;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -39,8 +53,7 @@
           <p>{{ s.descricao }}</p>
           <span class="preco"> R$ {{ s.preco }} </span>
 
-          <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
-
+          <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px;">
             <div>
               <span class="avaliacao-label" style="color: #f59e0b;">★</span>
               <span class="avaliacao-valor" style="font-weight: 700; color: #1a2340;">{{ s.media_nota if s.media_nota else '—' }}</span>
@@ -95,40 +108,50 @@
         const cards = document.querySelectorAll(".card");
 
         function filtrarServicos() {
-          // Remove acentos e converte pra minúsculo na busca
-          const termoBusca = inputBusca.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const categoriaFiltro = selectCategoria.value.toLowerCase();
+          const termoBusca = inputBusca ? inputBusca.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+          const categoriaFiltro = selectCategoria ? selectCategoria.value.toLowerCase() : "todas";
 
           cards.forEach(card => {
-            // Lê o título e descrição do card atual
-            const titulo = card.querySelector("h3").textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const descricao = card.querySelector("p").textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            // Pega todo o texto visível do card para a barra de pesquisa
+            const textoCard = card.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-            // Pega a categoria do banco de dados injetada no card
-            let categoriaCard = card.getAttribute("data-categoria") || "";
-            categoriaCard = categoriaCard.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            // Pega a categoria gravada no HTML e limpa
+            let dataCat = card.getAttribute("data-categoria") || "";
+            dataCat = dataCat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-            // 🎯 O Corretor Inteligente para Tecnologia
-            if (categoriaCard.includes("ti") || categoriaCard.includes("tecnologia")) {
-                categoriaCard = "tecnologia";
+            // 🎯 O Corretor Inteligente (Arruma TI e Hidráulica)
+            if (dataCat.includes("ti") || dataCat.includes("tecnologia")) dataCat = "tecnologia";
+            if (dataCat.includes("hidraulica") || dataCat.includes("hydraulica")) dataCat = "hidraulica";
+
+            // Verifica se o texto digitado bate
+            const matchBusca = (termoBusca === "") || textoCard.includes(termoBusca);
+
+            // Verifica se a categoria do select bate
+            let matchCategoria = false;
+            if (categoriaFiltro === "todas") {
+              matchCategoria = true;
+            } else if (dataCat.includes(categoriaFiltro)) {
+              matchCategoria = true;
+            } else if (textoCard.includes(categoriaFiltro)) {
+              // Chance extra: procura a palavra da categoria no meio do texto do card
+              matchCategoria = true;
             }
 
-            // Checa a lógica de match
-            const matchBusca = titulo.includes(termoBusca) || descricao.includes(termoBusca);
-            const matchCategoria = (categoriaFiltro === "todas") || (categoriaCard.includes(categoriaFiltro));
-
-            // Exibe ou oculta o card
+            // 🎯 A MÁGICA FINAL: Mostra ou esconde
             if (matchBusca && matchCategoria) {
-              card.style.display = "block";
+              card.style.display = ""; // Isso faz ele voltar pro display: flex que configuramos lá em cima!
             } else {
-              card.style.display = "none";
+              card.style.display = "none"; // Esconde perfeitamente
             }
           });
         }
 
-        // Adiciona os "espiões" nos inputs
+        // Executa o filtro quando digita ou quando muda a seleção
         if (inputBusca) inputBusca.addEventListener("input", filtrarServicos);
         if (selectCategoria) selectCategoria.addEventListener("change", filtrarServicos);
+
+        // Roda uma vez de cara só pra garantir
+        filtrarServicos();
       });
     </script>
 
