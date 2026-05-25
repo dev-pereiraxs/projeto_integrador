@@ -356,7 +356,6 @@ def servicos():
     except Exception as e:
         return f"<h3>Erro de Conexão com o Banco:</h3><p>{str(e)}</p>", 500
 
-
 @app.route("/perfil")
 def perfil():
     return render_template("cliente.html")
