@@ -34,16 +34,17 @@
 
       <div id="lista-servicos" class="servicos-grid">
         {% for s in servicos %}
-        <div class="card">
+        <div class="card" data-categoria="{{ s.area_atuacao | default(s.areas_atuacao, true) | lower }}">
           <h3>{{ s.titulo }}</h3>
           <p>{{ s.descricao }}</p>
           <span class="preco"> R$ {{ s.preco }} </span>
 
           <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+
             <div>
-              <span class="avaliacao-label">★</span>
-              <span class="avaliacao-valor">{{ s.media_nota | default(s.avaliacao_media | default('—')) }}</span>
-              <span> — {{ (s.prestador_nome | default('Prestador')) }}</span>
+              <span class="avaliacao-label" style="color: #f59e0b;">★</span>
+              <span class="avaliacao-valor" style="font-weight: 700; color: #1a2340;">{{ s.media_nota if s.media_nota else '—' }}</span>
+              <span style="font-weight: 500;"> — {{ s.prestador_nome }} {{ s.prestador_sobrenome }}</span>
             </div>
 
             {% if s.telefone %}
@@ -87,7 +88,50 @@
       </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/filtrar.js') }}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const inputBusca = document.getElementById("busca");
+        const selectCategoria = document.getElementById("filtroCategoria");
+        const cards = document.querySelectorAll(".card");
+
+        function filtrarServicos() {
+          // Remove acentos e converte pra minúsculo na busca
+          const termoBusca = inputBusca.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const categoriaFiltro = selectCategoria.value.toLowerCase();
+
+          cards.forEach(card => {
+            // Lê o título e descrição do card atual
+            const titulo = card.querySelector("h3").textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const descricao = card.querySelector("p").textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            // Pega a categoria do banco de dados injetada no card
+            let categoriaCard = card.getAttribute("data-categoria") || "";
+            categoriaCard = categoriaCard.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            // 🎯 O Corretor Inteligente para Tecnologia
+            if (categoriaCard.includes("ti") || categoriaCard.includes("tecnologia")) {
+                categoriaCard = "tecnologia";
+            }
+
+            // Checa a lógica de match
+            const matchBusca = titulo.includes(termoBusca) || descricao.includes(termoBusca);
+            const matchCategoria = (categoriaFiltro === "todas") || (categoriaCard.includes(categoriaFiltro));
+
+            // Exibe ou oculta o card
+            if (matchBusca && matchCategoria) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        }
+
+        // Adiciona os "espiões" nos inputs
+        if (inputBusca) inputBusca.addEventListener("input", filtrarServicos);
+        if (selectCategoria) selectCategoria.addEventListener("change", filtrarServicos);
+      });
+    </script>
+
     <script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
   </body>
 </html>

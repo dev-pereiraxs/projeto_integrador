@@ -323,19 +323,26 @@ def login():
 # =========================
 # PÁGINAS PÚBLICAS — SERVIÇOS (VERSÃO DEFINITIVA)
 # =========================
+# =========================
+# PÁGINAS PÚBLICAS — SERVIÇOS (VERSÃO DEFINITIVA)
+# =========================
 @app.route("/servicos")
 def servicos():
     try:
         conn = connectar()
         cursor = conn.cursor(dictionary=True)
 
+        # 🎯 FIX: Agora puxa o nome correto e calcula a média das avaliações em tempo real!
         cursor.execute("""
             SELECT 
                 s.*, 
-                p.nome, 
-                p.sobrenome, 
+                p.nome AS prestador_nome, 
+                p.sobrenome AS prestador_sobrenome, 
                 p.areas_atuacao, 
-                p.telefone
+                p.telefone,
+                (SELECT COALESCE(ROUND(AVG(nota), 1), NULL) 
+                 FROM avaliacoes_prestadores 
+                 WHERE prestador_email = s.prestador_email) AS media_nota
             FROM servicos_anunciados s
             INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
             ORDER BY s.id DESC
