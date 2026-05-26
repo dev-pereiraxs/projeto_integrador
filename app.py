@@ -11,6 +11,11 @@ import resend
 from itsdangerous import URLSafeTimedSerializer
 import bcrypt
 from functools import wraps
+from flask import request, jsonify
+import mysql.connector
+from flask import jsonify
+from collections import defaultdict
+from datetime import datetime, timedelta
 
 # Carrega as variáveis do arquivo .env
 load_dotenv()
@@ -60,13 +65,12 @@ def connectar():
             port=int(os.getenv("DB_PORT", 3306)),
             ssl_disabled=False
         )
-    else:
-        return mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="servicos"
-        )
+    return mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='',
+        database='servicos'
+    )
 
 
 # =========================
@@ -317,13 +321,6 @@ def login():
 
 
 # =========================
-# PÁGINAS PÚBLICAS — SERVIÇOS
-# =========================
-@app.route("/servicos")
-# =========================
-# PÁGINAS PÚBLICAS — SERVIÇOS (VERSÃO DEFINITIVA)
-# =========================
-# =========================
 # PÁGINAS PÚBLICAS — SERVIÇOS (VERSÃO DEFINITIVA)
 # =========================
 @app.route("/servicos")
@@ -332,21 +329,23 @@ def servicos():
         conn = connectar()
         cursor = conn.cursor(dictionary=True)
 
-        # 🎯 FIX: Agora puxa o nome correto e calcula a média das avaliações em tempo real!
         cursor.execute("""
-            SELECT 
-                s.*, 
-                p.nome AS prestador_nome, 
-                p.sobrenome AS prestador_sobrenome, 
-                p.areas_atuacao, 
-                p.telefone,
-                (SELECT COALESCE(ROUND(AVG(nota), 1), NULL) 
-                 FROM avaliacoes_prestadores 
-                 WHERE prestador_email = s.prestador_email) AS media_nota
-            FROM servicos_anunciados s
-            INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
-            ORDER BY s.id DESC
-        """)
+    SELECT 
+        s.*, 
+        p.nome AS prestador_nome, 
+        p.sobrenome AS prestador_sobrenome, 
+        p.areas_atuacao, 
+        p.telefone,
+        (SELECT COALESCE(ROUND(AVG(nota), 1), NULL) 
+         FROM avaliacoes_prestadores 
+         WHERE prestador_email = s.prestador_email) AS media_nota,
+        (SELECT COUNT(*) 
+         FROM avaliacoes_prestadores 
+         WHERE prestador_email = s.prestador_email) AS total_avaliacoes
+    FROM servicos_anunciados s
+    INNER JOIN cadastro_prestadores p ON s.prestador_email = p.email
+    ORDER BY s.id DESC
+""")
         lista = cursor.fetchall()
 
         cursor.close()
@@ -434,9 +433,6 @@ def sucesso_conclusao():
 # =========================
 # AUTENTICAÇÃO
 # =========================
-# =========================
-# AUTENTICAÇÃO
-# =========================
 @app.route("/autenticar", methods=["POST"])
 def autenticar():
     email = request.form["email"]
@@ -446,7 +442,6 @@ def autenticar():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # 1. Verifica se é prestador
     cursor.execute("SELECT * FROM cadastro_prestadores WHERE email=%s AND senha=%s", (email, senha))
     prestador = cursor.fetchone()
 
@@ -455,8 +450,6 @@ def autenticar():
         session["usuario_logado"] = email
         session["tipo_usuario"] = "prestador"
         session["usuario_nome"] = prestador["nome"] + " " + prestador["sobrenome"]
-
-        # 🔑 força a conversão para string limpa e remove espaços
         session["usuario_area"] = str(prestador.get("areas_atuacao") or "").strip().lower()
 
         cursor.close()
@@ -464,7 +457,6 @@ def autenticar():
         next_url = session.pop('next_url', None)
         return redirect(next_url if next_url else url_for("servicos"))
 
-    # 2. Se não for prestador, verifica se é cliente
     cursor.execute("SELECT * FROM cadastro_clientes WHERE email=%s AND senha=%s", (email, senha))
     cliente = cursor.fetchone()
     cursor.close()
@@ -478,9 +470,9 @@ def autenticar():
         next_url = session.pop('next_url', None)
         return redirect(next_url if next_url else url_for("avaliar"))
 
-    # 🎯 FIX CRÍTICO: Se não encontrou o usuário (senha ou e-mail errado),
-    # OBRIGATORIAMENTE tem que ter esse return no final para não dar o erro do Flask!
     return render_template("login.html", erro="E-mail ou senha inválidos")
+
+
 @app.route("/salvar_prestador", methods=["POST"])
 def salvar_prestador():
     dados = (
@@ -501,7 +493,6 @@ def salvar_prestador():
         )
         conn.commit()
 
-        # ✅ após cadastro, já loga o usuário (prestador)
         session.permanent = True if request.form.get("lembrar") else False
         session["usuario_logado"] = email_cadastro
         session["tipo_usuario"] = "prestador"
@@ -650,23 +641,24 @@ def listar_servicos():
         conn   = connectar()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT
-                s.*, 
-                p.nome AS prestador_nome,
-                p.sobrenome AS prestador_sobrenome,
-                p.areas_atuacao,
-                p.telefone,
-                COALESCE(ROUND(AVG(av.nota), 1), NULL) AS media_nota
-            FROM servicos_anunciados s
-            JOIN cadastro_prestadores p ON s.prestador_email = p.email
-            LEFT JOIN agendamentos a
-                   ON a.prestador_email = p.email
-                  AND a.status = 'concluido'
-            LEFT JOIN avaliacoes_prestadores av
-                   ON av.agendamento_id = a.id
-            GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao, p.telefone
-            ORDER BY s.id DESC
-        """)
+    SELECT
+        s.*, 
+        p.nome AS prestador_nome,
+        p.sobrenome AS prestador_sobrenome,
+        p.areas_atuacao,
+        p.telefone,
+        COALESCE(ROUND(AVG(av.nota), 1), NULL) AS media_nota,
+        COUNT(av.id) AS total_avaliacoes
+    FROM servicos_anunciados s
+    JOIN cadastro_prestadores p ON s.prestador_email = p.email
+    LEFT JOIN agendamentos a
+           ON a.prestador_email = p.email
+          AND a.status = 'concluido'
+    LEFT JOIN avaliacoes_prestadores av
+           ON av.agendamento_id = a.id
+    GROUP BY s.id, p.nome, p.sobrenome, p.areas_atuacao, p.telefone
+    ORDER BY s.id DESC
+""")
         dados = cursor.fetchall()
 
         for row in dados:
@@ -780,7 +772,7 @@ def cancelar_agendamento(id):
 
 
 # =========================
-# ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR) — CORRIGIDO
+# ATUALIZAR STATUS DO AGENDAMENTO (PRESTADOR)
 # =========================
 @app.route("/api/atualizar_status/<int:id>", methods=["PATCH"])
 def atualizar_status(id):
@@ -1120,7 +1112,7 @@ def salvar_foto():
         return jsonify({"mensagem": "Foto salva!", "url": url})
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-    
+
 
 # =========================
 # UPLOAD DE CERTIFICADO
@@ -1407,13 +1399,156 @@ def admin_metrics():
         "total_concluidos": total_concluidos,
     })
 
+# =========================
+# ADMIN — APIs DE LISTAGEM
+# =========================
+
+@app.route("/admin/api/clientes", methods=["GET"])
+@admin_required
+def admin_api_clientes():
+    page     = max(1, int(request.args.get("page", 1)))
+    busca    = request.args.get("q", "").strip()
+    per_page = 25
+    offset   = (page - 1) * per_page
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    where  = "WHERE nome LIKE %s OR sobrenome LIKE %s OR email LIKE %s" if busca else ""
+    params = (f"%{busca}%", f"%{busca}%", f"%{busca}%") if busca else ()
+
+    cursor.execute(f"SELECT COUNT(*) AS total FROM cadastro_clientes {where}", params)
+    total = cursor.fetchone()["total"]
+
+    cursor.execute(
+        f"SELECT id, nome, sobrenome, email, telefone, cidade, sexo FROM cadastro_clientes {where} ORDER BY id DESC LIMIT %s OFFSET %s",
+        (*params, per_page, offset)
+    )
+    rows = cursor.fetchall()
+    cursor.close(); conn.close()
+    return jsonify({"clientes": rows, "total": total, "page": page, "per_page": per_page})
+
+
+@app.route("/admin/api/prestadores", methods=["GET"])
+@admin_required
+def admin_api_prestadores():
+    page     = max(1, int(request.args.get("page", 1)))
+    busca    = request.args.get("q", "").strip()
+    per_page = 25
+    offset   = (page - 1) * per_page
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    where  = "WHERE nome LIKE %s OR sobrenome LIKE %s OR email LIKE %s" if busca else ""
+    params = (f"%{busca}%", f"%{busca}%", f"%{busca}%") if busca else ()
+
+    cursor.execute(f"SELECT COUNT(*) AS total FROM cadastro_prestadores {where}", params)
+    total = cursor.fetchone()["total"]
+
+    cursor.execute(
+        f"SELECT id, nome, sobrenome, email, telefone, areas_atuacao, cidade FROM cadastro_prestadores {where} ORDER BY id DESC LIMIT %s OFFSET %s",
+        (*params, per_page, offset)
+    )
+    rows = cursor.fetchall()
+    cursor.close(); conn.close()
+    return jsonify({"prestadores": rows, "total": total, "page": page, "per_page": per_page})
 
 @app.route("/admin/solicitacoes")
 @admin_required
 def admin_solicitacoes():
-    return render_template("admin/solicitacoes.html")
+    return redirect(url_for("admin_dashboard"))
 
 
+@app.route("/admin/api/orcamentos", methods=["GET"])
+@admin_required
+def admin_api_orcamentos():
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT COUNT(*) AS total FROM solicitacoes_orcamento")
+    total = cursor.fetchone()["total"] or 0
+
+    cursor.execute("SELECT status, COUNT(*) AS total FROM solicitacoes_orcamento GROUP BY status")
+    rows = cursor.fetchall()
+    status_map = {"pendente": 0, "enviado": 0, "erro": 0}
+    for r in rows:
+        st = (r.get("status") or "").lower()
+        if st in status_map:
+            status_map[st] = int(r.get("total") or 0)
+
+    cursor.execute("""
+        SELECT DATE(criado_em) AS dia, COUNT(*) AS total
+        FROM solicitacoes_orcamento
+        WHERE criado_em >= (CURDATE() - INTERVAL 6 DAY)
+        GROUP BY dia
+        ORDER BY dia ASC
+    """)
+    timeline_rows = cursor.fetchall() or []
+    timeline = []
+    for tr in timeline_rows:
+        dia = tr.get("dia")
+        if hasattr(dia, "strftime"):
+            dia = dia.strftime("%d/%m")
+        timeline.append({"dia": dia, "total": int(tr.get("total") or 0)})
+
+    cursor.execute("""
+        SELECT categoria, COUNT(*) AS total
+        FROM solicitacoes_orcamento
+        GROUP BY categoria
+        ORDER BY total DESC
+        LIMIT 8
+    """)
+    por_categoria_rows = cursor.fetchall() or []
+    por_categoria = [
+        {"categoria": r.get("categoria"), "total": int(r.get("total") or 0)}
+        for r in por_categoria_rows
+    ]
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "total": int(total),
+        "pendente": status_map["pendente"],
+        "enviado": status_map["enviado"],
+        "erro": status_map["erro"],
+        "timeline": timeline,
+        "por_categoria": por_categoria,
+    })
+
+
+# =========================
+# ORÇAMENTO — ROTA PÚBLICA
+# =========================
+@app.route('/api/solicitar-orcamento', methods=['POST'])
+def solicitar_orcamento():
+    try:
+        dados = request.get_json()
+        conn = connectar()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO solicitacoes_orcamento (nome, telefone, email, categoria, descricao)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (
+            dados.get('nome'),
+            dados.get('telefone'),
+            dados.get('email'),
+            dados.get('categoria'),
+            dados.get('descricao')
+        ))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        return jsonify({"success": False, "erro": str(e)}), 500
+
+
+# =========================
+# ADMIN — PÁGINAS
+# =========================
 @app.route("/admin/clientes")
 @admin_required
 def admin_clientes():
@@ -1443,7 +1578,7 @@ def agendamento_confirmado():
 
 
 # =========================
-# ROTAS DE AVALIAÇÃO — Agenda Fácil
+# ROTAS DE AVALIAÇÃO
 # =========================
 @app.route("/avaliar")
 def avaliar():
@@ -1642,42 +1777,17 @@ def stats_prestador(email):
         cursor.close();
         conn.close()
 
-"""
-admin_solicitacoes_blueprint.py
 
-Registre no app.py com apenas 2 linhas:
-    from admin_solicitacoes_blueprint import admin_sol_bp
-    app.register_blueprint(admin_sol_bp)
-"""
-
-from flask import Blueprint, jsonify, request, session
+# =========================
+# BLUEPRINT ADMIN SOLICITACOES
+# =========================
+from flask import Blueprint
 from functools import wraps
-import mysql.connector
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 admin_sol_bp = Blueprint("admin_sol", __name__)
 
 
-# ── helpers ──────────────────────────────────────────────
-def connectar():
-    if os.getenv("DB_HOST"):
-        return mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME"),
-            port=int(os.getenv("DB_PORT", 3306)),
-            ssl_disabled=False,
-        )
-    return mysql.connector.connect(
-        host="localhost", user="root", password="", database="servicos"
-    )
-
-
-def admin_required(fn):
+def _admin_sol_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if session.get("tipo_usuario") != "admin" or not session.get("usuario_logado"):
@@ -1686,19 +1796,18 @@ def admin_required(fn):
     return wrapper
 
 
-# ── GET /admin/api/solicitacoes ───────────────────────────
 @admin_sol_bp.route("/admin/api/solicitacoes", methods=["GET"])
-@admin_required
+@_admin_sol_required
 def listar_solicitacoes():
-    status_filtro = request.args.get("status", "")   # "" = todos
-    page          = max(1, int(request.args.get("page", 1)))
-    per_page      = 20
-    offset        = (page - 1) * per_page
+    status_filtro = request.args.get("status", "")
+    page     = max(1, int(request.args.get("page", 1)))
+    per_page = 20
+    offset   = (page - 1) * per_page
 
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    where  = "WHERE a.status = %s" if status_filtro else ""
+    where        = "WHERE a.status = %s" if status_filtro else ""
     params_count = (status_filtro,) if status_filtro else ()
 
     cursor.execute(
@@ -1709,18 +1818,11 @@ def listar_solicitacoes():
 
     query = f"""
         SELECT
-            a.id,
-            a.servico,
-            a.preco,
-            a.data_servico,
-            a.horario,
-            a.status,
-            a.observacoes,
-            a.criado_em,
-            a.cliente_email,
-            a.prestador_email,
-            CONCAT(c.nome, ' ', c.sobrenome)  AS cliente_nome,
-            CONCAT(p.nome, ' ', p.sobrenome)  AS prestador_nome
+            a.id, a.servico, a.preco, a.data_servico, a.horario,
+            a.status, a.observacoes, a.criado_em,
+            a.cliente_email, a.prestador_email,
+            CONCAT(c.nome, ' ', c.sobrenome) AS cliente_nome,
+            CONCAT(p.nome, ' ', p.sobrenome) AS prestador_nome
         FROM agendamentos a
         LEFT JOIN cadastro_clientes    c ON c.email = a.cliente_email
         LEFT JOIN cadastro_prestadores p ON p.email = a.prestador_email
@@ -1728,8 +1830,7 @@ def listar_solicitacoes():
         ORDER BY a.id DESC
         LIMIT %s OFFSET %s
     """
-    params = (*(params_count), per_page, offset)
-    cursor.execute(query, params)
+    cursor.execute(query, (*params_count, per_page, offset))
     rows = cursor.fetchall()
 
     for r in rows:
@@ -1739,50 +1840,36 @@ def listar_solicitacoes():
 
     cursor.close()
     conn.close()
-
     return jsonify({"solicitacoes": rows, "total": total, "page": page, "per_page": per_page})
 
 
-# ── PATCH /admin/api/solicitacoes/<id>/aprovar ────────────
 @admin_sol_bp.route("/admin/api/solicitacoes/<int:id>/aprovar", methods=["PATCH"])
-@admin_required
+@_admin_sol_required
 def aprovar_solicitacao(id):
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
-
-    cursor.execute("SELECT id, status FROM agendamentos WHERE id = %s", (id,))
-    ag = cursor.fetchone()
-    if not ag:
+    cursor.execute("SELECT id FROM agendamentos WHERE id = %s", (id,))
+    if not cursor.fetchone():
         cursor.close(); conn.close()
         return jsonify({"erro": "Não encontrado"}), 404
-
     cursor.execute("UPDATE agendamentos SET status = 'confirmado' WHERE id = %s", (id,))
     conn.commit()
     cursor.close(); conn.close()
     return jsonify({"mensagem": "Aprovado", "id": id, "status": "confirmado"})
 
 
-# ── PATCH /admin/api/solicitacoes/<id>/rejeitar ───────────
 @admin_sol_bp.route("/admin/api/solicitacoes/<int:id>/rejeitar", methods=["PATCH"])
-@admin_required
+@_admin_sol_required
 def rejeitar_solicitacao(id):
     motivo = (request.get_json(silent=True) or {}).get("motivo", "")
-
     conn   = connectar()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("SELECT id FROM agendamentos WHERE id = %s", (id,))
     if not cursor.fetchone():
         cursor.close(); conn.close()
         return jsonify({"erro": "Não encontrado"}), 404
-
-    cursor.execute(
-        "UPDATE agendamentos SET status = 'recusado' WHERE id = %s",
-        (id,),
-    )
+    cursor.execute("UPDATE agendamentos SET status = 'recusado' WHERE id = %s", (id,))
     conn.commit()
-
-    # notificação ao cliente (reutiliza tabela notificacoes)
     if motivo:
         cursor.execute(
             """INSERT INTO notificacoes (prestador_email, tipo, mensagem, agendamento_id)
@@ -1790,10 +1877,16 @@ def rejeitar_solicitacao(id):
             (None, "recusado_admin", f"Agendamento #{id} recusado pelo admin. Motivo: {motivo}", id),
         )
         conn.commit()
-
     cursor.close(); conn.close()
     return jsonify({"mensagem": "Rejeitado", "id": id, "status": "recusado"})
 
+
+app.register_blueprint(admin_sol_bp)
+
+
+# =========================
+# ALERTAS DE RECUSADOS
+# =========================
 @app.route("/api/checar_recusados_cliente")
 def checar_recusados_cliente():
     if not session.get('usuario_logado'):
@@ -1802,20 +1895,85 @@ def checar_recusados_cliente():
     email_cliente = session.get('usuario_logado')
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
-
     cursor.execute("""
         SELECT id, servico 
         FROM agendamentos 
         WHERE cliente_email = %s AND status = 'recusado' AND alerta_visto = 0
         LIMIT 1
     """, (email_cliente,))
-
     resultado = cursor.fetchone()
     cursor.close();
     conn.close()
-
     return jsonify({"recusado": resultado})
 
+
+# =========================
+# ADMIN — SOLICITAÇÕES DE ORÇAMENTO
+
+@app.route("/admin/api/solicitacoes-orcamento", methods=["GET"])
+@admin_required
+def admin_listar_solicitacoes_orcamento():
+    status_filtro = request.args.get("status", "")
+    page     = max(1, int(request.args.get("page", 1)))
+    per_page = 20
+    offset   = (page - 1) * per_page
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    where        = "WHERE status = %s" if status_filtro else ""
+    params_count = (status_filtro,) if status_filtro else ()
+
+    cursor.execute(
+        f"SELECT COUNT(*) AS total FROM solicitacoes_orcamento {where}",
+        params_count,
+    )
+    total = cursor.fetchone()["total"]
+
+    cursor.execute(
+        f"""
+        SELECT id, nome, telefone, email, categoria, descricao, status, criado_em
+        FROM solicitacoes_orcamento
+        {where}
+        ORDER BY id DESC
+        LIMIT %s OFFSET %s
+        """,
+        (*params_count, per_page, offset),
+    )
+    rows = cursor.fetchall()
+
+    for r in rows:
+        if r.get("criado_em") and hasattr(r["criado_em"], "isoformat"):
+            r["criado_em"] = r["criado_em"].isoformat()
+
+    cursor.close(); conn.close()
+    return jsonify({"solicitacoes": rows, "total": total, "page": page, "per_page": per_page})
+
+
+@app.route("/admin/api/solicitacoes-orcamento/<int:id>/aprovar", methods=["PATCH"])
+@admin_required
+def admin_aprovar_orcamento(id):
+    conn = connectar(); cursor = conn.cursor()
+    cursor.execute("UPDATE solicitacoes_orcamento SET status = 'enviado' WHERE id = %s", (id,))
+    conn.commit()
+    affected = cursor.rowcount
+    cursor.close(); conn.close()
+    if not affected:
+        return jsonify({"erro": "Não encontrado"}), 404
+    return jsonify({"mensagem": "Aprovado", "id": id, "status": "enviado"})
+
+
+@app.route("/admin/api/solicitacoes-orcamento/<int:id>/rejeitar", methods=["PATCH"])
+@admin_required
+def admin_rejeitar_orcamento(id):
+    conn = connectar(); cursor = conn.cursor()
+    cursor.execute("UPDATE solicitacoes_orcamento SET status = 'erro' WHERE id = %s", (id,))
+    conn.commit()
+    affected = cursor.rowcount
+    cursor.close(); conn.close()
+    if not affected:
+        return jsonify({"erro": "Não encontrado"}), 404
+    return jsonify({"mensagem": "Rejeitado", "id": id, "status": "erro"})
 
 @app.route("/api/marcar_alerta_visto/<int:id>", methods=["PATCH"])
 def marcar_alerta_visto(id):

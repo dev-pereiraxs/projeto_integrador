@@ -1,15 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='servicos.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='premium-header.css') }}" id="xbr4s9">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='global.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='servicos.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='premium-header.css') }}"
+      id="xbr4s9"
+    />
 
     <title>Serviço Fácil</title>
-    <link rel="icon" href="{{ url_for('static', filename='img/servico-facil.png') }}" type="image/png" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='img/servico-facil.png') }}"
+      type="image/png"
+    />
 
     <style>
       /* 🎨 ALINHAMENTO PERFEITO: Deixa todos do mesmo tamanho e joga o botão pra baixo */
@@ -22,8 +36,29 @@
       .servicos-grid .card .btn-agendar {
         margin-top: auto;
       }
-    </style>
 
+      .servicos-grid .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .servicos-grid .card .btn-agendar {
+        margin-top: auto;
+      }
+
+      .badge-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        padding: 3px 10px;
+        border-radius: 99px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+    </style>
   </head>
 
   <body>
@@ -48,22 +83,83 @@
 
       <div id="lista-servicos" class="servicos-grid">
         {% for s in servicos %}
-        <div class="card" data-categoria="{{ s.area_atuacao | default(s.areas_atuacao, true) | lower }}">
+        <div
+          class="card"
+          data-categoria="{{ s.area_atuacao | default(s.areas_atuacao, true) | lower }}"
+        >
+          {% set cat = (s.area_atuacao or s.areas_atuacao or '') | lower %} {%
+          if 'tecno' in cat or cat == 'ti' %}
+          <span class="badge-cat" style="background: #eff6ff; color: #1d4ed8"
+            >💻 Tecnologia</span
+          >
+          {% elif 'eletri' in cat %}
+          <span class="badge-cat" style="background: #fefce8; color: #a16207"
+            >⚡ Elétrica</span
+          >
+          {% elif 'mecan' in cat %}
+          <span class="badge-cat" style="background: #f3f4f6; color: #374151"
+            >🔧 Mecânica</span
+          >
+          {% elif 'reform' in cat %}
+          <span class="badge-cat" style="background: #fff7ed; color: #c2410c"
+            >🛠️ Reforma</span
+          >
+          {% elif 'limpez' in cat %}
+          <span class="badge-cat" style="background: #f0fdfa; color: #0f766e"
+            >🧹 Limpeza</span
+          >
+          {% elif 'hidrau' in cat %}
+          <span class="badge-cat" style="background: #ecfeff; color: #0e7490"
+            >🚰 Hidráulica</span
+          >
+          {% else %}
+          <span class="badge-cat" style="background: #f3f4f6; color: #374151"
+            >🔹 {{ s.area_atuacao or s.areas_atuacao or 'Geral' }}</span
+          >
+          {% endif %}
           <h3>{{ s.titulo }}</h3>
           <p>{{ s.descricao }}</p>
           <span class="preco"> R$ {{ s.preco }} </span>
 
-          <div class="prestador-nome" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px;">
+          <div
+            class="prestador-nome"
+            style="
+              margin-top: 10px;
+              font-size: 13px;
+              color: var(--text-muted);
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              margin-bottom: 16px;
+            "
+          >
             <div>
-              <span class="avaliacao-label" style="color: #f59e0b;">★</span>
-              <span class="avaliacao-valor" style="font-weight: 700; color: #1a2340;">{{ s.media_nota if s.media_nota else '—' }}</span>
-              <span style="font-weight: 500;"> — {{ s.prestador_nome }} {{ s.prestador_sobrenome }}</span>
+              <span class="avaliacao-label" style="color: #f59e0b">★</span>
+              <span
+                class="avaliacao-valor"
+                style="font-weight: 700; color: #1a2340"
+                >{{ s.media_nota if s.media_nota else '—' }}</span
+              >
+              <span style="font-weight: 500">
+                — {{ s.prestador_nome }} {{ s.prestador_sobrenome }}</span
+              >
             </div>
 
             {% if s.telefone %}
-            <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                margin-top: 2px;
+              "
+            >
               <span>📞</span>
-              <a href="https://wa.me/55{{ s.telefone | replace('(', '') | replace(')', '') | replace('-', '') | replace(' ', '') }}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600;">
+              <a
+                href="https://wa.me/55{{ s.telefone | replace('(', '') | replace(')', '') | replace('-', '') | replace(' ', '') }}"
+                target="_blank"
+                style="color: #2563eb; text-decoration: none; font-weight: 600"
+              >
                 {{ s.telefone }}
               </a>
             </div>
@@ -91,13 +187,17 @@
     <footer class="footer">
       <div class="footer__inner">
         <strong class="footer__brand"> Serviço Fácil </strong>
-        <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
+        <p class="footer__tagline">
+          Conectando pessoas a profissionais de confiança.
+        </p>
         <div class="footer__links">
           <a href="#"> Termos </a>
           <a href="#"> Privacidade </a>
           <a href="#"> Contato </a>
         </div>
-        <p class="footer__copy">© 2026 Serviço Fácil. Todos os direitos reservados.</p>
+        <p class="footer__copy">
+          © 2026 Serviço Fácil. Todos os direitos reservados.
+        </p>
       </div>
     </footer>
 
@@ -108,23 +208,42 @@
         const cards = document.querySelectorAll(".card");
 
         function filtrarServicos() {
-          const termoBusca = inputBusca ? inputBusca.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
-          const categoriaFiltro = selectCategoria ? selectCategoria.value.toLowerCase() : "todas";
+          const termoBusca = inputBusca
+            ? inputBusca.value
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+            : "";
+          const categoriaFiltro = selectCategoria
+            ? selectCategoria.value.toLowerCase()
+            : "todas";
 
-          cards.forEach(card => {
+          cards.forEach((card) => {
             // Pega todo o texto visível do card para a barra de pesquisa
-            const textoCard = card.innerText.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const textoCard = card.innerText
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "");
 
             // Pega a categoria gravada no HTML e limpa
             let dataCat = card.getAttribute("data-categoria") || "";
-            dataCat = dataCat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            dataCat = dataCat
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "");
 
             // 🎯 O Corretor Inteligente (Arruma TI e Hidráulica)
-            if (dataCat.includes("ti") || dataCat.includes("tecnologia")) dataCat = "tecnologia";
-            if (dataCat.includes("hidraulica") || dataCat.includes("hydraulica")) dataCat = "hidraulica";
+            if (dataCat.includes("ti") || dataCat.includes("tecnologia"))
+              dataCat = "tecnologia";
+            if (
+              dataCat.includes("hidraulica") ||
+              dataCat.includes("hydraulica")
+            )
+              dataCat = "hidraulica";
 
             // Verifica se o texto digitado bate
-            const matchBusca = (termoBusca === "") || textoCard.includes(termoBusca);
+            const matchBusca =
+              termoBusca === "" || textoCard.includes(termoBusca);
 
             // Verifica se a categoria do select bate
             let matchCategoria = false;
@@ -148,7 +267,8 @@
 
         // Executa o filtro quando digita ou quando muda a seleção
         if (inputBusca) inputBusca.addEventListener("input", filtrarServicos);
-        if (selectCategoria) selectCategoria.addEventListener("change", filtrarServicos);
+        if (selectCategoria)
+          selectCategoria.addEventListener("change", filtrarServicos);
 
         // Roda uma vez de cara só pra garantir
         filtrarServicos();
@@ -156,5 +276,32 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/agenda_facil.js') }}"></script>
+
+    <script>
+      // Delegação de evento para funcionar mesmo após filtros e componentes dinâmicos.
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-agendar");
+        if (!btn) return;
+
+        e.preventDefault();
+
+        const dataStr = btn.getAttribute("data-servico");
+        if (!dataStr) {
+          console.error("data-servico ausente no botão Agendar");
+          return;
+        }
+
+        try {
+          const servicoSelecionado = JSON.parse(dataStr);
+          localStorage.setItem(
+            "servicoSelecionado",
+            JSON.stringify(servicoSelecionado),
+          );
+          window.location.href = "/agendamentos";
+        } catch (err) {
+          console.error("Erro ao processar clique de agendamento:", err);
+        }
+      });
+    </script>
   </body>
 </html>

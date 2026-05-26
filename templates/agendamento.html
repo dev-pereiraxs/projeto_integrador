@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agenda Fácil – Agendamento</title>
+  <title>Serviço Fácil – Agendamento</title>
   <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -952,12 +952,7 @@
           <div class="prof-info">
             <div class="prof-name" id="prof-nome">—</div>
             <div class="prof-sub" id="prof-area">—</div>
-            <div class="stars">
-              <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-              <span class="star">★</span><span class="star">★</span>
-              <span class="rating-score">4,8</span>
-              <span class="rating-text">(127 avaliações)</span>
-            </div>
+            <div class="stars" id="prof-stars"></div>
           </div>
         </div>
         <div class="badge-verified">
@@ -1170,30 +1165,112 @@
       return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     }
 
-    function preencherServico() {
-      document.getElementById('info-categoria').textContent = servico.categoria || 'Geral';
-      document.getElementById('info-titulo').textContent = servico.titulo || '';
-      document.getElementById('info-descricao').textContent = servico.descricao || '';
-      document.getElementById('info-duracao').textContent = servico.duracao || '-';
-      document.getElementById('info-preco').textContent = formatPreco(servico.preco);
+      function preencherServico() {
 
-      document.getElementById('sum-titulo').textContent = servico.titulo || '';
-      document.getElementById('sum-categoria').textContent = servico.categoria || 'Geral';
-      document.getElementById('sum-preco').textContent = formatPreco(servico.preco);
-      document.getElementById('sum-total').textContent = formatPreco(servico.preco);
+    // Dados do serviço
+    const titulo = servico.titulo || 'Serviço';
+    const descricao = servico.descricao || 'Sem descrição';
+    const preco = servico.preco || 0;
 
-      const nomePrestador = servico.nome && servico.sobrenome ? servico.nome + ' ' + servico.sobrenome : (servico.nome || 'Prestador');
-      const areaPrestador = servico.areas_atuacao || servico.area_atuacao || servico.categoria || 'Prestador';
+    const categoria =
+        servico.area_atuacao ||
+        servico.areas_atuacao ||
+        servico.categoria ||
+        'Geral';
 
-      document.getElementById('prof-nome').textContent = nomePrestador;
-      document.getElementById('prof-area').textContent = areaPrestador;
-      document.getElementById('sum-prestador-nome').textContent = nomePrestador;
-      document.getElementById('sum-prestador-area').textContent = areaPrestador;
+    // Prestador
+    const nomePrestador =
+        `${servico.prestador_nome || ''} ${servico.prestador_sobrenome || ''}`
+        .trim() || 'Prestador';
 
-      const iniciais = nomePrestador.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
-      document.getElementById('prof-emoji').textContent = iniciais || '👷';
-      document.getElementById('sum-photo-emoji').textContent = iniciais || '👷';
+    // Interface superior
+    document.getElementById('info-categoria').textContent = categoria;
+    document.getElementById('info-titulo').textContent = titulo;
+    document.getElementById('info-descricao').textContent = descricao;
+    document.getElementById('info-duracao').textContent =
+        servico.duracao || '-';
+
+    document.getElementById('info-preco').textContent =
+        formatPreco(preco);
+
+    // Resumo lateral
+    document.getElementById('sum-titulo').textContent = titulo;
+    document.getElementById('sum-categoria').textContent = categoria;
+    document.getElementById('sum-preco').textContent =
+        formatPreco(preco);
+
+    document.getElementById('sum-total').textContent =
+        formatPreco(preco);
+
+    // Prestador
+    document.getElementById('prof-nome').textContent =
+        nomePrestador;
+
+    document.getElementById('prof-area').textContent =
+        categoria;
+
+    document.getElementById('sum-prestador-nome').textContent =
+        nomePrestador;
+
+    document.getElementById('sum-prestador-area').textContent =
+        categoria;
+
+    // Iniciais do avatar
+    const iniciais = nomePrestador
+        .split(' ')
+        .map(p => p[0])
+        .slice(0,2)
+        .join('')
+        .toUpperCase();
+
+    document.getElementById('prof-emoji').textContent =
+        iniciais || '👷';
+
+    document.getElementById('sum-photo-emoji').textContent =
+        iniciais || '👷';
+
+    // Avaliações
+    const nota = parseFloat(servico.media_nota) || 0;
+    const total = parseInt(servico.total_avaliacoes) || 0;
+
+    const starsEl = document.getElementById('prof-stars');
+
+    if(nota > 0){
+
+        let html='';
+
+        for(let i=1;i<=5;i++){
+
+            html += `
+            <span class="star"
+            style="opacity:${i<=Math.round(nota)?1:0.25}">
+            ★
+            </span>
+            `;
+        }
+
+        html += `
+        <span class="rating-score">
+        ${nota.toFixed(1)}
+        </span>
+
+        <span class="rating-text">
+        (${total} avaliações)
+        </span>
+        `;
+
+        starsEl.innerHTML=html;
+
+    } else {
+
+        starsEl.innerHTML=`
+        <span class="rating-text">
+        Sem avaliações ainda
+        </span>
+        `;
     }
+
+}
 
     preencherServico();
 
@@ -1377,13 +1454,14 @@
       btnAgendar.classList.add('loading');
 
       const payload = {
-        servico: servico.titulo,
-        preco: servico.preco,
-        prestador_email: servico.prestador_email || '',
-        data: selectedDate.toISOString().split('T')[0],
-        horario: selectedTime,
-        obs: document.getElementById('obs-input').value
-      };
+    servico_id: servico.id,
+    servico: servico.titulo,
+    preco: servico.preco,
+    prestador_email: servico.prestador_email,
+    data: selectedDate.toISOString().split('T')[0],
+    horario: selectedTime,
+    obs: document.getElementById('obs-input').value
+};
 
       try {
         const res = await fetch('/salvar_agendamento', {
