@@ -1642,6 +1642,157 @@ def stats_prestador(email):
         cursor.close();
         conn.close()
 
+"""
+admin_solicitacoes_blueprint.py
+
+Registre no app.py com apenas 2 linhas:
+    from admin_solicitacoes_blueprint import admin_sol_bp
+    app.register_blueprint(admin_sol_bp)
+"""
+
+from flask import Blueprint, jsonify, request, session
+from functools import wraps
+import mysql.connector
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+admin_sol_bp = Blueprint("admin_sol", __name__)
+
+
+# ── helpers ──────────────────────────────────────────────
+def connectar():
+    if os.getenv("DB_HOST"):
+        return mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            ssl_disabled=False,
+        )
+    return mysql.connector.connect(
+        host="localhost", user="root", password="", database="servicos"
+    )
+
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if session.get("tipo_usuario") != "admin" or not session.get("usuario_logado"):
+            return jsonify({"erro": "Acesso negado"}), 403
+        return fn(*args, **kwargs)
+    return wrapper
+
+
+# ── GET /admin/api/solicitacoes ───────────────────────────
+@admin_sol_bp.route("/admin/api/solicitacoes", methods=["GET"])
+@admin_required
+def listar_solicitacoes():
+    status_filtro = request.args.get("status", "")   # "" = todos
+    page          = max(1, int(request.args.get("page", 1)))
+    per_page      = 20
+    offset        = (page - 1) * per_page
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    where  = "WHERE a.status = %s" if status_filtro else ""
+    params_count = (status_filtro,) if status_filtro else ()
+
+    cursor.execute(
+        f"SELECT COUNT(*) AS total FROM agendamentos a {where}",
+        params_count,
+    )
+    total = cursor.fetchone()["total"]
+
+    query = f"""
+        SELECT
+            a.id,
+            a.servico,
+            a.preco,
+            a.data_servico,
+            a.horario,
+            a.status,
+            a.observacoes,
+            a.criado_em,
+            a.cliente_email,
+            a.prestador_email,
+            CONCAT(c.nome, ' ', c.sobrenome)  AS cliente_nome,
+            CONCAT(p.nome, ' ', p.sobrenome)  AS prestador_nome
+        FROM agendamentos a
+        LEFT JOIN cadastro_clientes    c ON c.email = a.cliente_email
+        LEFT JOIN cadastro_prestadores p ON p.email = a.prestador_email
+        {where}
+        ORDER BY a.id DESC
+        LIMIT %s OFFSET %s
+    """
+    params = (*(params_count), per_page, offset)
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+
+    for r in rows:
+        for key in ("data_servico", "criado_em"):
+            if r.get(key) and hasattr(r[key], "isoformat"):
+                r[key] = r[key].isoformat()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"solicitacoes": rows, "total": total, "page": page, "per_page": per_page})
+
+
+# ── PATCH /admin/api/solicitacoes/<id>/aprovar ────────────
+@admin_sol_bp.route("/admin/api/solicitacoes/<int:id>/aprovar", methods=["PATCH"])
+@admin_required
+def aprovar_solicitacao(id):
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT id, status FROM agendamentos WHERE id = %s", (id,))
+    ag = cursor.fetchone()
+    if not ag:
+        cursor.close(); conn.close()
+        return jsonify({"erro": "Não encontrado"}), 404
+
+    cursor.execute("UPDATE agendamentos SET status = 'confirmado' WHERE id = %s", (id,))
+    conn.commit()
+    cursor.close(); conn.close()
+    return jsonify({"mensagem": "Aprovado", "id": id, "status": "confirmado"})
+
+
+# ── PATCH /admin/api/solicitacoes/<id>/rejeitar ───────────
+@admin_sol_bp.route("/admin/api/solicitacoes/<int:id>/rejeitar", methods=["PATCH"])
+@admin_required
+def rejeitar_solicitacao(id):
+    motivo = (request.get_json(silent=True) or {}).get("motivo", "")
+
+    conn   = connectar()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT id FROM agendamentos WHERE id = %s", (id,))
+    if not cursor.fetchone():
+        cursor.close(); conn.close()
+        return jsonify({"erro": "Não encontrado"}), 404
+
+    cursor.execute(
+        "UPDATE agendamentos SET status = 'recusado' WHERE id = %s",
+        (id,),
+    )
+    conn.commit()
+
+    # notificação ao cliente (reutiliza tabela notificacoes)
+    if motivo:
+        cursor.execute(
+            """INSERT INTO notificacoes (prestador_email, tipo, mensagem, agendamento_id)
+               VALUES (%s, %s, %s, %s)""",
+            (None, "recusado_admin", f"Agendamento #{id} recusado pelo admin. Motivo: {motivo}", id),
+        )
+        conn.commit()
+
+    cursor.close(); conn.close()
+    return jsonify({"mensagem": "Rejeitado", "id": id, "status": "recusado"})
 
 @app.route("/api/checar_recusados_cliente")
 def checar_recusados_cliente():

@@ -49,13 +49,11 @@
         color: var(--ink);
       }
 
-      /* ── Shell ── */
       .shell {
         display: flex;
         min-height: 100vh;
       }
 
-      /* ── Sidebar ── */
       .sidebar {
         width: var(--sidebar-w);
         background: var(--sidebar-bg);
@@ -137,7 +135,32 @@
         background: rgba(239, 68, 68, 0.15) !important;
       }
 
-      /* ── Main ── */
+      /* Badge de pendentes no nav */
+      .nav__badge {
+        margin-left: auto;
+        background: #ef4444;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 2px 7px;
+        line-height: 1.4;
+        min-width: 18px;
+        text-align: center;
+        display: none; /* JS revela quando > 0 */
+        animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      @keyframes badgePop {
+        from {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
       .main {
         margin-left: var(--sidebar-w);
         flex: 1;
@@ -147,7 +170,6 @@
         width: calc(100% - var(--sidebar-w));
       }
 
-      /* ── Topbar ── */
       .topbar {
         background: var(--surface);
         border-bottom: 1px solid var(--border);
@@ -199,7 +221,6 @@
         font-weight: 500;
       }
 
-      /* Live dot */
       .live-dot {
         display: inline-flex;
         align-items: center;
@@ -226,13 +247,11 @@
         }
       }
 
-      /* ── Content ── */
       .content {
         padding: 28px 32px 48px;
         flex: 1;
       }
 
-      /* ── Section label ── */
       .section-label {
         font-size: 11px;
         font-weight: 600;
@@ -242,7 +261,6 @@
         margin-bottom: 14px;
       }
 
-      /* ── Metric grid ── */
       .metrics-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -295,26 +313,56 @@
         font-weight: 400;
       }
 
-      /* accents */
-      .ac-blue { background: var(--brand); }
-      .ac-green { background: var(--success); }
-      .ac-warn { background: var(--warn); }
-      .ac-red { background: var(--danger); }
-      .ac-indigo { background: #6366f1; }
-      .ac-sky { background: #0ea5e9; }
-      .ac-teal { background: #14b8a6; }
-      .ac-violet { background: #8b5cf6; }
+      .ac-blue {
+        background: var(--brand);
+      }
+      .ac-green {
+        background: var(--success);
+      }
+      .ac-warn {
+        background: var(--warn);
+      }
+      .ac-red {
+        background: var(--danger);
+      }
+      .ac-indigo {
+        background: #6366f1;
+      }
+      .ac-sky {
+        background: #0ea5e9;
+      }
+      .ac-teal {
+        background: #14b8a6;
+      }
+      .ac-violet {
+        background: #8b5cf6;
+      }
 
-      .ic-blue { background: #eff4ff; }
-      .ic-green { background: #ecfdf5; }
-      .ic-warn { background: #fffbeb; }
-      .ic-red { background: #fef2f2; }
-      .ic-indigo { background: #eef2ff; }
-      .ic-sky { background: #f0f9ff; }
-      .ic-teal { background: #f0fdfa; }
-      .ic-violet { background: #f5f3ff; }
+      .ic-blue {
+        background: #eff4ff;
+      }
+      .ic-green {
+        background: #ecfdf5;
+      }
+      .ic-warn {
+        background: #fffbeb;
+      }
+      .ic-red {
+        background: #fef2f2;
+      }
+      .ic-indigo {
+        background: #eef2ff;
+      }
+      .ic-sky {
+        background: #f0f9ff;
+      }
+      .ic-teal {
+        background: #f0fdfa;
+      }
+      .ic-violet {
+        background: #f5f3ff;
+      }
 
-      /* ── Charts grid ── */
       .charts-grid {
         display: grid;
         grid-template-columns: 1fr 2fr;
@@ -351,7 +399,6 @@
         overflow-x: auto;
       }
 
-      /* ── Ranking table ── */
       .rank-table {
         width: 100%;
         border-collapse: collapse;
@@ -377,7 +424,6 @@
         border-bottom: none;
       }
 
-      /* ── Footer note ── */
       .footer-note {
         font-size: 12px;
         color: var(--ink-3);
@@ -393,10 +439,6 @@
         font-size: 11px;
       }
 
-      /* =========================================
-         Responsividade (Tablets e Celulares)
-         ========================================= */
-
       @media (max-width: 1100px) {
         .charts-grid,
         .charts-grid[style] {
@@ -408,7 +450,6 @@
       }
 
       @media (max-width: 768px) {
-        /* Menu lateral oculto por padrão */
         .sidebar {
           transform: translateX(-100%);
           transition: transform 0.3s ease;
@@ -417,19 +458,13 @@
         .sidebar.open {
           transform: translateX(0);
         }
-
-        /* Ajustes do container principal */
         .main {
           margin-left: 0;
           width: 100%;
         }
-
-        /* Exibe o botão de hambúrguer */
         .menu-toggle {
           display: block;
         }
-
-        /* Ajuste de espaçamentos */
         .topbar {
           padding: 0 16px;
         }
@@ -442,7 +477,6 @@
       }
 
       @media (max-width: 480px) {
-        /* Empilha os cards no celular */
         .metrics-grid {
           grid-template-columns: 1fr;
         }
@@ -472,6 +506,7 @@
           </a>
           <a href="/admin/solicitacoes" class="nav__item">
             <span class="nav__icon">🧾</span> Solicitações
+            <span class="nav__badge" id="nav-pending-badge"></span>
           </a>
           <a href="/admin/clientes" class="nav__item">
             <span class="nav__icon">👥</span> Clientes
@@ -498,7 +533,8 @@
           <div class="topbar__right">
             <span class="live-dot">ao vivo</span>
             <span class="badge-pill">
-              👤 {{ session.get('usuario_nome', session.get('usuario_logado','admin')) }}
+              👤 {{ session.get('usuario_nome',
+              session.get('usuario_logado','admin')) }}
             </span>
           </div>
         </header>
@@ -512,25 +548,29 @@
               <div class="metric-card__value" id="m_user_clients">0</div>
               <div class="metric-card__label">Clientes cadastrados</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-indigo"></div>
               <div class="metric-card__icon ic-indigo">🛠️</div>
               <div class="metric-card__value" id="m_user_providers">0</div>
               <div class="metric-card__label">Prestadores ativos</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-sky"></div>
               <div class="metric-card__icon ic-sky">📅</div>
-              <div class="metric-card__value" id="m_services_total_today">0</div>
+              <div class="metric-card__value" id="m_services_total_today">
+                0
+              </div>
               <div class="metric-card__label">Agendamentos hoje</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-teal"></div>
               <div class="metric-card__icon ic-teal">✅</div>
-              <div class="metric-card__value" id="m_services_providers_total_done">0</div>
+              <div
+                class="metric-card__value"
+                id="m_services_providers_total_done"
+              >
+                0
+              </div>
               <div class="metric-card__label">Total concluídos</div>
             </div>
           </div>
@@ -543,21 +583,20 @@
               <div class="metric-card__value" id="m_services_pending">0</div>
               <div class="metric-card__label">Pendentes</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-blue"></div>
               <div class="metric-card__icon ic-blue">🔄</div>
-              <div class="metric-card__value" id="m_services_in_progress">0</div>
+              <div class="metric-card__value" id="m_services_in_progress">
+                0
+              </div>
               <div class="metric-card__label">Em andamento</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-green"></div>
               <div class="metric-card__icon ic-green">✔️</div>
               <div class="metric-card__value" id="m_services_done">0</div>
               <div class="metric-card__label">Concluídos</div>
             </div>
-
             <div class="metric-card">
               <div class="metric-card__accent ac-red"></div>
               <div class="metric-card__icon ic-red">❌</div>
@@ -577,10 +616,11 @@
                 <canvas id="chart_status" height="200"></canvas>
               </div>
             </div>
-
             <div class="chart-card">
               <div class="chart-card__header">
-                <span class="chart-card__title">Solicitações — últimos 7 dias</span>
+                <span class="chart-card__title"
+                  >Solicitações — últimos 7 dias</span
+                >
                 <span class="chart-card__sub">por data do serviço</span>
               </div>
               <div class="chart-card__body">
@@ -592,14 +632,15 @@
           <div class="charts-grid" style="grid-template-columns: 2fr 1fr">
             <div class="chart-card">
               <div class="chart-card__header">
-                <span class="chart-card__title">Top prestadores por agendamentos</span>
+                <span class="chart-card__title"
+                  >Top prestadores por agendamentos</span
+                >
                 <span class="chart-card__sub">top 5</span>
               </div>
               <div class="chart-card__body">
                 <canvas id="chart_top_prestadores" height="180"></canvas>
               </div>
             </div>
-
             <div class="chart-card">
               <div class="chart-card__header">
                 <span class="chart-card__title">Ranking — concluídos</span>
@@ -618,7 +659,11 @@
                     <tr>
                       <td
                         colspan="3"
-                        style="color: var(--ink-3); font-size: 12px; padding: 16px 0;"
+                        style="
+                          color: var(--ink-3);
+                          font-size: 12px;
+                          padding: 16px 0;
+                        "
                       >
                         Carregando…
                       </td>
@@ -629,32 +674,70 @@
             </div>
           </div>
         </div>
+
         <footer class="footer-note">
           Atualizado automaticamente a cada 10 s via
           <code>/admin/api/metrics</code>
         </footer>
       </div>
-      </div>
+    </div>
 
     <script src="/static/js/admin/dashboard.js"></script>
 
     <script>
-      const menuToggle = document.getElementById('menu-toggle');
-      const sidebar = document.querySelector('.sidebar');
+      // ── Sidebar mobile ──
+      const menuToggle = document.getElementById("menu-toggle");
+      const sidebar = document.querySelector(".sidebar");
 
-      // Abre/fecha o menu ao clicar no botão
-      menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
+      menuToggle.addEventListener("click", () =>
+        sidebar.classList.toggle("open"),
+      );
+      document.addEventListener("click", (e) => {
+        if (
+          window.innerWidth <= 768 &&
+          !sidebar.contains(e.target) &&
+          !menuToggle.contains(e.target)
+        )
+          sidebar.classList.remove("open");
       });
 
-      // Fecha o menu automaticamente se clicar fora dele na versão mobile
-      document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
-          if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-            sidebar.classList.remove('open');
+      // ── Badge de pendentes — sincroniza com o polling de métricas ──
+      function updatePendingBadge(count) {
+        const badge = document.getElementById("nav-pending-badge");
+        if (!badge) return;
+        if (count > 0) {
+          const label = count > 99 ? "99+" : count;
+          // Re-anima só se o valor mudou
+          if (badge.textContent !== String(label)) {
+            badge.textContent = label;
+            badge.style.display = "inline-block";
+            badge.style.animation = "none";
+            badge.offsetWidth; // reflow
+            badge.style.animation =
+              "badgePop 0.3s cubic-bezier(0.34,1.56,0.64,1)";
           }
+        } else {
+          badge.style.display = "none";
+          badge.textContent = "";
         }
-      });
+      }
+
+      // Intercepta o fetch que o dashboard.js já faz, sem duplicar chamadas
+      const _origFetch = window.fetch;
+      window.fetch = async function (...args) {
+        const res = await _origFetch(...args);
+        const url = typeof args[0] === "string" ? args[0] : args[0].url || "";
+        if (url.includes("/admin/api/metrics")) {
+          res
+            .clone()
+            .json()
+            .then((data) => {
+              updatePendingBadge((data.status_counts || {}).pendente || 0);
+            })
+            .catch(() => {});
+        }
+        return res;
+      };
     </script>
   </body>
 </html>
