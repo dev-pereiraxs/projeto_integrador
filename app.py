@@ -587,8 +587,45 @@ def salvar_agendamento():
 
 
 # =========================
+# CADASTRO CLIENTE
+# =========================
+@app.route("/salvar", methods=["POST"])
+def salvar():
+    dados = (
+        request.form["nome"], request.form["sobrenome"],
+        request.form["data_nascimento"], request.form["sexo"],
+        request.form["email"], request.form["senha"],
+    )
+    conn = connectar()
+    cursor = conn.cursor()
+    email_cadastro = request.form["email"].strip().lower()
+    nome_cadastro = request.form["nome"].strip()
+    sobrenome_cadastro = request.form["sobrenome"].strip()
+    try:
+        cursor.execute(
+            "INSERT INTO cadastro_clientes (nome,sobrenome,data_nascimento,sexo,email,senha) VALUES (%s,%s,%s,%s,%s,%s)",
+            dados
+        )
+        conn.commit()
+
+        # ✅ Após cadastro, já loga o usuário (cliente)
+        session.permanent = True if request.form.get("lembrar") else False
+        session["usuario_logado"] = email_cadastro
+        session["tipo_usuario"] = "cliente"
+        session["usuario_nome"] = f"{nome_cadastro} {sobrenome_cadastro}".strip()
+
+        # Envia de volta para a Home para exibir o modal verde de sucesso
+        return redirect(url_for("index", cadastro="ok", tipo="cliente"))
+    except Exception as e:
+        return render_template("cadastro.html", erro="Erro ao cadastrar. O e-mail já existe ou os dados são inválidos.")
+    finally:
+        cursor.close()
+        conn.close()
+
+# =========================
 # SERVIÇOS PRESTADOR
 # =========================
+
 @app.route("/salvar_servico_prestador", methods=["POST"])
 def salvar_servico_prestador():
     if "usuario_logado" not in session or session.get("tipo_usuario") != "prestador":
