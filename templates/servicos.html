@@ -166,8 +166,9 @@
             {% endif %}
           </div>
 
-          <button class="btn-agendar" data-servico="{{ s | tojson }}">
-            Agendar
+          <!-- CORRETO — aspas simples -->
+            <button class="btn-agendar" data-servico='{{ s | tojson }}'>
+            > Agendar
           </button>
         </div>
         {% endfor %}

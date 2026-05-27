@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meus Agendamentos</title>
+</head>
+
+<body>
+  {% include 'partials/header.html' %}
+
+  <main style="max-width:960px;margin:24px auto;padding:0 16px;">
+    <h1 style="font-size:24px;font-weight:700;margin-bottom:16px;">Meus Agendamentos</h1>
+    <div id="agendamentos" style="display:flex;flex-direction:column;gap:12px;"></div>
+    <p id="empty" style="color:#64748b;display:none;">Nenhum agendamento encontrado.</p>
+  </main>
+
+  <script>
+    async function load() {
+      const el = document.getElementById('agendamentos');
+      const empty = document.getElementById('empty');
+      el.innerHTML = '';
+
+      const res = await fetch('/api/meus_agendamentos');
+      if (!res.ok) {
+        el.innerHTML = '<p style="color:#ef4444;">Erro ao carregar agendamentos.</p>';
+        return;
+      }
+
+      const dados = await res.json();
+      const list = Array.isArray(dados) ? dados : dados.agendamentos || [];
+
+      if (!list.length) {
+        empty.style.display = 'block';
+        return;
+      }
+
+      list.forEach(a => {
+        const card = document.createElement('div');
+        card.style.border = '1px solid rgba(59,130,246,.25)';
+        card.style.borderRadius = '12px';
+        card.style.padding = '14px 16px';
+        card.style.background = 'rgba(59,130,246,.06)';
+
+        card.innerHTML = `
+<div style="font-weight:700; margin-bottom:4px;">${a.servico || 'Serviço'}</div>
+          <div style="color:#475569;font-size:14px;">
+            <div><b>Categoria:</b> ${a.categoria || a.area_atuacao || '—'}</div>
+            <div><b>Subcategoria:</b> ${a.subcategoria || a.sub_categoria || '—'}</div>
+            <div><b>Prestador:</b> ${a.prestador_nome || a.prestador_email || '—'}</div>
+            <div><b>Data:</b> ${a.data_servico || '—'} às ${a.horario || '—'}</div>
+            <div><b>Status:</b> ${a.status || '—'}</div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button style="cursor:pointer;border:1px solid rgba(59,130,246,.35);background:rgba(59,130,246,.10);color:#1d4ed8;padding:10px 12px;border-radius:10px;font-weight:700;" 
+onclick="window.location.href='/agendamentos'"
+              Agendar novamente
+            </button>
+          </div>
+        `;
+
+        el.appendChild(card);
+      });
+    }
+
+    load().catch(console.error);
+  </script>
+</body>
+
+</html>
+

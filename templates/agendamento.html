@@ -1147,130 +1147,83 @@
 
   <script>
     const servico = window.servicoAtual || (function () {
-      const stored = localStorage.getItem('servicoSelecionado');
-      return stored ? JSON.parse(stored) : {
-        titulo: 'Serviço não encontrado',
-        preco: '0.00',
-        categoria: 'Geral',
-        descricao: '',
-        duracao: '-',
-        nome: 'Prestador',
-        sobrenome: '',
-        prestador_email: ''
-      };
-    })();
+  const stored = localStorage.getItem('servicoSelecionado');
+  return stored ? JSON.parse(stored) : {
+    titulo: 'Serviço não encontrado',
+    preco: '0.00',
+    categoria: 'Geral',
+    descricao: '',
+    duracao: '-',
+    prestador_email: ''
+  };
+})();
+
+
 
     function formatPreco(valor) {
       const n = parseFloat(String(valor).replace(',', '.')) || 0;
       return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     }
 
-      function preencherServico() {
+    function preencherServico() {
+      const titulo    = servico.titulo    || 'Serviço';
+      const descricao = servico.descricao || 'Sem descrição';
+      const preco     = servico.preco     || 0;
 
-    // Dados do serviço
-    const titulo = servico.titulo || 'Serviço';
-    const descricao = servico.descricao || 'Sem descrição';
-    const preco = servico.preco || 0;
+      const categoria =
+          servico.area_atuacao  ||
+          servico.areas_atuacao ||
+          servico.categoria     ||
+          'Geral';
 
-    const categoria =
-        servico.area_atuacao ||
-        servico.areas_atuacao ||
-        servico.categoria ||
-        'Geral';
+      const nomePrestador = (
+        servico.prestador_nome
+          ? `${servico.prestador_nome} ${servico.prestador_sobrenome || ''}`.trim()
+          : servico.nome_prestador || ''
+      ) || 'Prestador';
 
-    // Prestador
-    const nomePrestador =
-        `${servico.prestador_nome || ''} ${servico.prestador_sobrenome || ''}`
-        .trim() || 'Prestador';
+      document.getElementById('info-categoria').textContent = categoria;
+      document.getElementById('info-titulo').textContent    = titulo;
+      document.getElementById('info-descricao').textContent = descricao;
+      document.getElementById('info-duracao').textContent   = servico.duracao || '-';
+      document.getElementById('info-preco').textContent     = formatPreco(preco);
 
-    // Interface superior
-    document.getElementById('info-categoria').textContent = categoria;
-    document.getElementById('info-titulo').textContent = titulo;
-    document.getElementById('info-descricao').textContent = descricao;
-    document.getElementById('info-duracao').textContent =
-        servico.duracao || '-';
+      document.getElementById('sum-titulo').textContent    = titulo;
+      document.getElementById('sum-categoria').textContent = categoria;
+      document.getElementById('sum-preco').textContent     = formatPreco(preco);
+      document.getElementById('sum-total').textContent     = formatPreco(preco);
 
-    document.getElementById('info-preco').textContent =
-        formatPreco(preco);
+      document.getElementById('prof-nome').textContent           = nomePrestador;
+      document.getElementById('prof-area').textContent           = categoria;
+      document.getElementById('sum-prestador-nome').textContent  = nomePrestador;
+      document.getElementById('sum-prestador-area').textContent  = categoria;
 
-    // Resumo lateral
-    document.getElementById('sum-titulo').textContent = titulo;
-    document.getElementById('sum-categoria').textContent = categoria;
-    document.getElementById('sum-preco').textContent =
-        formatPreco(preco);
+      const iniciais = nomePrestador
+          .split(' ')
+          .map(p => p[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase();
 
-    document.getElementById('sum-total').textContent =
-        formatPreco(preco);
+      document.getElementById('prof-emoji').textContent      = iniciais || '👷';
+      document.getElementById('sum-photo-emoji').textContent = iniciais || '👷';
 
-    // Prestador
-    document.getElementById('prof-nome').textContent =
-        nomePrestador;
+      const nota  = parseFloat(servico.media_nota || servico.avaliacao_media) || 0;
+      const total = parseInt(servico.total_avaliacoes) || 0;
+      const starsEl = document.getElementById('prof-stars');
 
-    document.getElementById('prof-area').textContent =
-        categoria;
-
-    document.getElementById('sum-prestador-nome').textContent =
-        nomePrestador;
-
-    document.getElementById('sum-prestador-area').textContent =
-        categoria;
-
-    // Iniciais do avatar
-    const iniciais = nomePrestador
-        .split(' ')
-        .map(p => p[0])
-        .slice(0,2)
-        .join('')
-        .toUpperCase();
-
-    document.getElementById('prof-emoji').textContent =
-        iniciais || '👷';
-
-    document.getElementById('sum-photo-emoji').textContent =
-        iniciais || '👷';
-
-    // Avaliações
-    const nota = parseFloat(servico.media_nota) || 0;
-    const total = parseInt(servico.total_avaliacoes) || 0;
-
-    const starsEl = document.getElementById('prof-stars');
-
-    if(nota > 0){
-
-        let html='';
-
-        for(let i=1;i<=5;i++){
-
-            html += `
-            <span class="star"
-            style="opacity:${i<=Math.round(nota)?1:0.25}">
-            ★
-            </span>
-            `;
+      if (nota > 0) {
+        let html = '';
+        for (let i = 1; i <= 5; i++) {
+          html += `<span class="star" style="opacity:${i <= Math.round(nota) ? 1 : 0.25}">★</span>`;
         }
-
-        html += `
-        <span class="rating-score">
-        ${nota.toFixed(1)}
-        </span>
-
-        <span class="rating-text">
-        (${total} avaliações)
-        </span>
-        `;
-
-        starsEl.innerHTML=html;
-
-    } else {
-
-        starsEl.innerHTML=`
-        <span class="rating-text">
-        Sem avaliações ainda
-        </span>
-        `;
+        html += `<span class="rating-score">${nota.toFixed(1)}</span>`;
+        html += `<span class="rating-text">(${total} avaliações)</span>`;
+        starsEl.innerHTML = html;
+      } else {
+        starsEl.innerHTML = `<span class="rating-text">Sem avaliações ainda</span>`;
+      }
     }
-
-}
 
     preencherServico();
 
@@ -1280,11 +1233,11 @@
 
     let selectedDate = null;
     let selectedTime = null;
-    let calYear = today.getFullYear();
+    let calYear  = today.getFullYear();
     let calMonth = today.getMonth();
 
     function formatDataLabel(date) {
-      const dd = String(date.getDate()).padStart(2, '0');
+      const dd  = String(date.getDate()).padStart(2, '0');
       const mmm = MONTHS[date.getMonth()].slice(0, 3);
       const yyyy = date.getFullYear();
       return `${dd} de ${mmm}. ${yyyy}`;
@@ -1304,8 +1257,8 @@
       });
 
       const firstDay = new Date(calYear, calMonth, 1).getDay();
-      const offset = (firstDay + 6) % 7;
-      const days = new Date(calYear, calMonth + 1, 0).getDate();
+      const offset   = (firstDay + 6) % 7;
+      const days     = new Date(calYear, calMonth + 1, 0).getDate();
 
       for (let i = 0; i < offset; i++) {
         const el = document.createElement('div');
@@ -1314,15 +1267,15 @@
       }
 
       for (let d = 1; d <= days; d++) {
-        const el = document.createElement('div');
+        const el   = document.createElement('div');
         const date = new Date(calYear, calMonth, d);
-        const isPast = date < today;
+        const isPast    = date < today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
         const isSelected = selectedDate &&
           selectedDate.getFullYear() === calYear &&
-          selectedDate.getMonth() === calMonth &&
-          selectedDate.getDate() === d;
+          selectedDate.getMonth()    === calMonth &&
+          selectedDate.getDate()     === d;
 
         el.textContent = d;
 
@@ -1365,9 +1318,9 @@
     const HORARIOS_TODOS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
 
     async function carregarHorarios(data) {
-      const slotsEl = document.getElementById('time-slots');
-      const dataISO = data.toISOString().split('T')[0];
-      const email = servico.prestador_email || '';
+      const slotsEl  = document.getElementById('time-slots');
+      const dataISO  = data.toISOString().split('T')[0];
+      const email    = servico.prestador_email || '';
 
       slotsEl.innerHTML = `
         <div class="slots-loading">
@@ -1377,9 +1330,9 @@
 
       let ocupados = [];
       try {
-        const res = await fetch(`/api/horarios_bloqueados?data=${dataISO}&prestador_email=${encodeURIComponent(email)}`);
+        const res  = await fetch(`/api/horarios_bloqueados?data=${dataISO}&prestador_email=${encodeURIComponent(email)}`);
         const json = await res.json();
-        ocupados = Array.isArray(json) ? json : json.ocupados || [];
+        ocupados   = Array.isArray(json) ? json : json.ocupados || [];
       } catch (e) {
         console.error('Erro ao buscar horários:', e);
       }
@@ -1388,7 +1341,7 @@
 
       HORARIOS_TODOS.forEach(hora => {
         const btn = document.createElement('div');
-        btn.className = 'time-btn';
+        btn.className   = 'time-btn';
         btn.textContent = hora;
 
         if (ocupados.includes(hora)) {
@@ -1409,18 +1362,17 @@
       if (ocupados.length >= HORARIOS_TODOS.length) {
         const aviso = document.createElement('p');
         aviso.style.cssText = 'font-size:13px;color:var(--red);margin-top:4px;width:100%';
-        aviso.textContent = 'Sem horários disponíveis neste dia. Escolha outra data.';
+        aviso.textContent   = 'Sem horários disponíveis neste dia. Escolha outra data.';
         slotsEl.appendChild(aviso);
       }
     }
 
-    const modalOverlay = document.getElementById('modal-pagamento');
-    const btnConfirmar = document.getElementById('btn-confirmar');
-    const btnCancelar = document.getElementById('btn-cancelar-modal');
-    const btnAgendar = document.getElementById('btn-agendar-agora');
-
-    const confirmState = document.getElementById('modal-confirm-state');
-    const successState = document.getElementById('modal-success-state');
+    const modalOverlay   = document.getElementById('modal-pagamento');
+    const btnConfirmar   = document.getElementById('btn-confirmar');
+    const btnCancelar    = document.getElementById('btn-cancelar-modal');
+    const btnAgendar     = document.getElementById('btn-agendar-agora');
+    const confirmState   = document.getElementById('modal-confirm-state');
+    const successState   = document.getElementById('modal-success-state');
     const btnAddCalendar = document.getElementById('btn-add-calendar');
 
     btnConfirmar.addEventListener('click', () => {
@@ -1430,9 +1382,9 @@
       const dd = String(selectedDate.getDate()).padStart(2, '0');
       const mm = MONTHS[selectedDate.getMonth()].slice(0, 3);
 
-      document.getElementById('modal-sum-titulo').textContent = servico.titulo || '—';
+      document.getElementById('modal-sum-titulo').textContent   = servico.titulo || '—';
       document.getElementById('modal-sum-datahora').textContent = `${dd} ${mm} às ${selectedTime}`;
-      document.getElementById('modal-sum-preco').textContent = formatPreco(servico.preco);
+      document.getElementById('modal-sum-preco').textContent    = formatPreco(servico.preco);
 
       confirmState.style.display = '';
       successState.classList.remove('visible');
@@ -1454,27 +1406,26 @@
       btnAgendar.classList.add('loading');
 
       const payload = {
-    servico_id: servico.id,
-    servico: servico.titulo,
-    preco: servico.preco,
-    prestador_email: servico.prestador_email,
-    data: selectedDate.toISOString().split('T')[0],
-    horario: selectedTime,
-    obs: document.getElementById('obs-input').value
-};
+        servico_id:      servico.id,
+        servico:         servico.titulo,
+        preco:           servico.preco,
+        prestador_email: servico.prestador_email,
+        data:            selectedDate.toISOString().split('T')[0],
+        horario:         selectedTime,
+        obs:             document.getElementById('obs-input').value
+      };
 
       try {
-        const res = await fetch('/salvar_agendamento', {
-          method: 'POST',
+        const res  = await fetch('/salvar_agendamento', {
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body:    JSON.stringify(payload)
         });
 
         const data = await res.json();
         btnAgendar.classList.remove('loading');
 
         if (res.status === 401 || (data.erro && data.erro.toLowerCase().includes('logado'))) {
-          // Salva a URL atual para voltar depois do login
           sessionStorage.setItem('redirect_apos_login', window.location.href);
           fecharModal();
           document.getElementById('modal-nao-logado').classList.add('open');
@@ -1488,7 +1439,7 @@
         }
 
         if (data.calendar_url) {
-          btnAddCalendar.href = data.calendar_url;
+          btnAddCalendar.href          = data.calendar_url;
           btnAddCalendar.style.display = '';
         } else {
           btnAddCalendar.style.display = 'none';
@@ -1503,16 +1454,6 @@
         fecharModal();
         alert('Erro de conexão com o servidor. Tente novamente.');
       }
-    });
-
-    // Controles do modal "não logado"
-    document.getElementById('btn-ir-login').addEventListener('click', () => {
-      window.location.href = '/login?next=' + encodeURIComponent(window.location.href);
-    });
-
-    document.getElementById('btn-fechar-nao-logado').addEventListener('click', () => {
-      document.getElementById('modal-nao-logado').classList.remove('open');
-      document.body.style.overflow = '';
     });
   </script>
 
