@@ -1,1724 +1,2293 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+  <head>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='img/agenda-facil.png') }}"
+      type="image/png"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Perfil – Serviço Fácil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-<head>
-  <link rel="icon" href="{{ url_for('static', filename='img/agenda-facil.png') }}" type="image/png" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meu Perfil – Serviço Fácil</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
-    rel="stylesheet" />
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+      :root {
+        --navy: #0c1526;
+        --navy-mid: #1e3a5f;
+        --blue: #2563eb;
+        --blue-dark: #1d4ed8;
+        --blue-muted: #eff6ff;
+        --blue-light: #93c5fd;
+        --green: #10b981;
+        --green-dark: #059669;
+        --gold: #f59e0b;
+        --gold-dark: #d97706;
+        --red: #ef4444;
+        --text: #0f172a;
+        --text-mid: #374151;
+        --text-muted: #6b7280;
+        --text-faint: #9ca3af;
+        --border: #e5e7eb;
+        --border-mid: #d1d5db;
+        --bg: #f4f6f9;
+        --bg-card: #ffffff;
+        --bg-subtle: #f8fafc;
+        --font: "DM Sans", sans-serif;
+        --display: "Sora", sans-serif;
+        --r-sm: 6px;
+        --r: 10px;
+        --r-lg: 14px;
+        --r-xl: 18px;
+        --r-full: 999px;
+        --shadow-card:
+          0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+        --shadow-lift: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --t: all 0.18s ease;
+        --t-smooth: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
 
-    :root {
-      --navy: #0c1526;
-      --navy-mid: #1e3a5f;
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --blue-muted: #eff6ff;
-      --blue-light: #93c5fd;
-      --green: #10b981;
-      --green-dark: #059669;
-      --gold: #f59e0b;
-      --gold-dark: #d97706;
-      --red: #ef4444;
-      --text: #0f172a;
-      --text-mid: #374151;
-      --text-muted: #6b7280;
-      --text-faint: #9ca3af;
-      --border: #e5e7eb;
-      --border-mid: #d1d5db;
-      --bg: #f4f6f9;
-      --bg-card: #ffffff;
-      --bg-subtle: #f8fafc;
-      --font: 'DM Sans', sans-serif;
-      --display: 'Sora', sans-serif;
-      --r-sm: 6px;
-      --r: 10px;
-      --r-lg: 14px;
-      --r-xl: 18px;
-      --r-full: 999px;
-      --shadow-card: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .04);
-      --shadow-lift: 0 4px 20px rgba(0, 0, 0, .10);
-      --t: all .18s ease;
-      --t-smooth: all .28s cubic-bezier(.22, 1, .36, 1);
-    }
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      background: linear-gradient(140deg, var(--navy) 0%, var(--navy-mid) 55%, #1e40af 100%);
-      padding: 48px 24px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 85% 20%, rgba(59, 130, 246, .18) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 10% 90%, rgba(37, 99, 235, .12) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      max-width: 880px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--display);
-      font-size: 28px;
-      font-weight: 700;
-      color: #fff;
-      border: 3px solid rgba(255, 255, 255, .22);
-      flex-shrink: 0;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      transition: border-color .2s, transform .2s;
-      box-shadow: 0 0 0 6px rgba(255, 255, 255, .07);
-    }
-
-    .hero-avatar:hover {
-      border-color: rgba(255, 255, 255, .5);
-      transform: scale(1.04);
-    }
-
-    .hero-avatar::after {
-      content: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, .42);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      border-radius: 50%;
-    }
-
-    .hero-avatar:hover::after {
-      content: '📷';
-      display: flex;
-    }
-
-    .hero-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    .hero-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .hero-name {
-      font-family: var(--display);
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -.3px;
-      margin-bottom: 3px;
-    }
-
-    .hero-email {
-      font-size: 13px;
-      color: rgba(255, 255, 255, .48);
-      margin-bottom: 10px;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(59, 130, 246, .2);
-      border: 1px solid rgba(147, 197, 253, .3);
-      color: #bfdbfe;
-      font-size: 10.5px;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: var(--r-full);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-    }
-
-    .btn-edit-hero {
-      margin-left: auto;
-      padding: 8px 16px;
-      background: rgba(255, 255, 255, .1);
-      border: 1px solid rgba(255, 255, 255, .2);
-      border-radius: var(--r);
-      color: rgba(255, 255, 255, .85);
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--t);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .btn-edit-hero:hover {
-      background: rgba(255, 255, 255, .18);
-      border-color: rgba(255, 255, 255, .35);
-      color: #fff;
-    }
-
-    @media (max-width: 600px) {
+      /* ── HERO ── */
       .hero {
-        padding: 36px 20px 72px;
+        background: linear-gradient(
+          140deg,
+          var(--navy) 0%,
+          var(--navy-mid) 55%,
+          #1e40af 100%
+        );
+        padding: 48px 24px 80px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 60% 80% at 85% 20%,
+            rgba(59, 130, 246, 0.18) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 40% 60% at 10% 90%,
+            rgba(37, 99, 235, 0.12) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
       }
 
       .hero-inner {
-        flex-wrap: wrap;
-        gap: 14px;
+        max-width: 880px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--display);
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        border: 3px solid rgba(255, 255, 255, 0.22);
+        flex-shrink: 0;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.07);
+      }
+
+      .hero-avatar:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: scale(1.04);
+      }
+
+      .hero-avatar::after {
+        content: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.42);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        border-radius: 50%;
+      }
+
+      .hero-avatar:hover::after {
+        content: "📷";
+        display: flex;
+      }
+
+      .hero-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      .hero-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .hero-name {
+        font-family: var(--display);
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.3px;
+        margin-bottom: 3px;
+      }
+
+      .hero-email {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.48);
+        margin-bottom: 10px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid rgba(147, 197, 253, 0.3);
+        color: #bfdbfe;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: var(--r-full);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
       }
 
       .btn-edit-hero {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
+        margin-left: auto;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--r);
+        color: rgba(255, 255, 255, 0.85);
+        font-family: var(--font);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--t);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
       }
-    }
 
-    /* ── PAGE ── */
-    .page {
-      width: 100%;
-      max-width: 880px;
-      margin: -40px auto 0;
-      padding: 0 24px 56px;
-      flex-grow: 1;
-      position: relative;
-      z-index: 1;
-    }
+      .btn-edit-hero:hover {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.35);
+        color: #fff;
+      }
 
-    @media (max-width: 600px) {
+      @media (max-width: 600px) {
+        .hero {
+          padding: 36px 20px 72px;
+        }
+
+        .hero-inner {
+          flex-wrap: wrap;
+          gap: 14px;
+        }
+
+        .btn-edit-hero {
+          margin-left: 0;
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* ── PAGE ── */
       .page {
-        padding: 0 16px 48px;
-        margin-top: -32px;
+        width: 100%;
+        max-width: 880px;
+        margin: -40px auto 0;
+        padding: 0 24px 56px;
+        flex-grow: 1;
+        position: relative;
+        z-index: 1;
       }
-    }
 
-    /* ── STATS ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+      @media (max-width: 600px) {
+        .page {
+          padding: 0 16px 48px;
+          margin-top: -32px;
+        }
+      }
 
-    .stat-card {
-      background: var(--bg-card);
-      border-radius: var(--r-lg);
-      padding: 18px 20px;
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(0, 0, 0, .04);
-    }
-
-    .stat-val {
-      font-family: var(--display);
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-
-    .stat-label {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 500;
-      letter-spacing: .1px;
-    }
-
-    .stat-val.green {
-      color: #059669;
-    }
-
-    .stat-val.gold {
-      color: #d97706;
-    }
-
-    @media (max-width: 600px) {
+      /* ── STATS ── */
       .stats-row {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .stat-card:last-child {
-        grid-column: span 2;
-      }
-    }
-
-    /* ── CARD CONTAINER ── */
-    .card {
-      background: var(--bg-card);
-      border-radius: var(--r-xl);
-      box-shadow: var(--shadow-card);
-      border: 1px solid rgba(0, 0, 0, .05);
-      overflow: hidden;
-    }
-
-    /* ── TABS ── */
-    .tabs {
-      display: flex;
-      gap: 2px;
-      padding: 14px 16px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tab-btn {
-      padding: 9px 14px 11px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      cursor: pointer;
-      font-family: var(--font);
-      transition: var(--t);
-      border-radius: var(--r-sm) var(--r-sm) 0 0;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-mid);
-    }
-
-    .tab-btn.active {
-      color: var(--blue);
-      border-bottom-color: var(--blue);
-    }
-
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    /* ── AGENDAMENTO ITEMS ── */
-    .ag-list {
-      padding: 8px 0;
-    }
-
-    .ag-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      transition: background .15s;
-    }
-
-    .ag-item:last-child {
-      border-bottom: none;
-    }
-
-    .ag-item:hover {
-      background: #fafbff;
-    }
-
-    .ag-item-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ag-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--r);
-      background: var(--blue-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .ag-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .ag-servico {
-      font-size: 14.5px;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 3px;
-    }
-
-    .ag-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .ag-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 7px;
-      flex-shrink: 0;
-    }
-
-    .ag-preco {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      font-family: var(--display);
-    }
-
-    @media (max-width: 600px) {
-      .ag-item {
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
-        padding: 14px 16px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        background: var(--bg-card);
+        border-radius: var(--r-lg);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-card);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .stat-val {
+        font-family: var(--display);
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 500;
+        letter-spacing: 0.1px;
+      }
+
+      .stat-val.green {
+        color: #059669;
+      }
+
+      .stat-val.gold {
+        color: #d97706;
+      }
+
+      @media (max-width: 600px) {
+        .stats-row {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-card:last-child {
+          grid-column: span 2;
+        }
+      }
+
+      /* ── CARD CONTAINER ── */
+      .card {
+        background: var(--bg-card);
+        border-radius: var(--r-xl);
+        box-shadow: var(--shadow-card);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+
+      /* ── TABS ── */
+      .tabs {
+        display: flex;
+        gap: 2px;
+        padding: 14px 16px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .tab-btn {
+        padding: 9px 14px 11px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        cursor: pointer;
+        font-family: var(--font);
+        transition: var(--t);
+        border-radius: var(--r-sm) var(--r-sm) 0 0;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-mid);
+      }
+
+      .tab-btn.active {
+        color: var(--blue);
+        border-bottom-color: var(--blue);
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* ── AGENDAMENTO ITEMS ── */
+      .ag-list {
+        padding: 8px 0;
+      }
+
+      .ag-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+
+      .ag-item:last-child {
+        border-bottom: none;
+      }
+
+      .ag-item:hover {
+        background: #fafbff;
+      }
+
+      .ag-item-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .ag-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--r);
+        background: var(--blue-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .ag-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .ag-servico {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 3px;
+      }
+
+      .ag-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.5;
       }
 
       .ag-right {
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 7px;
+        flex-shrink: 0;
       }
-    }
 
-    /* ── STATUS BADGES ── */
-    .status-badge {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: var(--r-full);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      white-space: nowrap;
-    }
+      .ag-preco {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        font-family: var(--display);
+      }
 
-    .status-pendente {
-      background: #fef9c3;
-      color: #854d0e;
-    }
+      @media (max-width: 600px) {
+        .ag-item {
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 14px 16px;
+        }
 
-    .status-confirmado {
-      background: #dcfce7;
-      color: #166534;
-    }
+        .ag-right {
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
 
-    .status-em_andamento {
-      background: #dbeafe;
-      color: #1e40af;
-    }
+      /* ── STATUS BADGES ── */
+      .status-badge {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: var(--r-full);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
 
-    .status-concluido {
-      background: #f0fdf4;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
+      .status-pendente {
+        background: #fef9c3;
+        color: #854d0e;
+      }
 
-    .status-cancelado {
-      background: #fef2f2;
-      color: #991b1b;
-    }
+      .status-confirmado {
+        background: #dcfce7;
+        color: #166534;
+      }
 
-    .status-recusado {
-      background: #f0f9ff;
-      color: #075985;
-    }
+      .status-em_andamento {
+        background: #dbeafe;
+        color: #1e40af;
+      }
 
-    .btn-cancelar {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--red);
-      background: none;
-      border: 1px solid rgba(239, 68, 68, .25);
-      border-radius: var(--r-sm);
-      padding: 5px 11px;
-      cursor: pointer;
-      transition: var(--t);
-    }
+      .status-concluido {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
 
-    .btn-cancelar:hover {
-      background: rgba(239, 68, 68, .06);
-      border-color: rgba(239, 68, 68, .45);
-    }
+      .status-cancelado {
+        background: #fef2f2;
+        color: #991b1b;
+      }
 
-    /* ── DADOS PESSOAIS ── */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 20px;
-    }
+      .status-recusado {
+        background: #f0f9ff;
+        color: #075985;
+      }
 
-    .info-box {
-      background: var(--bg-subtle);
-      border-radius: var(--r);
-      padding: 13px 15px;
-      border: 1px solid var(--border);
-    }
+      .btn-cancelar {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--red);
+        background: none;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: var(--r-sm);
+        padding: 5px 11px;
+        cursor: pointer;
+        transition: var(--t);
+      }
 
-    .info-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--text-faint);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 4px;
-    }
+      .btn-cancelar:hover {
+        background: rgba(239, 68, 68, 0.06);
+        border-color: rgba(239, 68, 68, 0.45);
+      }
 
-    .info-value {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    @media (max-width: 600px) {
+      /* ── DADOS PESSOAIS ── */
       .info-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 20px;
       }
-    }
 
-    /* ── EMPTY STATE ── */
-    .empty {
-      text-align: center;
-      padding: 48px 20px;
-      color: var(--text-muted);
-      font-size: 13px;
-    }
+      .info-box {
+        background: var(--bg-subtle);
+        border-radius: var(--r);
+        padding: 13px 15px;
+        border: 1px solid var(--border);
+      }
 
-    .empty-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--r-lg);
-      background: var(--blue-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      margin: 0 auto 14px;
-    }
+      .info-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--text-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
 
-    .empty p {
-      margin-bottom: 16px;
-      line-height: 1.6;
-    }
+      .info-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
 
-    /* ── BTN PRIMARY ── */
-    .btn-primary {
-      display: inline-block;
-      padding: 10px 20px;
-      background: var(--blue);
-      color: #fff;
-      border: none;
-      border-radius: var(--r);
-      font-family: var(--display);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: var(--t);
-    }
+      @media (max-width: 600px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .btn-primary:hover {
-      background: var(--blue-dark);
-    }
+      /* ── EMPTY STATE ── */
+      .empty {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
 
-    /* ── MODAIS ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 15, 30, .55);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
+      .empty-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--r-lg);
+        background: var(--blue-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin: 0 auto 14px;
+      }
 
-    .modal-overlay.open {
-      display: flex;
-    }
+      .empty p {
+        margin-bottom: 16px;
+        line-height: 1.6;
+      }
 
-    .modal-box {
-      background: #fff;
-      border-radius: var(--r-xl);
-      padding: 28px;
-      width: 100%;
-      max-width: 400px;
-      margin: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
-      animation: modalIn .22s cubic-bezier(.22, 1, .36, 1);
-    }
+      /* ── BTN PRIMARY ── */
+      .btn-primary {
+        display: inline-block;
+        padding: 10px 20px;
+        background: var(--blue);
+        color: #fff;
+        border: none;
+        border-radius: var(--r);
+        font-family: var(--display);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: var(--t);
+      }
 
-    @keyframes modalIn {
-      from {
+      .btn-primary:hover {
+        background: var(--blue-dark);
+      }
+
+      /* ── MODAIS ── */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 15, 30, 0.55);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal-box {
+        background: #fff;
+        border-radius: var(--r-xl);
+        padding: 28px;
+        width: 100%;
+        max-width: 400px;
+        margin: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        animation: modalIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.97);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .modal-box h3 {
+        font-family: var(--display);
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        color: var(--text);
+      }
+
+      .modal-fields {
+        display: grid;
+        gap: 10px;
+      }
+
+      .modal-fields input,
+      .modal-fields select {
+        padding: 10px 12px;
+        border: 1px solid var(--border-mid);
+        border-radius: var(--r);
+        font-size: 14px;
+        font-family: var(--font);
+        color: var(--text);
+        background: #fff;
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+
+      .modal-fields input:focus,
+      .modal-fields select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .modal-actions button {
+        flex: 1;
+        padding: 11px;
+        border: none;
+        border-radius: var(--r);
+        cursor: pointer;
+        font-weight: 600;
+        font-family: var(--font);
+        font-size: 13.5px;
+        transition: var(--t);
+      }
+
+      .modal-actions button:hover {
+        opacity: 0.88;
+      }
+
+      .btn-save {
+        background: var(--blue);
+        color: #fff;
+      }
+
+      .btn-cancel-modal {
+        background: var(--bg-subtle);
+        color: var(--text-mid);
+        border: 1px solid var(--border) !important;
+      }
+
+      .btn-danger {
+        background: var(--red);
+        color: #fff;
+      }
+
+      /* ── ANIMAÇÕES ── */
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.96);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @keyframes drawChk {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes pulseIcon {
+        0%,
+        100% {
+          box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+        }
+
+        50% {
+          box-shadow: 0 8px 32px rgba(245, 158, 11, 0.38);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes starPop {
+        0% {
+          transform: scale(0.7);
+        }
+
+        60% {
+          transform: scale(1.3);
+        }
+
+        100% {
+          transform: scale(1.18);
+        }
+      }
+
+      #checkSvg path {
+        stroke-dasharray: 40;
+        stroke-dashoffset: 40;
+        animation: drawChk 0.4s 0.5s ease forwards;
+      }
+
+      /* ── MODAL AVALIAÇÃO ── */
+      #overlayAvaliacao {
+        position: fixed;
+        inset: 0;
+        z-index: 9990;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(4, 7, 18, 0.72);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
         opacity: 0;
-        transform: translateY(12px) scale(.97);
+        pointer-events: none;
+        transition: opacity 0.3s ease;
       }
 
-      to {
+      #overlayAvaliacao.aberto {
         opacity: 1;
-        transform: none;
-      }
-    }
-
-    .modal-box h3 {
-      font-family: var(--display);
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: var(--text);
-    }
-
-    .modal-fields {
-      display: grid;
-      gap: 10px;
-    }
-
-    .modal-fields input,
-    .modal-fields select {
-      padding: 10px 12px;
-      border: 1px solid var(--border-mid);
-      border-radius: var(--r);
-      font-size: 14px;
-      font-family: var(--font);
-      color: var(--text);
-      background: #fff;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-
-    .modal-fields input:focus,
-    .modal-fields select:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 11px;
-      border: none;
-      border-radius: var(--r);
-      cursor: pointer;
-      font-weight: 600;
-      font-family: var(--font);
-      font-size: 13.5px;
-      transition: var(--t);
-    }
-
-    .modal-actions button:hover {
-      opacity: .88;
-    }
-
-    .btn-save {
-      background: var(--blue);
-      color: #fff;
-    }
-
-    .btn-cancel-modal {
-      background: var(--bg-subtle);
-      color: var(--text-mid);
-      border: 1px solid var(--border) !important;
-    }
-
-    .btn-danger {
-      background: var(--red);
-      color: #fff;
-    }
-
-    /* ── ANIMAÇÕES ── */
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(.96);
+        pointer-events: all;
       }
 
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes popIn {
-      from {
-        transform: scale(0);
-        opacity: 0;
-      }
-
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+      .av-box {
+        width: 100%;
+        max-width: 420px;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 20px;
+        padding: 32px 26px 26px;
+        box-shadow:
+          0 32px 72px rgba(0, 0, 0, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        transform: translateY(20px) scale(0.96);
+        transition: var(--t-smooth);
+        position: relative;
       }
 
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes drawChk {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-
-    @keyframes pulseIcon {
-
-      0%,
-      100% {
-        box-shadow: 0 8px 24px rgba(245, 158, 11, .2);
+      #overlayAvaliacao.aberto .av-box {
+        transform: translateY(0) scale(1);
       }
 
-      50% {
-        box-shadow: 0 8px 32px rgba(245, 158, 11, .38);
-      }
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes starPop {
-      0% {
-        transform: scale(.7);
-      }
-
-      60% {
-        transform: scale(1.3);
+      .av-icon-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border: 1.5px solid rgba(245, 158, 11, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        font-size: 26px;
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+        animation: pulseIcon 2.5s ease-in-out infinite;
       }
 
-      100% {
+      .av-title {
+        font-family: var(--display);
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: center;
+        margin-bottom: 5px;
+        letter-spacing: -0.2px;
+      }
+
+      .av-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.65;
+        margin-bottom: 18px;
+      }
+
+      .av-service-card {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 1px solid #bae6fd;
+        border-radius: var(--r-lg);
+        padding: 12px 14px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .av-service-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--r);
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .av-service-name {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #0c4a6e;
+        margin-bottom: 2px;
+      }
+
+      .av-service-meta {
+        font-size: 11.5px;
+        color: #0369a1;
+      }
+
+      .av-stars-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 10px;
+      }
+
+      .av-stars-row {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .av-star {
+        font-size: 34px;
+        cursor: pointer;
+        color: #d1d5db;
+        transition:
+          color 0.12s,
+          transform 0.12s,
+          filter 0.12s;
+        user-select: none;
+        line-height: 1;
+      }
+
+      .av-star:hover,
+      .av-star.ativo {
+        color: var(--gold);
         transform: scale(1.18);
+        filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.45));
       }
-    }
 
-    #checkSvg path {
-      stroke-dasharray: 40;
-      stroke-dashoffset: 40;
-      animation: drawChk .4s .5s ease forwards;
-    }
+      .av-star.selecionado {
+        color: var(--gold);
+        animation: starPop 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
 
-    /* ── MODAL AVALIAÇÃO ── */
-    #overlayAvaliacao {
-      position: fixed;
-      inset: 0;
-      z-index: 9990;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(4, 7, 18, .72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s ease;
-    }
+      .av-nota-texto {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gold-dark);
+        min-height: 20px;
+        margin-bottom: 14px;
+      }
 
-    #overlayAvaliacao.aberto {
-      opacity: 1;
-      pointer-events: all;
-    }
+      .av-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+        display: block;
+      }
 
-    .av-box {
-      width: 100%;
-      max-width: 420px;
-      background: rgba(255, 255, 255, .94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, .6);
-      border-radius: 20px;
-      padding: 32px 26px 26px;
-      box-shadow: 0 32px 72px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .8);
-      transform: translateY(20px) scale(.96);
-      transition: var(--t-smooth);
-      position: relative;
-    }
+      .av-textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        font-family: var(--font);
+        font-size: 13px;
+        color: var(--text-mid);
+        background: var(--bg-subtle);
+        resize: none;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        margin-bottom: 18px;
+      }
 
-    #overlayAvaliacao.aberto .av-box {
-      transform: translateY(0) scale(1);
-    }
+      .av-textarea:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        background: #fff;
+      }
 
-    .av-icon-wrap {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      border: 1.5px solid rgba(245, 158, 11, .3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-      font-size: 26px;
-      box-shadow: 0 8px 24px rgba(245, 158, 11, .2);
-      animation: pulseIcon 2.5s ease-in-out infinite;
-    }
+      .av-textarea::placeholder {
+        color: var(--text-faint);
+      }
 
-    .av-title {
-      font-family: var(--display);
-      font-size: 19px;
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-      margin-bottom: 5px;
-      letter-spacing: -.2px;
-    }
+      .av-btn-enviar {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: var(--r-lg);
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        font-family: var(--display);
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+        transition:
+          opacity 0.2s,
+          transform 0.15s,
+          box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 9px;
+      }
 
-    .av-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.65;
-      margin-bottom: 18px;
-    }
+      .av-btn-enviar:hover:not(:disabled) {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 22px rgba(245, 158, 11, 0.4);
+      }
 
-    .av-service-card {
-      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-      border: 1px solid #bae6fd;
-      border-radius: var(--r-lg);
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+      .av-btn-enviar:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .av-service-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--r);
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
-    }
+      .av-btn-pular {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        background: transparent;
+        color: var(--text-faint);
+        font-family: var(--font);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
 
-    .av-service-name {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #0c4a6e;
-      margin-bottom: 2px;
-    }
+      .av-btn-pular:hover {
+        background: var(--bg-subtle);
+        color: var(--text-muted);
+      }
 
-    .av-service-meta {
-      font-size: 11.5px;
-      color: #0369a1;
-    }
+      .av-spinner {
+        width: 17px;
+        height: 17px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: none;
+      }
 
-    .av-stars-label {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-mid);
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      margin-bottom: 10px;
-    }
+      .av-btn-enviar.loading .av-spinner {
+        display: block;
+      }
 
-    .av-stars-row {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
+      .av-btn-enviar.loading .av-btn-label {
+        display: none;
+      }
 
-    .av-star {
-      font-size: 34px;
-      cursor: pointer;
-      color: #d1d5db;
-      transition: color .12s, transform .12s, filter .12s;
-      user-select: none;
-      line-height: 1;
-    }
+      .av-sucesso {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        padding: 6px 0;
+        animation: fadeUp 0.4s ease both;
+      }
 
-    .av-star:hover,
-    .av-star.ativo {
-      color: var(--gold);
-      transform: scale(1.18);
-      filter: drop-shadow(0 2px 8px rgba(245, 158, 11, .45));
-    }
+      .av-sucesso-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981, #059669);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 0 0 12px rgba(16, 185, 129, 0.1),
+          0 12px 28px rgba(16, 185, 129, 0.28);
+        font-size: 30px;
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      }
 
-    .av-star.selecionado {
-      color: var(--gold);
-      animation: starPop .25s cubic-bezier(.22, 1, .36, 1) both;
-    }
+      .av-sucesso-title {
+        font-family: var(--display);
+        font-size: 19px;
+        font-weight: 700;
+        color: #064e3b;
+      }
 
-    .av-nota-texto {
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--gold-dark);
-      min-height: 20px;
-      margin-bottom: 14px;
-    }
+      .av-sucesso-sub {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
 
-    .av-label {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-mid);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 5px;
-      display: block;
-    }
+      .av-close-btn {
+        position: absolute;
+        top: 13px;
+        right: 14px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--bg-subtle);
+        color: var(--text-faint);
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
 
-    .av-textarea {
-      width: 100%;
-      padding: 11px 13px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      font-family: var(--font);
-      font-size: 13px;
-      color: var(--text-mid);
-      background: var(--bg-subtle);
-      resize: none;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-      margin-bottom: 18px;
-    }
+      .av-close-btn:hover {
+        background: var(--border);
+        color: var(--text-mid);
+      }
 
-    .av-textarea:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, .1);
-      background: #fff;
-    }
+      /* ── TOAST SUCESSO ── */
+      #overlaySuccesso {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.52);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(6px);
+      }
 
-    .av-textarea::placeholder {
-      color: var(--text-faint);
-    }
+      #toastSuccesso {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        padding: 48px 40px 40px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        color: #fff;
+        animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
 
-    .av-btn-enviar {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: var(--r-lg);
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #fff;
-      font-family: var(--display);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(245, 158, 11, .3);
-      transition: opacity .2s, transform .15s, box-shadow .2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 9px;
-    }
+      /* ── FOOTER ── */
+      .footer {
+        background: var(--navy);
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        padding: 32px 20px 24px;
+        font-size: 13px;
+        width: 100%;
+        margin-top: auto;
+      }
 
-    .av-btn-enviar:hover:not(:disabled) {
-      opacity: .92;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(245, 158, 11, .4);
-    }
+      .footer__inner {
+        max-width: 900px;
+        margin: 0 auto;
+      }
 
-    .av-btn-enviar:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
+      .footer__brand {
+        color: #fff;
+        font-size: 15px;
+        font-family: var(--display);
+        font-weight: 600;
+      }
 
-    .av-btn-pular {
-      width: 100%;
-      padding: 11px;
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      background: transparent;
-      color: var(--text-faint);
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .2s, color .2s;
-    }
+      .footer__tagline {
+        margin: 5px 0 14px;
+      }
 
-    .av-btn-pular:hover {
-      background: var(--bg-subtle);
-      color: var(--text-muted);
-    }
+      .footer__links {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
 
-    .av-spinner {
-      width: 17px;
-      height: 17px;
-      border: 2px solid rgba(255, 255, 255, .3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none;
-    }
+      .footer__links a {
+        color: rgba(255, 255, 255, 0.65);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
 
-    .av-btn-enviar.loading .av-spinner {
-      display: block;
-    }
+      .footer__links a:hover {
+        color: #fff;
+      }
 
-    .av-btn-enviar.loading .av-btn-label {
-      display: none;
-    }
+      .footer__copy {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 14px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.28);
+      }
 
-    .av-sucesso {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 12px;
-      padding: 6px 0;
-      animation: fadeUp .4s ease both;
-    }
+      /* ── ORÇAMENTOS ── */
+      .orc-filters {
+        display: flex;
+        gap: 6px;
+        padding: 14px 20px 0;
+        flex-wrap: wrap;
+      }
+      .orc-filter-btn {
+        padding: 5px 13px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: var(--r-full);
+        border: 1px solid var(--border-mid);
+        background: var(--bg-subtle);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--t);
+        font-family: var(--font);
+      }
+      .orc-filter-btn:hover {
+        background: var(--border);
+        color: var(--text-mid);
+      }
+      .orc-filter-btn.active {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: #fff;
+      }
+      .orc-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+      .orc-item:last-child {
+        border-bottom: none;
+      }
+      .orc-item:hover {
+        background: #fafbff;
+      }
+      .orc-item-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+      }
+      .orc-num {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+      }
+      .orc-servico {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 3px;
+      }
+      .orc-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+      .orc-desc {
+        font-size: 12px;
+        color: var(--text-muted);
+        background: var(--bg-subtle);
+        border: 1px solid var(--border);
+        border-radius: var(--r-sm);
+        padding: 6px 10px;
+        margin-top: 7px;
+        line-height: 1.5;
+        font-style: italic;
+        max-width: 340px;
+      }
+      .orc-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 7px;
+        flex-shrink: 0;
+      }
+      .status-badge.status-enviado {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .status-badge.status-erro {
+        background: #fef2f2;
+        color: #991b1b;
+      }
+      .status-badge.status-pendente-orc {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+      @media (max-width: 600px) {
+        .orc-item {
+          flex-wrap: wrap;
+          gap: 10px;
+          padding: 14px 16px;
+        }
+        .orc-right {
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
+          width: 100%;
+        }
+        .orc-desc {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
 
-    .av-sucesso-icon {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #10b981, #059669);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 0 12px rgba(16, 185, 129, .1), 0 12px 28px rgba(16, 185, 129, .28);
-      font-size: 30px;
-      animation: popIn .5s cubic-bezier(.175, .885, .32, 1.275) both;
-    }
+  <body>
+    {# ── Header ── #} {% include 'partials/header.html' %} {# ── Input oculto
+    para upload de foto ── #}
+    <input
+      type="file"
+      id="fotoInput"
+      accept="image/*"
+      style="display: none"
+      onchange="uploadFoto(this)"
+    />
 
-    .av-sucesso-title {
-      font-family: var(--display);
-      font-size: 19px;
-      font-weight: 700;
-      color: #064e3b;
-    }
-
-    .av-sucesso-sub {
-      font-size: 13.5px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-
-    .av-close-btn {
-      position: absolute;
-      top: 13px;
-      right: 14px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg-subtle);
-      color: var(--text-faint);
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background .15s, color .15s;
-    }
-
-    .av-close-btn:hover {
-      background: var(--border);
-      color: var(--text-mid);
-    }
-
-    /* ── TOAST SUCESSO ── */
-    #overlaySuccesso {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .52);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(6px);
-    }
-
-    #toastSuccesso {
-      background: rgba(255, 255, 255, .1);
-      border: 1px solid rgba(255, 255, 255, .18);
-      border-radius: 24px;
-      padding: 48px 40px 40px;
-      max-width: 380px;
-      width: 90%;
-      text-align: center;
-      color: #fff;
-      animation: cardIn .55s cubic-bezier(.22, 1, .36, 1) both;
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      background: var(--navy);
-      color: rgba(255, 255, 255, .5);
-      text-align: center;
-      padding: 32px 20px 24px;
-      font-size: 13px;
-      width: 100%;
-      margin-top: auto;
-    }
-
-    .footer__inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .footer__brand {
-      color: #fff;
-      font-size: 15px;
-      font-family: var(--display);
-      font-weight: 600;
-    }
-
-    .footer__tagline {
-      margin: 5px 0 14px;
-    }
-
-    .footer__links {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .footer__links a {
-      color: rgba(255, 255, 255, .65);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color .2s;
-    }
-
-    .footer__links a:hover {
-      color: #fff;
-    }
-
-    .footer__copy {
-      border-top: 1px solid rgba(255, 255, 255, .08);
-      padding-top: 14px;
-      font-size: 11px;
-      color: rgba(255, 255, 255, .28);
-    }
-  </style>
-</head>
-
-<body>
-
-  {# ── Header ── #}
-  {% include 'partials/header.html' %}
-
-  {# ── Input oculto para upload de foto ── #}
-  <input type="file" id="fotoInput" accept="image/*" style="display:none" onchange="uploadFoto(this)">
-
-  {# ── Hero ── #}
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-avatar" id="fotoPreview" onclick="abrirModalEditar()" title="Clique para editar perfil">
-        {% if cliente.foto %}
-        <img src="{{ cliente.foto }}" alt="Foto de perfil">
-        {% else %}
-        {{ (cliente.nome[0] | upper) if cliente.nome else '?' }}
-        {% endif %}
-      </div>
-      <div class="hero-info">
-        <div class="hero-name" id="heroNome">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
-        <div class="hero-email">{{ cliente.email }}</div>
-        <span class="hero-badge">⭐ Cliente</span>
-      </div>
-      <button class="btn-edit-hero" onclick="abrirModalEditar()">✏️ Editar perfil</button>
-    </div>
-  </section>
-
-  {# ── Modal editar perfil ── #}
-  <div id="modalEditar" class="modal-overlay">
-    <div class="modal-box">
-      <h3>Editar Perfil</h3>
-      <div class="modal-fields">
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 0 4px;">
-          <div id="modalFotoPreview" onclick="document.getElementById('fotoInput').click()"
-            style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;flex-shrink:0;border:2px solid var(--border);">
-            {% if cliente.foto %}<img src="{{ cliente.foto }}" style="width:100%;height:100%;object-fit:cover;">{% else
-            %}{{ (cliente.nome[0]|upper) if cliente.nome else '?' }}{% endif %}
-          </div>
-          <button type="button" onclick="document.getElementById('fotoInput').click()"
-            style="font-size:12.5px;font-weight:600;color:var(--blue);background:var(--blue-muted);border:1px solid #bfdbfe;border-radius:var(--r);padding:7px 13px;cursor:pointer;">📷
-            Trocar foto</button>
+    {# ── Hero ── #}
+    <section class="hero">
+      <div class="hero-inner">
+        <div
+          class="hero-avatar"
+          id="fotoPreview"
+          onclick="abrirModalEditar()"
+          title="Clique para editar perfil"
+        >
+          {% if cliente.foto %}
+          <img src="{{ cliente.foto }}" alt="Foto de perfil" />
+          {% else %} {{ (cliente.nome[0] | upper) if cliente.nome else '?' }} {%
+          endif %}
         </div>
-        <input id="editNome" placeholder="Primeiro nome">
-        <input id="editSobrenome" placeholder="Último nome">
-        <input id="editTelefone" placeholder="Telefone">
-        <input id="editCidade" placeholder="Cidade, Estado">
-        <select id="editSexo">
-          <option value="">Gênero</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Outro">Outro</option>
-        </select>
+        <div class="hero-info">
+          <div class="hero-name" id="heroNome">
+            {{ cliente.nome }} {{ cliente.sobrenome }}
+          </div>
+          <div class="hero-email">{{ cliente.email }}</div>
+          <span class="hero-badge">⭐ Cliente</span>
+        </div>
+        <button class="btn-edit-hero" onclick="abrirModalEditar()">
+          ✏️ Editar perfil
+        </button>
       </div>
-      <div class="modal-actions">
-        <button class="btn-save" onclick="salvarPerfil()">Salvar</button>
-        <button class="btn-cancel-modal" onclick="fecharModal()">Cancelar</button>
+    </section>
+
+    {# ── Modal editar perfil ── #}
+    <div id="modalEditar" class="modal-overlay">
+      <div class="modal-box">
+        <h3>Editar Perfil</h3>
+        <div class="modal-fields">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              padding: 10px 0 4px;
+            "
+          >
+            <div
+              id="modalFotoPreview"
+              onclick="document.getElementById('fotoInput').click()"
+              style="
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: 700;
+                color: #fff;
+                cursor: pointer;
+                overflow: hidden;
+                flex-shrink: 0;
+                border: 2px solid var(--border);
+              "
+            >
+              {% if cliente.foto %}<img
+                src="{{ cliente.foto }}"
+                style="width: 100%; height: 100%; object-fit: cover"
+              />{% else %}{{ (cliente.nome[0]|upper) if cliente.nome else '?'
+              }}{% endif %}
+            </div>
+            <button
+              type="button"
+              onclick="document.getElementById('fotoInput').click()"
+              style="
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--blue);
+                background: var(--blue-muted);
+                border: 1px solid #bfdbfe;
+                border-radius: var(--r);
+                padding: 7px 13px;
+                cursor: pointer;
+              "
+            >
+              📷 Trocar foto
+            </button>
+          </div>
+          <input id="editNome" placeholder="Primeiro nome" />
+          <input id="editSobrenome" placeholder="Último nome" />
+          <input id="editTelefone" placeholder="Telefone" />
+          <input id="editCidade" placeholder="Cidade, Estado" />
+          <select id="editSexo">
+            <option value="">Gênero</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-save" onclick="salvarPerfil()">Salvar</button>
+          <button class="btn-cancel-modal" onclick="fecharModal()">
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  {# ── Modal Confirmar Cancelamento ── #}
-  <div id="modalCancelar" class="modal-overlay">
-    <div class="modal-box" style="text-align:center;max-width:340px;">
-      <div style="font-size:40px;margin-bottom:10px;line-height:1;">⚠️</div>
-      <h3 style="margin-bottom:8px;">Cancelar Agendamento?</h3>
-      <p style="color:var(--text-muted);font-size:13.5px;margin-bottom:22px;line-height:1.55;">
-        Tem certeza? Esta ação não poderá ser desfeita.
-      </p>
-      <div class="modal-actions" style="margin-top:0;">
-        <button class="btn-cancel-modal" onclick="fecharModalCancelar()">Não, voltar</button>
-        <button id="btnConfirmarCancelamento" class="btn-danger">Sim, cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  {# ── Conteúdo principal ── #}
-  <div class="page">
-
-    {% set total = agendamentos|length %}
-    {% set concluidos = agendamentos|selectattr('status','equalto','concluido')|list|length %}
-    {% set pendentes = agendamentos|selectattr('status','in',['pendente','confirmado'])|list|length %}
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val">{{ total }}</div>
-        <div class="stat-label">Total de agendamentos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val green">{{ concluidos }}</div>
-        <div class="stat-label">Concluídos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val gold">{{ pendentes }}</div>
-        <div class="stat-label">Pendentes</div>
+    {# ── Modal Confirmar Cancelamento ── #}
+    <div id="modalCancelar" class="modal-overlay">
+      <div class="modal-box" style="text-align: center; max-width: 340px">
+        <div style="font-size: 40px; margin-bottom: 10px; line-height: 1">
+          ⚠️
+        </div>
+        <h3 style="margin-bottom: 8px">Cancelar Agendamento?</h3>
+        <p
+          style="
+            color: var(--text-muted);
+            font-size: 13.5px;
+            margin-bottom: 22px;
+            line-height: 1.55;
+          "
+        >
+          Tem certeza? Esta ação não poderá ser desfeita.
+        </p>
+        <div class="modal-actions" style="margin-top: 0">
+          <button class="btn-cancel-modal" onclick="fecharModalCancelar()">
+            Não, voltar
+          </button>
+          <button id="btnConfirmarCancelamento" class="btn-danger">
+            Sim, cancelar
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('agendamentos',this)">Meus Agendamentos</button>
-        <button class="tab-btn" onclick="switchTab('dados',this)">Meus Dados</button>
+    {# ── Conteúdo principal ── #}
+    <div class="page">
+      {% set total = agendamentos|length %} {% set concluidos =
+      agendamentos|selectattr('status','equalto','concluido')|list|length %} {%
+      set pendentes =
+      agendamentos|selectattr('status','in',['pendente','confirmado'])|list|length
+      %}
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val">{{ total }}</div>
+          <div class="stat-label">Total de agendamentos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val green">{{ concluidos }}</div>
+          <div class="stat-label">Concluídos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val gold">{{ pendentes }}</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
       </div>
 
-      {# ── Aba agendamentos ── #}
-      <div class="tab-panel active" id="tab-agendamentos">
-        {% if agendamentos %}
-        <div class="ag-list">
-          {% for a in agendamentos %}
-          <div class="ag-item" id="ag-{{ a.id }}">
-            <div class="ag-item-left">
-              <div class="ag-icon">
-                {% set s = a.servico|lower %}
-                {% if 'eletr' in s %}💡
-                {% elif 'hidra' in s %}🔧
-                {% elif 'mec' in s %}🔩
-                {% elif 'reform' in s %}🏗️
-                {% elif 'limpez' in s %}🧹
-                {% elif 'ti' in s or 'tecnol' in s %}💻
-                {% else %}⚙️{% endif %}
-              </div>
-              <div class="ag-info">
-                <div class="ag-servico">{{ a.servico }}</div>
-                <div class="ag-sub">
-                  📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico else '—' }}
-                  · 🕐 {{ a.horario }}<br>
-                  {% if a.prestador_nome %}👷 {{ a.prestador_nome }} {{ a.prestador_sobrenome }}{% endif %}
+      <div class="card">
+        <div class="tabs">
+          <button
+            class="tab-btn active"
+            onclick="switchTab('agendamentos', this)"
+          >
+            Meus Agendamentos
+          </button>
+          <button class="tab-btn" onclick="switchTab('orcamentos', this)">
+            Meus Orçamentos
+            {% if orcamentos %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 17px;
+                height: 17px;
+                border-radius: 50%;
+                background: var(--blue);
+                color: #fff;
+                font-size: 9px;
+                font-weight: 700;
+                margin-left: 6px;
+              "
+              >{{ orcamentos|length }}</span
+            >
+            {% endif %}
+          </button>
+
+          <button class="tab-btn" onclick="switchTab('dados', this)">
+            Meus Dados
+          </button>
+
+        </div>
+
+
+        {# ── Aba agendamentos ── #}
+        <div class="tab-panel active" id="tab-agendamentos">
+          {% if agendamentos %}
+          <div class="ag-list">
+            {% for a in agendamentos %}
+            <div class="ag-item" id="ag-{{ a.id }}">
+              <div class="ag-item-left">
+                <div class="ag-icon">
+                  {% set s = a.servico|lower %} {% if 'eletr' in s %}💡 {% elif
+                  'hidra' in s %}🔧 {% elif 'mec' in s %}🔩 {% elif 'reform' in
+                  s %}🏗️ {% elif 'limpez' in s %}🧹 {% elif 'ti' in s or
+                  'tecnol' in s %}💻 {% else %}⚙️{% endif %}
+                </div>
+                <div class="ag-info">
+                  <div class="ag-servico">{{ a.servico }}</div>
+                  <div class="ag-sub">
+                    📅 {{ a.data_servico.strftime('%d/%m/%Y') if a.data_servico
+                    else '—' }} · 🕐 {{ a.horario }}<br />
+                    {% if a.prestador_nome %}👷 {{ a.prestador_nome }} {{
+                    a.prestador_sobrenome }}{% endif %}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="ag-right">
-              <div class="ag-preco">R$ {{ "%.2f"|format(a.preco) if a.preco else '—' }}</div>
-              <span class="status-badge status-{{ a.status }}">{{ a.status.replace('_',' ') }}</span>
-              {% if a.status in ['pendente', 'confirmado'] %}
-              <button class="btn-cancelar" onclick="abrirModalCancelar({{ a.id }})">Cancelar</button>
-              {% endif %}
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty">
-          <div class="empty-icon">📅</div>
-          <p>Você ainda não tem agendamentos.</p>
-          <a href="/servicos" class="btn-primary">Ver Serviços</a>
-        </div>
-        {% endif %}
-      </div>
 
-      {# ── Aba dados pessoais ── #}
-      <div class="tab-panel" id="tab-dados">
-        <div class="info-grid">
-          <div class="info-box">
-            <div class="info-label">Nome completo</div>
-            <div class="info-value">{{ cliente.nome }} {{ cliente.sobrenome }}</div>
+              <div class="ag-right">
+                <div class="ag-preco">
+                  R$ {{ "%.2f"|format(a.preco) if a.preco else '—' }}
+                </div>
+                <span class="status-badge status-{{ a.status }}"
+                  >{{ a.status.replace('_',' ') }}</span
+                >
+                {% if a.status in ['pendente', 'confirmado'] %}
+                <button
+                  class="btn-cancelar"
+                  onclick="abrirModalCancelar({{ a.id }})"
+                >
+                  Cancelar
+                </button>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
           </div>
-          <div class="info-box">
-            <div class="info-label">E-mail</div>
-            <div class="info-value">{{ cliente.email }}</div>
-          </div>
-          <div class="info-box">
-            <div class="info-label">Data de nascimento</div>
-            <div class="info-value">{{ cliente.data_nascimento.strftime('%d/%m/%Y') if cliente.data_nascimento else '—'
-              }}</div>
-          </div>
-          <div class="info-box">
-            <div class="info-label">Gênero</div>
-            <div class="info-value">{{ cliente.sexo or '—' }}</div>
-          </div>
-          {% if cliente.telefone %}
-          <div class="info-box">
-            <div class="info-label">Telefone</div>
-            <div class="info-value">{{ cliente.telefone }}</div>
+          {% else %}
+          <div class="empty">
+            <div class="empty-icon">📅</div>
+            <p>Você ainda não tem agendamentos.</p>
+            <a href="/servicos" class="btn-primary">Ver Serviços</a>
           </div>
           {% endif %}
-          {% if cliente.cidade %}
-          <div class="info-box">
-            <div class="info-label">Cidade</div>
-            <div class="info-value">{{ cliente.cidade }}</div>
+        </div>
+
+        {# ── Aba dados pessoais ── #}
+        <div class="tab-panel" id="tab-dados">
+          <div class="info-grid">
+            <div class="info-box">
+              <div class="info-label">Nome completo</div>
+              <div class="info-value">
+                {{ cliente.nome }} {{ cliente.sobrenome }}
+              </div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">E-mail</div>
+              <div class="info-value">{{ cliente.email }}</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Data de nascimento</div>
+              <div class="info-value">
+                {{ cliente.data_nascimento.strftime('%d/%m/%Y') if
+                cliente.data_nascimento else '—' }}
+              </div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Gênero</div>
+              <div class="info-value">{{ cliente.sexo or '—' }}</div>
+            </div>
+            {% if cliente.telefone %}
+            <div class="info-box">
+              <div class="info-label">Telefone</div>
+              <div class="info-value">{{ cliente.telefone }}</div>
+            </div>
+            {% endif %} {% if cliente.cidade %}
+            <div class="info-box">
+              <div class="info-label">Cidade</div>
+              <div class="info-value">{{ cliente.cidade }}</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {# ── Aba orçamentos ── #}
+        <div class="tab-panel" id="tab-orcamentos">
+          {% if orcamentos %}
+          <div class="orc-filters">
+            <button
+              class="orc-filter-btn active"
+              onclick="filtrarOrcamentos('todos', this)"
+            >
+              Todos ({{ orcamentos|length }})
+            </button>
+            <button
+              class="orc-filter-btn"
+              onclick="filtrarOrcamentos('pendente', this)"
+            >
+              Aguardando
+            </button>
+            <button
+              class="orc-filter-btn"
+              onclick="filtrarOrcamentos('enviado', this)"
+            >
+              Contatados
+            </button>
+            <button
+              class="orc-filter-btn"
+              onclick="filtrarOrcamentos('erro', this)"
+            >
+              Não atendidos
+            </button>
+          </div>
+          <div style="padding: 4px 0">
+            {% for o in orcamentos %}
+            <div
+              class="orc-item"
+              data-orc-status="{{ o.status }}"
+              id="orc-{{ o.id }}"
+            >
+              <div class="orc-item-left">
+                <div class="ag-icon">
+                  {% set cat = (o.categoria or '')|lower %} {% if 'eletr' in cat
+                  %}💡 {% elif 'hidra' in cat %}🔧 {% elif 'mec' in cat %}🔩 {%
+                  elif 'reform' in cat or 'constru' in cat %}🏗️ {% elif 'limpez'
+                  in cat %}🧹 {% elif 'ti' in cat or 'tecnol' in cat %}💻 {%
+                  elif 'jardim' in cat %}🌿 {% elif 'pintur' in cat %}🎨 {% else
+                  %}📋{% endif %}
+                </div>
+                <div style="flex: 1; min-width: 0">
+                  <div class="orc-num">Orçamento #{{ o.id }}</div>
+                  <div class="orc-servico">{{ o.categoria or 'Serviço' }}</div>
+                  <div class="orc-sub">
+                    📅 {{ o.criado_em.strftime('%d/%m/%Y') if o.criado_em else
+                    '—' }}
+                  </div>
+                  {% if o.descricao %}
+                  <div class="orc-desc">
+                    {{ o.descricao[:120] }}{% if o.descricao|length > 120 %}…{%
+                    endif %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="orc-right">
+                {% if o.status == 'enviado' %}
+                <span class="status-badge status-enviado">Contatado ✓</span>
+                {% elif o.status == 'erro' %}
+                <span class="status-badge status-erro">Não atendido</span>
+                {% else %}
+                <span class="status-badge status-pendente-orc">Aguardando</span>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty">
+            <div class="empty-icon">📋</div>
+            <p>Você ainda não solicitou nenhum orçamento.</p>
+            <a href="/orcamentos" class="btn-primary">Solicitar Orçamento</a>
           </div>
           {% endif %}
         </div>
       </div>
     </div>
-  </div>
 
-  {# ── Toast de sucesso (editar perfil) ── #}
-  <div id="overlaySuccesso">
-    <div id="toastSuccesso">
-      <div
-        style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 0 14px rgba(16,185,129,.15),0 12px 28px rgba(16,185,129,.35);animation:popIn .5s .1s cubic-bezier(.175,.885,.32,1.275) both;">
-        <svg id="checkSvg" width="32" height="32" viewBox="0 0 36 36" fill="none" stroke="#fff" stroke-width="3"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 18l7 7 13-13" />
-        </svg>
-      </div>
-      <div
-        style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;animation:fadeUp .4s .25s ease both;">
-        Perfil atualizado!</div>
-      <p
-        style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:24px;animation:fadeUp .4s .35s ease both;">
-        Suas informações foram salvas com sucesso.</p>
-      <div
-        style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:999px;background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.3);color:rgba(255,255,255,.8);font-size:12.5px;animation:fadeUp .4s .45s ease both;">
-        ✅ Registro atualizado com sucesso
+    {# ── Toast de sucesso (editar perfil) ── #}
+    <div id="overlaySuccesso">
+      <div id="toastSuccesso">
+        <div
+          style="
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow:
+              0 0 0 14px rgba(16, 185, 129, 0.15),
+              0 12px 28px rgba(16, 185, 129, 0.35);
+            animation: popIn 0.5s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+              both;
+          "
+        >
+          <svg
+            id="checkSvg"
+            width="32"
+            height="32"
+            viewBox="0 0 36 36"
+            fill="none"
+            stroke="#fff"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 18l7 7 13-13" />
+          </svg>
+        </div>
+        <div
+          style="
+            font-family: &quot;Sora&quot;, sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            animation: fadeUp 0.4s 0.25s ease both;
+          "
+        >
+          Perfil atualizado!
+        </div>
+        <p
+          style="
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            animation: fadeUp 0.4s 0.35s ease both;
+          "
+        >
+          Suas informações foram salvas com sucesso.
+        </p>
+        <div
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.18);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12.5px;
+            animation: fadeUp 0.4s 0.45s ease both;
+          "
+        >
+          ✅ Registro atualizado com sucesso
+        </div>
       </div>
     </div>
-  </div>
 
-  {# ── Modal de avaliação ── #}
-  <div id="overlayAvaliacao">
-    <div class="av-box">
-      <button class="av-close-btn" id="avBtnPular2" aria-label="Fechar">✕</button>
-
-      <div id="avFormulario">
-        <div class="av-icon-wrap">⭐</div>
-        <div class="av-title">Como foi o serviço?</div>
-        <div class="av-subtitle">Sua avaliação ajuda outros clientes e melhora a qualidade dos profissionais.</div>
-
-        <div class="av-service-card">
-          <div class="av-service-icon">⚙️</div>
-          <div>
-            <div class="av-service-name" id="avNomeServico">Serviço</div>
-            <div class="av-service-meta" id="avMetaServico"></div>
-          </div>
-        </div>
-
-        <div class="av-stars-label">Sua nota</div>
-        <div class="av-stars-row">
-          <span class="av-star" data-v="1" role="button" tabindex="0" aria-label="1 estrela">★</span>
-          <span class="av-star" data-v="2" role="button" tabindex="0" aria-label="2 estrelas">★</span>
-          <span class="av-star" data-v="3" role="button" tabindex="0" aria-label="3 estrelas">★</span>
-          <span class="av-star" data-v="4" role="button" tabindex="0" aria-label="4 estrelas">★</span>
-          <span class="av-star" data-v="5" role="button" tabindex="0" aria-label="5 estrelas">★</span>
-        </div>
-        <div class="av-nota-texto" id="avNotaTexto"></div>
-
-        <label class="av-label" for="avComentario">Comentário (opcional)</label>
-        <textarea id="avComentario" class="av-textarea" rows="3"
-          placeholder="Conte como foi a experiência..."></textarea>
-
-        <button id="avBtnEnviar" class="av-btn-enviar" disabled>
-          <span class="av-btn-label">Enviar avaliação</span>
-          <div class="av-spinner"></div>
+    {# ── Modal de avaliação ── #}
+    <div id="overlayAvaliacao">
+      <div class="av-box">
+        <button class="av-close-btn" id="avBtnPular2" aria-label="Fechar">
+          ✕
         </button>
-        <button id="avBtnPular" class="av-btn-pular">Pular por agora</button>
-      </div>
 
-      <div class="av-sucesso" id="avSucesso">
-        <div class="av-sucesso-icon">✓</div>
-        <div class="av-sucesso-title">Obrigado pelo feedback!</div>
-        <p class="av-sucesso-sub">Sua avaliação foi enviada com sucesso e já está visível no perfil do profissional.</p>
+        <div id="avFormulario">
+          <div class="av-icon-wrap">⭐</div>
+          <div class="av-title">Como foi o serviço?</div>
+          <div class="av-subtitle">
+            Sua avaliação ajuda outros clientes e melhora a qualidade dos
+            profissionais.
+          </div>
+
+          <div class="av-service-card">
+            <div class="av-service-icon">⚙️</div>
+            <div>
+              <div class="av-service-name" id="avNomeServico">Serviço</div>
+              <div class="av-service-meta" id="avMetaServico"></div>
+            </div>
+          </div>
+
+          <div class="av-stars-label">Sua nota</div>
+          <div class="av-stars-row">
+            <span
+              class="av-star"
+              data-v="1"
+              role="button"
+              tabindex="0"
+              aria-label="1 estrela"
+              >★</span
+            >
+            <span
+              class="av-star"
+              data-v="2"
+              role="button"
+              tabindex="0"
+              aria-label="2 estrelas"
+              >★</span
+            >
+            <span
+              class="av-star"
+              data-v="3"
+              role="button"
+              tabindex="0"
+              aria-label="3 estrelas"
+              >★</span
+            >
+            <span
+              class="av-star"
+              data-v="4"
+              role="button"
+              tabindex="0"
+              aria-label="4 estrelas"
+              >★</span
+            >
+            <span
+              class="av-star"
+              data-v="5"
+              role="button"
+              tabindex="0"
+              aria-label="5 estrelas"
+              >★</span
+            >
+          </div>
+          <div class="av-nota-texto" id="avNotaTexto"></div>
+
+          <label class="av-label" for="avComentario"
+            >Comentário (opcional)</label
+          >
+          <textarea
+            id="avComentario"
+            class="av-textarea"
+            rows="3"
+            placeholder="Conte como foi a experiência..."
+          ></textarea>
+
+          <button id="avBtnEnviar" class="av-btn-enviar" disabled>
+            <span class="av-btn-label">Enviar avaliação</span>
+            <div class="av-spinner"></div>
+          </button>
+          <button id="avBtnPular" class="av-btn-pular">Pular por agora</button>
+        </div>
+
+        <div class="av-sucesso" id="avSucesso">
+          <div class="av-sucesso-icon">✓</div>
+          <div class="av-sucesso-title">Obrigado pelo feedback!</div>
+          <p class="av-sucesso-sub">
+            Sua avaliação foi enviada com sucesso e já está visível no perfil do
+            profissional.
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <div class="footer__inner">
-      <strong class="footer__brand">Serviço Fácil</strong>
-      <p class="footer__tagline">Conectando pessoas a profissionais de confiança.</p>
-      <div class="footer__links">
-        <a href="#">Termos</a>
-        <a href="#">Privacidade</a>
-        <a href="#">Contato</a>
+    <footer class="footer">
+      <div class="footer__inner">
+        <strong class="footer__brand">Serviço Fácil</strong>
+        <p class="footer__tagline">
+          Conectando pessoas a profissionais de confiança.
+        </p>
+        <div class="footer__links">
+          <a href="#">Termos</a>
+          <a href="#">Privacidade</a>
+          <a href="#">Contato</a>
+        </div>
+        <p class="footer__copy">
+          © 2026 Serviço Fácil. Todos os direitos reservados.
+        </p>
       </div>
-      <p class="footer__copy">© 2026 Serviço Fácil. Todos os direitos reservados.</p>
-    </div>
-  </footer>
+    </footer>
 
-  <script>
-  /* ── Tabs ── */
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
-  }
-
-  function abrirTabPeloQuery() {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const tab = params.get('tab');
-      const btnAg = document.querySelector(".tab-btn[onclick*=\"switchTab('agendamentos'\"]") || null;
-      const btnDados = document.querySelector(".tab-btn[onclick*=\"switchTab('dados'\"]") || null;
-      if (tab === 'agendamentos') { switchTab('agendamentos', btnAg); return; }
-      if (tab === 'dados') { switchTab('dados', btnDados); }
-    } catch (e) { /* noop */ }
-  }
-  abrirTabPeloQuery();
-
-  /* ── Cancelar agendamento ── */
-  let idAgendamentoParaCancelar = null;
-
-  function abrirModalCancelar(id) {
-    idAgendamentoParaCancelar = id;
-    document.getElementById('modalCancelar').classList.add('open');
-  }
-
-  function fecharModalCancelar() {
-    idAgendamentoParaCancelar = null;
-    document.getElementById('modalCancelar').classList.remove('open');
-  }
-
-  document.getElementById('modalCancelar').addEventListener('click', function (e) {
-    if (e.target === this) fecharModalCancelar();
-  });
-
-  document.getElementById('btnConfirmarCancelamento').addEventListener('click', async function () {
-    if (!idAgendamentoParaCancelar) return;
-    const btn = this;
-    const textoOriginal = btn.textContent;
-    btn.textContent = 'Cancelando...';
-    btn.disabled = true;
-    btn.style.opacity = '.7';
-
-    try {
-      const res = await fetch(`/api/cancelar_agendamento/${idAgendamentoParaCancelar}`, { method: 'PATCH' });
-      const data = await res.json();
-
-      if (data.mensagem) {
-        const item = document.getElementById('ag-' + idAgendamentoParaCancelar);
-        const badge = item.querySelector('.status-badge');
-        badge.className = 'status-badge status-cancelado';
-        badge.textContent = 'cancelado';
-        item.querySelectorAll('.btn-cancelar').forEach(b => b.remove());
-        fecharModalCancelar();
-      } else {
-        alert('Erro ao cancelar: ' + (data.erro || 'tente novamente'));
-      }
-    } catch (e) {
-      alert('Erro de conexão. Tente novamente.');
-    } finally {
-      btn.textContent = textoOriginal;
-      btn.disabled = false;
-      btn.style.opacity = '1';
-    }
-  });
-
-  /* ── Modal editar perfil ── */
-  function abrirModalEditar() {
-    document.getElementById('editNome').value = "{{ cliente.nome or '' }}";
-    document.getElementById('editSobrenome').value = "{{ cliente.sobrenome or '' }}";
-    document.getElementById('editTelefone').value = "{{ cliente.telefone or '' }}";
-    document.getElementById('editCidade').value = "{{ cliente.cidade or '' }}";
-    document.getElementById('editSexo').value = "{{ cliente.sexo or '' }}";
-    document.getElementById('modalEditar').classList.add('open');
-  }
-
-  function fecharModal() {
-    document.getElementById('modalEditar').classList.remove('open');
-  }
-
-  async function salvarPerfil() {
-    const dados = {
-      nome: document.getElementById('editNome').value.trim(),
-      sobrenome: document.getElementById('editSobrenome').value.trim(),
-      telefone: document.getElementById('editTelefone').value.trim(),
-      cidade: document.getElementById('editCidade').value.trim(),
-      sexo: document.getElementById('editSexo').value,
-    };
-
-    if (!dados.nome) { alert('Nome é obrigatório'); return; }
-
-    try {
-      const res = await fetch('/editar_perfil_cliente', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      });
-
-      let data = null;
-      try { data = await res.json(); } catch (e) {
-        if (!res.ok) throw new Error(`Falha ao salvar (HTTP ${res.status}).`);
-        throw new Error('Resposta não-JSON');
+    <script>
+      /* ── Tabs ── */
+      function switchTab(name, btn) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        document.getElementById("tab-" + name).classList.add("active");
       }
 
-      if (!res.ok || data?.erro) { alert('Erro: ' + (data?.erro || `HTTP ${res.status}`)); return; }
-
-      document.getElementById('heroNome').textContent = dados.nome + ' ' + dados.sobrenome;
-      fecharModal();
-
-      const overlay = document.getElementById('overlaySuccesso');
-      overlay.style.display = 'flex';
-
-      const path = document.getElementById('checkSvg').querySelector('path');
-      path.style.animation = 'none';
-      void path.offsetWidth;
-      path.style.animation = '';
-
-      setTimeout(() => { overlay.style.display = 'none'; location.reload(); }, 2500);
-    } catch (err) {
-      alert('Falha ao salvar: ' + err.message);
-    }
-  }
-
-  document.getElementById('modalEditar').addEventListener('click', function (e) {
-    if (e.target === this) fecharModal();
-  });
-
-  /* ── Upload foto ── */
-  async function uploadFoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    const form = new FormData();
-    form.append('foto', file);
-
-    const res = await fetch('/salvar_foto', { method: 'POST', body: form });
-    const data = await res.json();
-
-    if (data.erro) {
-      alert('Erro: ' + data.erro);
-    } else {
-      const preview = document.getElementById('fotoPreview');
-      let img = preview.querySelector('img');
-      if (!img) {
-        img = document.createElement('img');
-        img.alt = 'Foto de perfil';
-        preview.textContent = '';
-        preview.appendChild(img);
-      }
-      img.src = data.url + '?t=' + Date.now();
-      const modalPreview = document.getElementById('modalFotoPreview');
-      if (modalPreview) {
-        modalPreview.innerHTML = `<img src="${data.url}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover;">`;
-      }
-    }
-  }
-
-  /* ── Modal de avaliação ── */
-  (function () {
-    let _notaSelecionada = 0;
-    let _agendamentoId = null;
-    const TEXTOS_NOTA = ['', 'Péssimo 😞', 'Ruim 😕', 'Regular 😐', 'Bom 😊', 'Excelente! 🤩'];
-
-    const overlay = document.getElementById('overlayAvaliacao');
-    const form = document.getElementById('avFormulario');
-    const sucesso = document.getElementById('avSucesso');
-    const stars = document.querySelectorAll('.av-star');
-    const notaTexto = document.getElementById('avNotaTexto');
-    const btnEnviar = document.getElementById('avBtnEnviar');
-    const btnPular = document.getElementById('avBtnPular');
-    const btnPular2 = document.getElementById('avBtnPular2');
-    const comentario = document.getElementById('avComentario');
-
-    function abrirModal(dados) {
-      _agendamentoId = dados.id;
-      document.getElementById('avNomeServico').textContent = dados.servico || 'Serviço';
-
-      const prestador = [(dados.prestador_nome || ''), (dados.prestador_sobrenome || '')].join(' ').trim();
-      const data = dados.data_servico
-        ? new Date(dados.data_servico + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
-        : '';
-      document.getElementById('avMetaServico').textContent = [prestador, data, dados.horario].filter(Boolean).join(' · ');
-
-      const s = (dados.servico || '').toLowerCase();
-      const emojiMap = { 'eletr': '💡', 'hidra': '🔧', 'mec': '🔩', 'reform': '🏗️', 'limpez': '🧹', 'ti': '💻', 'tecnol': '💻', 'jardim': '🌿', 'pintur': '🎨', 'segur': '🔒' };
-      const iconeKey = Object.keys(emojiMap).find(k => s.includes(k));
-      document.querySelector('.av-service-icon').textContent = iconeKey ? emojiMap[iconeKey] : '⚙️';
-
-      resetForm();
-      overlay.classList.add('aberto');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function fecharModalAv() {
-      overlay.classList.remove('aberto');
-      document.body.style.overflow = '';
-      setTimeout(resetForm, 350);
-    }
-
-    function resetForm() {
-      _notaSelecionada = 0;
-      comentario.value = '';
-      notaTexto.textContent = '';
-      btnEnviar.disabled = true;
-      btnEnviar.classList.remove('loading');
-      stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
-      form.style.display = '';
-      sucesso.style.display = 'none';
-    }
-
-    stars.forEach(star => {
-      star.addEventListener('mouseover', () => {
-        const v = parseInt(star.dataset.v);
-        stars.forEach(s => { s.classList.toggle('ativo', parseInt(s.dataset.v) <= v); s.classList.remove('selecionado'); });
-        notaTexto.textContent = TEXTOS_NOTA[v];
-      });
-
-      star.addEventListener('mouseleave', () => {
-        if (_notaSelecionada === 0) {
-          stars.forEach(s => s.classList.remove('ativo', 'selecionado'));
-          notaTexto.textContent = '';
-        } else {
-          stars.forEach(s => { s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); s.classList.remove('ativo'); });
-          notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+      function abrirTabPeloQuery() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const tab = params.get("tab");
+          const btnAg =
+            document.querySelector(
+              ".tab-btn[onclick*=\"switchTab('agendamentos'\"]",
+            ) || null;
+          const btnDados =
+            document.querySelector(
+              ".tab-btn[onclick*=\"switchTab('dados'\"]",
+            ) || null;
+          if (tab === "agendamentos") {
+            switchTab("agendamentos", btnAg);
+            return;
+          }
+          if (tab === "dados") {
+            switchTab("dados", btnDados);
+          }
+        } catch (e) {
+          /* noop */
         }
-      });
+      }
+      abrirTabPeloQuery();
 
-      star.addEventListener('click', () => {
-        _notaSelecionada = parseInt(star.dataset.v);
-        stars.forEach(s => { s.classList.remove('ativo'); s.classList.toggle('selecionado', parseInt(s.dataset.v) <= _notaSelecionada); });
-        notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
-        btnEnviar.disabled = false;
-      });
+      /* ── Cancelar agendamento ── */
+      let idAgendamentoParaCancelar = null;
 
-      star.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); star.click(); }
-      });
-    });
+      function abrirModalCancelar(id) {
+        idAgendamentoParaCancelar = id;
+        document.getElementById("modalCancelar").classList.add("open");
+      }
 
-    btnEnviar.addEventListener('click', async () => {
-      if (!_notaSelecionada || !_agendamentoId) return;
-      btnEnviar.classList.add('loading');
-      btnEnviar.disabled = true;
+      function fecharModalCancelar() {
+        idAgendamentoParaCancelar = null;
+        document.getElementById("modalCancelar").classList.remove("open");
+      }
 
-      try {
-        const res = await fetch('/api/salvar_avaliacao', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ agendamento_id: _agendamentoId, nota: _notaSelecionada, comentario: comentario.value.trim() })
+      document
+        .getElementById("modalCancelar")
+        .addEventListener("click", function (e) {
+          if (e.target === this) fecharModalCancelar();
         });
-        const data = await res.json();
 
-        if (!res.ok || data.erro) {
-          alert(data.erro || 'Erro ao salvar avaliação. Tente novamente.');
-          btnEnviar.classList.remove('loading');
-          btnEnviar.disabled = false;
+      document
+        .getElementById("btnConfirmarCancelamento")
+        .addEventListener("click", async function () {
+          if (!idAgendamentoParaCancelar) return;
+          const btn = this;
+          const textoOriginal = btn.textContent;
+          btn.textContent = "Cancelando...";
+          btn.disabled = true;
+          btn.style.opacity = ".7";
+
+          try {
+            const res = await fetch(
+              `/api/cancelar_agendamento/${idAgendamentoParaCancelar}`,
+              { method: "PATCH" },
+            );
+            const data = await res.json();
+
+            if (data.mensagem) {
+              const item = document.getElementById(
+                "ag-" + idAgendamentoParaCancelar,
+              );
+              const badge = item.querySelector(".status-badge");
+              badge.className = "status-badge status-cancelado";
+              badge.textContent = "cancelado";
+              item.querySelectorAll(".btn-cancelar").forEach((b) => b.remove());
+              fecharModalCancelar();
+            } else {
+              alert("Erro ao cancelar: " + (data.erro || "tente novamente"));
+            }
+          } catch (e) {
+            alert("Erro de conexão. Tente novamente.");
+          } finally {
+            btn.textContent = textoOriginal;
+            btn.disabled = false;
+            btn.style.opacity = "1";
+          }
+        });
+
+      function filtrarOrcamentos(status, btn) {
+        document
+          .querySelectorAll(".orc-filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        document.querySelectorAll("[data-orc-status]").forEach((item) => {
+          const match = status === "todos" || item.dataset.orcStatus === status;
+          item.style.display = match ? "flex" : "none";
+        });
+      }
+
+      /* ── Modal editar perfil ── */
+      function abrirModalEditar() {
+        document.getElementById("editNome").value = "{{ cliente.nome or '' }}";
+        document.getElementById("editSobrenome").value =
+          "{{ cliente.sobrenome or '' }}";
+        document.getElementById("editTelefone").value =
+          "{{ cliente.telefone or '' }}";
+        document.getElementById("editCidade").value =
+          "{{ cliente.cidade or '' }}";
+        document.getElementById("editSexo").value = "{{ cliente.sexo or '' }}";
+        document.getElementById("modalEditar").classList.add("open");
+      }
+
+      function fecharModal() {
+        document.getElementById("modalEditar").classList.remove("open");
+      }
+
+      async function salvarPerfil() {
+        const dados = {
+          nome: document.getElementById("editNome").value.trim(),
+          sobrenome: document.getElementById("editSobrenome").value.trim(),
+          telefone: document.getElementById("editTelefone").value.trim(),
+          cidade: document.getElementById("editCidade").value.trim(),
+          sexo: document.getElementById("editSexo").value,
+        };
+
+        if (!dados.nome) {
+          alert("Nome é obrigatório");
           return;
         }
 
-        form.style.display = 'none';
-        sucesso.style.display = 'flex';
-        setTimeout(fecharModalAv, 2800);
-      } catch {
-        alert('Erro de conexão. Tente novamente.');
-        btnEnviar.classList.remove('loading');
-        btnEnviar.disabled = false;
+        try {
+          const res = await fetch("/editar_perfil_cliente", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados),
+          });
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch (e) {
+            if (!res.ok)
+              throw new Error(`Falha ao salvar (HTTP ${res.status}).`);
+            throw new Error("Resposta não-JSON");
+          }
+
+          if (!res.ok || data?.erro) {
+            alert("Erro: " + (data?.erro || `HTTP ${res.status}`));
+            return;
+          }
+
+          document.getElementById("heroNome").textContent =
+            dados.nome + " " + dados.sobrenome;
+          fecharModal();
+
+          const overlay = document.getElementById("overlaySuccesso");
+          overlay.style.display = "flex";
+
+          const path = document
+            .getElementById("checkSvg")
+            .querySelector("path");
+          path.style.animation = "none";
+          void path.offsetWidth;
+          path.style.animation = "";
+
+          setTimeout(() => {
+            overlay.style.display = "none";
+            location.reload();
+          }, 2500);
+        } catch (err) {
+          alert("Falha ao salvar: " + err.message);
+        }
       }
-    });
 
-    btnPular.addEventListener('click', fecharModalAv);
-    btnPular2.addEventListener('click', fecharModalAv);
-    overlay.addEventListener('click', e => { if (e.target === overlay) fecharModalAv(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('aberto')) fecharModalAv(); });
+      document
+        .getElementById("modalEditar")
+        .addEventListener("click", function (e) {
+          if (e.target === this) fecharModal();
+        });
 
-    async function verificarAvaliacoesPendentes() {
-      try {
-        const res = await fetch('/api/avaliacoes_pendentes');
+      /* ── Upload foto ── */
+      async function uploadFoto(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const form = new FormData();
+        form.append("foto", file);
+
+        const res = await fetch("/salvar_foto", { method: "POST", body: form });
         const data = await res.json();
-        if (data.pendente) setTimeout(() => abrirModal(data.pendente), 600);
-      } catch (e) {
-        console.warn('[Avaliação] Erro ao verificar pendências:', e);
+
+        if (data.erro) {
+          alert("Erro: " + data.erro);
+        } else {
+          const preview = document.getElementById("fotoPreview");
+          let img = preview.querySelector("img");
+          if (!img) {
+            img = document.createElement("img");
+            img.alt = "Foto de perfil";
+            preview.textContent = "";
+            preview.appendChild(img);
+          }
+          img.src = data.url + "?t=" + Date.now();
+          const modalPreview = document.getElementById("modalFotoPreview");
+          if (modalPreview) {
+            modalPreview.innerHTML = `<img src="${data.url}?t=${Date.now()}" style="width:100%;height:100%;object-fit:cover;">`;
+          }
+        }
       }
-    }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', verificarAvaliacoesPendentes);
-    } else {
-      verificarAvaliacoesPendentes();
-    }
-  })();
-</script>
-</body>
+      /* ── Modal de avaliação ── */
+      (function () {
+        let _notaSelecionada = 0;
+        let _agendamentoId = null;
+        const TEXTOS_NOTA = [
+          "",
+          "Péssimo 😞",
+          "Ruim 😕",
+          "Regular 😐",
+          "Bom 😊",
+          "Excelente! 🤩",
+        ];
 
+        const overlay = document.getElementById("overlayAvaliacao");
+        const form = document.getElementById("avFormulario");
+        const sucesso = document.getElementById("avSucesso");
+        const stars = document.querySelectorAll(".av-star");
+        const notaTexto = document.getElementById("avNotaTexto");
+        const btnEnviar = document.getElementById("avBtnEnviar");
+        const btnPular = document.getElementById("avBtnPular");
+        const btnPular2 = document.getElementById("avBtnPular2");
+        const comentario = document.getElementById("avComentario");
+
+        function abrirModal(dados) {
+          _agendamentoId = dados.id;
+          document.getElementById("avNomeServico").textContent =
+            dados.servico || "Serviço";
+
+          const prestador = [
+            dados.prestador_nome || "",
+            dados.prestador_sobrenome || "",
+          ]
+            .join(" ")
+            .trim();
+          const data = dados.data_servico
+            ? new Date(dados.data_servico + "T00:00:00").toLocaleDateString(
+                "pt-BR",
+                { day: "2-digit", month: "short" },
+              )
+            : "";
+          document.getElementById("avMetaServico").textContent = [
+            prestador,
+            data,
+            dados.horario,
+          ]
+            .filter(Boolean)
+            .join(" · ");
+
+          const s = (dados.servico || "").toLowerCase();
+          const emojiMap = {
+            eletr: "💡",
+            hidra: "🔧",
+            mec: "🔩",
+            reform: "🏗️",
+            limpez: "🧹",
+            ti: "💻",
+            tecnol: "💻",
+            jardim: "🌿",
+            pintur: "🎨",
+            segur: "🔒",
+          };
+          const iconeKey = Object.keys(emojiMap).find((k) => s.includes(k));
+          document.querySelector(".av-service-icon").textContent = iconeKey
+            ? emojiMap[iconeKey]
+            : "⚙️";
+
+          resetForm();
+          overlay.classList.add("aberto");
+          document.body.style.overflow = "hidden";
+        }
+
+        function fecharModalAv() {
+          overlay.classList.remove("aberto");
+          document.body.style.overflow = "";
+          setTimeout(resetForm, 350);
+        }
+
+        function resetForm() {
+          _notaSelecionada = 0;
+          comentario.value = "";
+          notaTexto.textContent = "";
+          btnEnviar.disabled = true;
+          btnEnviar.classList.remove("loading");
+          stars.forEach((s) => s.classList.remove("ativo", "selecionado"));
+          form.style.display = "";
+          sucesso.style.display = "none";
+        }
+
+        stars.forEach((star) => {
+          star.addEventListener("mouseover", () => {
+            const v = parseInt(star.dataset.v);
+            stars.forEach((s) => {
+              s.classList.toggle("ativo", parseInt(s.dataset.v) <= v);
+              s.classList.remove("selecionado");
+            });
+            notaTexto.textContent = TEXTOS_NOTA[v];
+          });
+
+          star.addEventListener("mouseleave", () => {
+            if (_notaSelecionada === 0) {
+              stars.forEach((s) => s.classList.remove("ativo", "selecionado"));
+              notaTexto.textContent = "";
+            } else {
+              stars.forEach((s) => {
+                s.classList.toggle(
+                  "selecionado",
+                  parseInt(s.dataset.v) <= _notaSelecionada,
+                );
+                s.classList.remove("ativo");
+              });
+              notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+            }
+          });
+
+          star.addEventListener("click", () => {
+            _notaSelecionada = parseInt(star.dataset.v);
+            stars.forEach((s) => {
+              s.classList.remove("ativo");
+              s.classList.toggle(
+                "selecionado",
+                parseInt(s.dataset.v) <= _notaSelecionada,
+              );
+            });
+            notaTexto.textContent = TEXTOS_NOTA[_notaSelecionada];
+            btnEnviar.disabled = false;
+          });
+
+          star.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              star.click();
+            }
+          });
+        });
+
+        btnEnviar.addEventListener("click", async () => {
+          if (!_notaSelecionada || !_agendamentoId) return;
+          btnEnviar.classList.add("loading");
+          btnEnviar.disabled = true;
+
+          try {
+            const res = await fetch("/api/salvar_avaliacao", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                agendamento_id: _agendamentoId,
+                nota: _notaSelecionada,
+                comentario: comentario.value.trim(),
+              }),
+            });
+            const data = await res.json();
+
+            if (!res.ok || data.erro) {
+              alert(data.erro || "Erro ao salvar avaliação. Tente novamente.");
+              btnEnviar.classList.remove("loading");
+              btnEnviar.disabled = false;
+              return;
+            }
+
+            form.style.display = "none";
+            sucesso.style.display = "flex";
+            setTimeout(fecharModalAv, 2800);
+          } catch {
+            alert("Erro de conexão. Tente novamente.");
+            btnEnviar.classList.remove("loading");
+            btnEnviar.disabled = false;
+          }
+        });
+
+        btnPular.addEventListener("click", fecharModalAv);
+        btnPular2.addEventListener("click", fecharModalAv);
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) fecharModalAv();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && overlay.classList.contains("aberto"))
+            fecharModalAv();
+        });
+
+        async function verificarAvaliacoesPendentes() {
+          try {
+            const res = await fetch("/api/avaliacoes_pendentes");
+            const data = await res.json();
+            if (data.pendente) setTimeout(() => abrirModal(data.pendente), 600);
+          } catch (e) {
+            console.warn("[Avaliação] Erro ao verificar pendências:", e);
+          }
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener(
+            "DOMContentLoaded",
+            verificarAvaliacoesPendentes,
+          );
+        } else {
+          verificarAvaliacoesPendentes();
+        }
+      })();
+    </script>
+  </body>
 </html>

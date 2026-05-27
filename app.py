@@ -1074,6 +1074,9 @@ def perfil_prestador(email):
 # =========================
 # PERFIL DO CLIENTE
 # =========================
+# =========================
+# PERFIL DO CLIENTE
+# =========================
 @app.route("/perfil_cliente")
 def perfil_cliente():
     if "usuario_logado" not in session:
@@ -1081,22 +1084,76 @@ def perfil_cliente():
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM cadastro_clientes WHERE email = %s", (session["usuario_logado"],))
+
+    # dados cliente
+    cursor.execute(
+        "SELECT * FROM cadastro_clientes WHERE email=%s",
+        (session["usuario_logado"],)
+    )
     cliente = cursor.fetchone()
 
+    # agendamentos (mantido igual)
     cursor.execute("""
-        SELECT a.*, p.nome AS prestador_nome, p.sobrenome AS prestador_sobrenome
+        SELECT
+            a.*,
+            p.nome AS prestador_nome,
+            p.sobrenome AS prestador_sobrenome
         FROM agendamentos a
-        LEFT JOIN cadastro_prestadores p ON a.prestador_email = p.email
-        WHERE a.cliente_email = %s
+        LEFT JOIN cadastro_prestadores p
+            ON a.prestador_email = p.email
+        WHERE a.cliente_email=%s
         ORDER BY a.data_servico DESC
     """, (session["usuario_logado"],))
+
     agendamentos = cursor.fetchall()
-    cursor.close();
+
+    # NOVO: ORÇAMENTOS
+    cursor.execute("""
+        SELECT
+            o.id,
+
+            COALESCE(
+                o.categoria,
+                'Serviço'
+            ) AS servico,
+
+            CASE
+                WHEN LOWER(o.status)='enviado'
+                    THEN 'aprovado'
+
+                WHEN LOWER(o.status)='erro'
+                    THEN 'recusado'
+
+                ELSE 'aguardando'
+            END AS status,
+
+            NULL AS valor,
+
+            o.criado_em,
+
+            NULL AS prestador_nome,
+            NULL AS prestador_sobrenome,
+
+            o.descricao AS mensagem_prestador,
+
+            0 AS agendado
+
+        FROM solicitacoes_orcamento o
+        WHERE o.email=%s
+        ORDER BY o.id DESC
+    """, (session["usuario_logado"],))
+
+    orcamentos = cursor.fetchall()
+
+    cursor.close()
     conn.close()
 
-    return render_template("perfil-cliente.html", cliente=cliente, agendamentos=agendamentos)
-
+    return render_template(
+        "perfil-cliente.html",
+        cliente=cliente,
+        agendamentos=agendamentos,
+        orcamentos=orcamentos
+    )
 
 @app.route("/meu_perfil")
 def meu_perfil():
