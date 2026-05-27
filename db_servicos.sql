@@ -7,6 +7,8 @@ DROP DATABASE IF EXISTS servicos;
 CREATE DATABASE servicos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE servicos;
 
+SELECT areas_atuacao FROM cadastro_prestadores;
+
 
 -- ============================================================
 --  1. CLIENTES
@@ -115,6 +117,7 @@ CREATE TABLE notificacoes (
 );
 
 
+
 -- ============================================================
 --  6. AVALIAÇÕES DOS PRESTADORES
 -- ============================================================
@@ -152,7 +155,7 @@ CREATE TABLE admins (
 );
 
 
--- INSERT INTO admins (email, senha, nivel, ativo) VALUES
+INSERT INTO admins (email, senha, nivel, ativo) VALUES
 ('felipe@admin.com.br', '123@senac', 'admin', 1),
 ('lucas@admin.com.br',  '123@senac', 'admin', 1);
 
@@ -242,6 +245,20 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+=============================================================
+--  10. CORRIGE ÁREAS DE ATUAÇÃO PARA VALORES PADRONIZADOS
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE cadastro_prestadores SET areas_atuacao = 'Tecnologia' WHERE LOWER(areas_atuacao) LIKE '%ti%';
+UPDATE cadastro_prestadores SET areas_atuacao = 'Mecânica'   WHERE LOWER(areas_atuacao) LIKE '%mec%';
+UPDATE cadastro_prestadores SET areas_atuacao = 'Elétrica'   WHERE LOWER(areas_atuacao) LIKE '%el%tric%';
+UPDATE cadastro_prestadores SET areas_atuacao = 'Hidráulica' WHERE LOWER(areas_atuacao) LIKE '%hidr%';
+UPDATE cadastro_prestadores SET areas_atuacao = 'Reformas'   WHERE LOWER(areas_atuacao) LIKE '%reform%';
+UPDATE cadastro_prestadores SET areas_atuacao = 'Limpeza'    WHERE LOWER(areas_atuacao) LIKE '%limpez%';
+
+SET SQL_SAFE_UPDATES = 1;
 
 -- ============================================================
 --  FIM DO SCHEMA
