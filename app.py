@@ -694,8 +694,19 @@ def resetar_senha(token):
 def admin_login_page(): return render_template("admin/login.html", erro=None)
 
 
-@app.route("/admin/autenticar", methods=["POST"])
+# =========================
+# ADMIN AUTH E DASHBOARD
+# =========================
+@app.route("/admin/login", methods=["GET"])
+def admin_login_page(): return render_template("admin/login.html", erro=None)
+
+
+@app.route("/admin/autenticar", methods=["GET", "POST"])
 def admin_autenticar():
+    # 🎯 FIX ANTI-ERRO 405: Se o Render converter POST pra GET, devolve pro login
+    if request.method == "GET":
+        return redirect(url_for("admin_login_page"))
+
     try:
         email = request.form.get("email", "").strip().lower()
         senha = request.form.get("senha", "")
