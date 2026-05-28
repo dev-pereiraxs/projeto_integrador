@@ -30,7 +30,7 @@ function carregarMeusServicos() {
 }
 
 // ============================================================
-// CONTADORES DO TOPO
+// CONTADORES DO TOPO (🎯 LÓGICA CORRIGIDA)
 // ============================================================
 function atualizarContadores() {
   let pendentes = 0;
@@ -39,9 +39,15 @@ function atualizarContadores() {
 
   pedidos.forEach(p => {
     const s = (p.status || "").toLowerCase();
-    if (s === "pendente" || s === "confirmado") pendentes++;
-    else if (s === "em_andamento") andamento++;
-    else if (s === "concluido") concluidos++;
+
+    if (s === "pendente") {
+        pendentes++;
+    } else if (s === "confirmado" || s === "em_andamento") {
+        // 🎯 FIX: Agora quando você aceita, ele conta corretamente como "Em Andamento"
+        andamento++;
+    } else if (s === "concluido") {
+        concluidos++;
+    }
   });
 
   if (pendentesEl) pendentesEl.textContent = pendentes;
@@ -391,7 +397,6 @@ function carregarServicos() {
   fetch("/api/meus_servicos")
     .then(r => r.json())
     .then(data => {
-      // Dupla checagem de segurança para o caso do fetch demorar e o usuário já ter saído da aba
       if (abaAtual !== "servicos") return;
 
       if (data.erro) {
@@ -399,7 +404,6 @@ function carregarServicos() {
         return;
       }
 
-      // 🎨 ESTADO VAZIO EXCLUSIVO E INDEPENDENTE DE MEUS SERVIÇOS
       if (data.length === 0) {
         lista.innerHTML = `
           <div class="empty-state-container">
