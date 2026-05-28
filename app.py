@@ -693,17 +693,36 @@ def resetar_senha(token):
 @app.route("/admin/login", methods=["GET"])
 def admin_login_page(): return render_template("admin/login.html", erro=None)
 
+
 @app.route("/admin/autenticar", methods=["POST"])
 def admin_autenticar():
-    email, senha = request.form.get("email", "").strip().lower(), request.form.get("senha", "")
-    conn = connectar(); cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT email, senha, ativo FROM admins WHERE email=%s", (email,))
-    admin = cursor.fetchone()
-    cursor.close(); conn.close()
-    if not admin or not admin.get("ativo") or senha != admin.get("senha"):
-        return render_template("admin/login.html", erro="Credenciais inválidas")
-    session.update({"usuario_logado": admin["email"], "tipo_usuario": "admin", "usuario_nome": admin["email"]})
-    return redirect(url_for("admin_dashboard"))
+    try:
+        email = request.form.get("email", "").strip().lower()
+        senha = request.form.get("senha", "")
+
+        conn = connectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT email, senha, ativo FROM admins WHERE email=%s", (email,))
+        admin = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not admin or not admin.get("ativo") or senha != admin.get("senha"):
+            return render_template("admin/login.html", erro="Credenciais inválidas")
+
+        session.update({"usuario_logado": admin["email"], "tipo_usuario": "admin", "usuario_nome": admin["email"]})
+        return redirect(url_for("admin_dashboard"))
+
+    except Exception as e:
+        # 🎯 RASTREADOR DE ERRO: Vai mostrar na tela exatamente o que quebrou!
+        return f"""
+        <div style="font-family: sans-serif; padding: 40px; text-align: center;">
+            <h2 style="color: #ef4444;">Erro Crítico no Banco de Dados (Render)</h2>
+            <p>O Python travou com a seguinte mensagem:</p>
+            <code style="background: #f1f5f9; padding: 10px; border-radius: 8px; display: inline-block; color: #b91c1c; font-size: 16px;">{str(e)}</code>
+            <p style="margin-top: 20px; color: #64748b;">Dica: Você rodou o comando <b>CREATE TABLE admins</b> e o <b>INSERT</b> no seu banco de dados online?</p>
+        </div>
+        """, 500
 
 @app.route("/logout")
 def logout():
