@@ -703,7 +703,7 @@ def admin_login_page(): return render_template("admin/login.html", erro=None)
 
 @app.route("/admin/autenticar", methods=["GET", "POST"])
 def admin_autenticar():
-    # 🎯 FIX ANTI-ERRO 405: Se o Render converter POST pra GET, devolve pro login
+    # Se o Render converter POST pra GET, devolve pro login
     if request.method == "GET":
         return redirect(url_for("admin_login_page"))
 
@@ -713,25 +713,40 @@ def admin_autenticar():
 
         conn = connectar()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT email, senha, ativo FROM admins WHERE email=%s", (email,))
+
+        # 🎯 FIX: Usa SELECT * para não quebrar, independentemente do nome da coluna!
+        cursor.execute("SELECT * FROM admins WHERE email=%s", (email,))
         admin = cursor.fetchone()
         cursor.close()
         conn.close()
 
-        if not admin or not admin.get("ativo") or senha != admin.get("senha"):
+        if not admin or not admin.get("ativo"):
+            return render_template("admin/login.html", erro="Credenciais inválidas")
+
+        # 🎯 FIX: Pega a senha do banco, seja lá qual for o nome da coluna
+        senha_banco = admin.get("senha_hash") or admin.get("senha")
+
+        # Verifica se a senha salva é hash (bcrypt) ou texto normal
+        senha_valida = False
+        if senha_banco:
+            if senha_banco.startswith("$2b$") or senha_banco.startswith("$2a$"):
+                import bcrypt
+                senha_valida = bcrypt.checkpw(senha.encode("utf-8"), senha_banco.encode("utf-8"))
+            else:
+                senha_valida = (senha == senha_banco)
+
+        if not senha_valida:
             return render_template("admin/login.html", erro="Credenciais inválidas")
 
         session.update({"usuario_logado": admin["email"], "tipo_usuario": "admin", "usuario_nome": admin["email"]})
         return redirect(url_for("admin_dashboard"))
 
     except Exception as e:
-        # 🎯 RASTREADOR DE ERRO: Vai mostrar na tela exatamente o que quebrou!
         return f"""
         <div style="font-family: sans-serif; padding: 40px; text-align: center;">
             <h2 style="color: #ef4444;">Erro Crítico no Banco de Dados (Render)</h2>
             <p>O Python travou com a seguinte mensagem:</p>
             <code style="background: #f1f5f9; padding: 10px; border-radius: 8px; display: inline-block; color: #b91c1c; font-size: 16px;">{str(e)}</code>
-            <p style="margin-top: 20px; color: #64748b;">Dica: Você rodou o comando <b>CREATE TABLE admins</b> e o <b>INSERT</b> no seu banco de dados online?</p>
         </div>
         """, 500
 
