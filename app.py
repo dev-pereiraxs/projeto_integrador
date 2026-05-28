@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import mysql.connector
 from authlib.integrations.flask_client import OAuth
@@ -357,7 +358,15 @@ def servicos():
 
 @app.route("/perfil")
 def perfil():
-    return render_template("cliente.html")
+    # Redireciona para o perfil correto conforme o tipo do usuário.
+    # (Sem isso, o histórico de orçamentos do template perfil-cliente.html não aparece.)
+    if "usuario_logado" not in session:
+        return redirect(url_for("login"))
+
+    if session.get("tipo_usuario") == "prestador":
+        return redirect(url_for("perfil_prestador", email=session["usuario_logado"]))
+
+    return redirect(url_for("perfil_cliente"))
 
 
 @app.route("/prestador")
@@ -1074,9 +1083,6 @@ def perfil_prestador(email):
 # =========================
 # PERFIL DO CLIENTE
 # =========================
-# =========================
-# PERFIL DO CLIENTE
-# =========================
 @app.route("/perfil_cliente")
 def perfil_cliente():
     if "usuario_logado" not in session:
@@ -1085,65 +1091,30 @@ def perfil_cliente():
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
 
-    # dados cliente
     cursor.execute(
         "SELECT * FROM cadastro_clientes WHERE email=%s",
         (session["usuario_logado"],)
     )
     cliente = cursor.fetchone()
 
-    # agendamentos (mantido igual)
     cursor.execute("""
-        SELECT
-            a.*,
-            p.nome AS prestador_nome,
-            p.sobrenome AS prestador_sobrenome
+        SELECT a.*, p.nome AS prestador_nome, p.sobrenome AS prestador_sobrenome
         FROM agendamentos a
-        LEFT JOIN cadastro_prestadores p
-            ON a.prestador_email = p.email
+        LEFT JOIN cadastro_prestadores p ON a.prestador_email = p.email
         WHERE a.cliente_email=%s
         ORDER BY a.data_servico DESC
     """, (session["usuario_logado"],))
-
     agendamentos = cursor.fetchall()
 
-    # NOVO: ORÇAMENTOS
     cursor.execute("""
-        SELECT
-            o.id,
-
-            COALESCE(
-                o.categoria,
-                'Serviço'
-            ) AS servico,
-
-            CASE
-                WHEN LOWER(o.status)='enviado'
-                    THEN 'aprovado'
-
-                WHEN LOWER(o.status)='erro'
-                    THEN 'recusado'
-
-                ELSE 'aguardando'
-            END AS status,
-
-            NULL AS valor,
-
-            o.criado_em,
-
-            NULL AS prestador_nome,
-            NULL AS prestador_sobrenome,
-
-            o.descricao AS mensagem_prestador,
-
-            0 AS agendado
-
+        SELECT o.id, COALESCE(o.categoria, 'Serviço') AS categoria,
+               o.status, o.criado_em, o.descricao,
+               COALESCE(o.motivo_recusa, '') AS motivo_recusa
         FROM solicitacoes_orcamento o
-        WHERE o.email=%s
+        WHERE o.cliente_email = %s
         ORDER BY o.id DESC
     """, (session["usuario_logado"],))
-
-    orcamentos = cursor.fetchall()
+    orcamentos = cursor.fetchall()  # ← estava faltando isso
 
     cursor.close()
     conn.close()
@@ -1163,6 +1134,67 @@ def meu_perfil():
         return redirect(url_for("perfil_prestador", email=session["usuario_logado"]))
     return redirect(url_for("perfil_cliente"))
 
+@app.route("/api/cancelar_orcamento/<int:id>", methods=["PATCH"])
+def cancelar_orcamento_cliente(id):
+    if "usuario_logado" not in session or session.get("tipo_usuario") != "cliente":
+        return jsonify({"erro": "Acesso negado"}), 401
+ 
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute(
+    "SELECT id, status FROM solicitacoes_orcamento WHERE id=%s AND cliente_email=%s",
+    (id, session["usuario_logado"])
+)
+        orc = cursor.fetchone()
+ 
+        if not orc:
+            return jsonify({"erro": "Orçamento não encontrado"}), 404
+        if orc["status"] != "pendente":
+            return jsonify({"erro": "Apenas orçamentos pendentes podem ser cancelados"}), 400
+ 
+        cursor.execute(
+            "UPDATE solicitacoes_orcamento SET status='cancelado' WHERE id=%s",
+            (id,)
+        )
+        conn.commit()
+        return jsonify({"mensagem": "Orçamento cancelado com sucesso"})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route("/api/checar_alerta_orcamento")
+def checar_alerta_orcamento():
+    if not session.get("usuario_logado"):
+        return jsonify({"alerta": None})
+    conn = connectar()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT id, categoria, status, COALESCE(motivo_recusa, '') AS motivo_recusa
+        FROM solicitacoes_orcamento
+        WHERE cliente_email = %s AND alerta_visto = 0 AND status IN ('erro', 'cancelado')
+        ORDER BY id DESC LIMIT 1
+    """, (session["usuario_logado"],))
+    alerta = cursor.fetchone()
+    cursor.close(); conn.close()
+    return jsonify({"alerta": alerta})
+
+
+@app.route("/api/marcar_alerta_orcamento_visto/<int:id>", methods=["PATCH"])
+def marcar_alerta_orcamento_visto(id):
+    if not session.get("usuario_logado"):
+        return jsonify({"erro": "não logado"}), 401
+    conn = connectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE solicitacoes_orcamento SET alerta_visto = 1 WHERE id = %s AND cliente_email = %s",
+        (id, session["usuario_logado"])
+    )
+    conn.commit()
+    cursor.close(); conn.close()
+    return jsonify({"mensagem": "ok"})
 
 # =========================
 # UPLOAD FOTO DE PERFIL
@@ -1383,26 +1415,21 @@ def admin_autenticar():
 
     conn = connectar()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT email, senha_hash, ativo FROM admins WHERE email=%s", (email,))
+    cursor.execute("SELECT email, senha, ativo FROM admins WHERE email=%s", (email,))
     admin = cursor.fetchone()
-    cursor.close();
+    cursor.close()
     conn.close()
 
     if not admin or not admin.get("ativo"):
         return render_template("login.html", erro="Credenciais inválidas")
 
-    senha_hash = admin.get("senha_hash")
-    try:
-        if not bcrypt.checkpw(senha.encode("utf-8"), senha_hash.encode("utf-8")):
-            return render_template("login.html", erro="Credenciais inválidas")
-    except Exception:
+    if senha != admin.get("senha"):
         return render_template("login.html", erro="Credenciais inválidas")
 
     session["usuario_logado"] = admin["email"]
     session["tipo_usuario"] = "admin"
     session["usuario_nome"] = admin["email"]
     return redirect(url_for("admin_dashboard"))
-
 
 @app.route("/logout")
 def logout():
@@ -1619,6 +1646,9 @@ def admin_api_orcamentos():
 def solicitar_orcamento():
     try:
         dados = request.get_json()
+        # usa o email da sessão se logado, senão o do form
+        email = session.get("usuario_logado") or dados.get('email') or ''
+        
         conn = connectar()
         cursor = conn.cursor()
         cursor.execute("""
@@ -1627,7 +1657,7 @@ def solicitar_orcamento():
         """, (
             dados.get('nome'),
             dados.get('telefone'),
-            dados.get('email'),
+            email,  # <-- aqui
             dados.get('categoria'),
             dados.get('descricao')
         ))
@@ -1636,9 +1666,7 @@ def solicitar_orcamento():
         conn.close()
         return jsonify({"success": True})
     except Exception as e:
-        import traceback; traceback.print_exc()
         return jsonify({"success": False, "erro": str(e)}), 500
-
 
 # =========================
 # ADMIN — PÁGINAS
@@ -2025,15 +2053,16 @@ def admin_listar_solicitacoes_orcamento():
     total = cursor.fetchone()["total"]
 
     cursor.execute(
-        f"""
-        SELECT id, nome, telefone, email, categoria, descricao, status, criado_em
-        FROM solicitacoes_orcamento
-        {where}
-        ORDER BY id DESC
-        LIMIT %s OFFSET %s
-        """,
-        (*params_count, per_page, offset),
-    )
+    f"""
+    SELECT id, nome, telefone, email, categoria, descricao,
+           status, motivo_recusa, criado_em   -- ← adicionar motivo_recusa
+    FROM solicitacoes_orcamento
+    {where}
+    ORDER BY id DESC
+    LIMIT %s OFFSET %s
+    """,
+    (*params_count, per_page, offset),
+)
     rows = cursor.fetchall()
 
     for r in rows:
@@ -2060,11 +2089,20 @@ def admin_aprovar_orcamento(id):
 @app.route("/admin/api/solicitacoes-orcamento/<int:id>/rejeitar", methods=["PATCH"])
 @admin_required
 def admin_rejeitar_orcamento(id):
-    conn = connectar(); cursor = conn.cursor()
-    cursor.execute("UPDATE solicitacoes_orcamento SET status = 'erro' WHERE id = %s", (id,))
+    dados  = request.get_json(silent=True) or {}
+    motivo = (dados.get("motivo") or "").strip() or None   # None → NULL no banco
+ 
+    conn = connectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE solicitacoes_orcamento SET status='erro', motivo_recusa=%s WHERE id=%s",
+        (motivo, id)
+    )
     conn.commit()
     affected = cursor.rowcount
-    cursor.close(); conn.close()
+    cursor.close()
+    conn.close()
+ 
     if not affected:
         return jsonify({"erro": "Não encontrado"}), 404
     return jsonify({"mensagem": "Rejeitado", "id": id, "status": "erro"})
