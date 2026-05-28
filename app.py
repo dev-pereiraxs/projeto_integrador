@@ -691,19 +691,11 @@ def resetar_senha(token):
 # ADMIN AUTH E DASHBOARD
 # =========================
 @app.route("/admin/login", methods=["GET"])
-def admin_login_page(): return render_template("admin/login.html", erro=None)
-
-
-# =========================
-# ADMIN AUTH E DASHBOARD
-# =========================
-@app.route("/admin/login", methods=["GET"])
-def admin_login_page(): return render_template("admin/login.html", erro=None)
-
+def admin_login_page():
+    return render_template("admin/login.html", erro=None)
 
 @app.route("/admin/autenticar", methods=["GET", "POST"])
 def admin_autenticar():
-    # Se o Render converter POST pra GET, devolve pro login
     if request.method == "GET":
         return redirect(url_for("admin_login_page"))
 
@@ -713,8 +705,6 @@ def admin_autenticar():
 
         conn = connectar()
         cursor = conn.cursor(dictionary=True)
-
-        # 🎯 FIX: Usa SELECT * para não quebrar, independentemente do nome da coluna!
         cursor.execute("SELECT * FROM admins WHERE email=%s", (email,))
         admin = cursor.fetchone()
         cursor.close()
@@ -723,11 +713,9 @@ def admin_autenticar():
         if not admin or not admin.get("ativo"):
             return render_template("admin/login.html", erro="Credenciais inválidas")
 
-        # 🎯 FIX: Pega a senha do banco, seja lá qual for o nome da coluna
         senha_banco = admin.get("senha_hash") or admin.get("senha")
-
-        # Verifica se a senha salva é hash (bcrypt) ou texto normal
         senha_valida = False
+
         if senha_banco:
             if senha_banco.startswith("$2b$") or senha_banco.startswith("$2a$"):
                 import bcrypt
@@ -742,13 +730,7 @@ def admin_autenticar():
         return redirect(url_for("admin_dashboard"))
 
     except Exception as e:
-        return f"""
-        <div style="font-family: sans-serif; padding: 40px; text-align: center;">
-            <h2 style="color: #ef4444;">Erro Crítico no Banco de Dados (Render)</h2>
-            <p>O Python travou com a seguinte mensagem:</p>
-            <code style="background: #f1f5f9; padding: 10px; border-radius: 8px; display: inline-block; color: #b91c1c; font-size: 16px;">{str(e)}</code>
-        </div>
-        """, 500
+        return f"<div style='padding:40px;text-align:center;'><h2 style='color:#ef4444;'>Erro (Render)</h2><code>{str(e)}</code></div>", 500
 
 @app.route("/logout")
 def logout():
